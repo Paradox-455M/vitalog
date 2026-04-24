@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthFlow - Settings &amp; Profile</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#f3f1ea",
+                    "primary-fixed": "#c4efa3",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "on-tertiary-container": "#f7a175",
+                    "on-secondary-fixed": "#002111",
+                    "tertiary": "#562100",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#43493d",
+                    "on-tertiary-fixed": "#341100",
+                    "tertiary-fixed": "#ffdbcb",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#0a2100",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#30312c",
+                    "on-secondary-container": "#3b6c51",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "background": "#fbf9f2",
+                    "surface-container-low": "#f6f4ed",
+                    "secondary-fixed": "#b9efcc",
+                    "on-error": "#ffffff",
+                    "surface": "#fbf9f2",
+                    "inverse-primary": "#a8d38a",
+                    "surface-tint": "#43682b",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#733613",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "surface-container-highest": "#e4e2dc",
+                    "secondary": "#36684c",
+                    "surface-container-high": "#eae8e1",
+                    "on-primary-container": "#98c27b",
+                    "primary-fixed-dim": "#a8d38a",
+                    "surface-dim": "#dcdad3",
+                    "surface-variant": "#e4e2dc",
+                    "outline-variant": "#c3c9b9",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "primary": "#173901",
+                    "outline": "#73796c",
+                    "secondary-container": "#b6ecc9",
+                    "primary-container": "#2d5016",
+                    "on-background": "#1b1c18",
+                    "on-surface": "#1b1c18",
+                    "surface-bright": "#fbf9f2",
+                    "surface-container": "#f0eee7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Noto Serif', serif; }
+        .vitality-gradient { background: linear-gradient(135deg, #173901 0%, #2d5016 100%); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<div class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar standardized to match SCREEN_6 -->
+<aside class="flex flex-col h-screen w-64 border-r-0 bg-[#fbf9f2] dark:bg-stone-950 transition-all z-50 py-8 px-6 sticky top-0">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl vitality-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="clinical_notes">clinical_notes</span>
+</div>
+<span class="text-2xl font-serif text-[#173901] dark:text-[#f6f4ed] font-bold">HealthFlow</span>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm tracking-wide">Dashboard</span>
+</a>
+<a class="flex items-center justify-between py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-sm tracking-wide">My Reports</span>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full">12</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="timeline">timeline</span>
+<span class="text-sm tracking-wide">Health Timeline</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="family_restroom">family_restroom</span>
+<span class="text-sm tracking-wide">Family</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="text-sm tracking-wide">Biomarker Library</span>
+</a>
+<!-- Active Tab: Settings -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-[#173901] dark:text-[#a8d38a] font-bold border-r-4 border-[#173901] bg-[#e4e2dc] dark:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-sm tracking-wide">Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<div class="bg-surface-container-high p-4 rounded-2xl mb-6">
+<p class="text-xs font-bold text-primary mb-1">Upgrade to Premium</p>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">Deep AI insights and unlimited report storage.</p>
+</div>
+<div class="flex items-center gap-3 px-2">
+<img alt="Arjun Johnson's profile picture" class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of Arjun, a smiling Indian man in his 30s with a neat beard, soft indoor studio lighting, warm professional aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlBFyXrQL4eaXGWoIlOlIzve1Yup39kTS4NCzVV08msWc4N0r8ycrdiP-6zqam11aWf5dhezk-DCSYQJWdL4KG84DB9UPr5Jch8iIfqW7ZMnFZEuXIc8el-zWg1bY28YE123R9YWOsI_N4gpL2GEIe79upvMSmmabFHAHPkwOKS2pzQwWigkNq2-onqYKi2Olq4A0tMpnno6tLQYpyDKRkN6AOSFQAAXtl4QZHsKRjp03UejwFLEQqP2C2fsMrn2aNIMlIyYdZwks"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold">Arjun</span>
+<span class="text-[10px] text-stone-500 uppercase tracking-widest">The Mindful Curator</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 min-w-0 bg-background overflow-y-auto">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-6 h-16 w-full sticky top-0 z-50 bg-white border-b border-stone-200">
+<h1 class="text-2xl font-bold text-primary font-['Noto_Serif']">Settings</h1>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-stone-50 border-stone-200 rounded-full text-sm focus:ring-primary focus:border-primary w-64" placeholder="Search settings..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-stone-500 p-2 rounded-full hover:bg-stone-50" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-stone-500 p-2 rounded-full hover:bg-stone-50" data-icon="help">help</button>
+</div>
+</header>
+<div class="max-w-5xl mx-auto p-8">
+<div class="mb-10">
+<h2 class="text-3xl font-bold text-on-surface mb-2 font-serif">Settings</h2>
+<p class="text-on-surface-variant font-body">Manage your account and subscription preferences.</p>
+</div>
+<!-- Bento Grid Layout for Settings Cards -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Profile Card -->
+<div class="md:col-span-8 bg-white rounded-xl border border-[#E8E6DF] p-6 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+                                Profile Information
+                            </h3>
+</div>
+<div class="flex flex-col md:flex-row gap-8">
+<div class="flex flex-col items-center gap-3">
+<div class="w-24 h-24 rounded-full overflow-hidden border-2 border-emerald-100">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a person for profile picture with soft lighting and natural skin tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2mGgXuD_ec_v2i4k9E_zUr9Ml3MwGBJsTjRdzIOPuNURW6RBjrU8AFPhekp6pcehIiyUuEJ3H0vXEu74wqk1C57F-LfjcMGKahz7Lm4NDJaR61LQ5MIqwSQHVb6OOlNwUiryvBWpbsYdOzysbPL4ahuVc4t9tbBtGLxAukqe3hNuh4gZjsbMefNGL3YtBAk4qso18OLjlPePfDjiENkpSTTagNaUkaD8XDUGIAnpnF-aog8QzsaQFKCJZ-uQSCPjsXIO52W8C30s"/>
+</div>
+<button class="text-xs font-bold text-primary hover:underline">Change Photo</button>
+</div>
+<div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Full Name</label>
+<input class="bg-stone-50 border-stone-200 rounded-lg px-4 py-2 text-sm focus:ring-primary focus:border-primary" type="text" value="Arjun Johnson"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email Address</label>
+<input class="bg-stone-50 border-stone-200 rounded-lg px-4 py-2 text-sm focus:ring-primary focus:border-primary" type="email" value="arjun.j@healthflow.com"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Date of Birth</label>
+<input class="bg-stone-50 border-stone-200 rounded-lg px-4 py-2 text-sm focus:ring-primary focus:border-primary" type="date" value="1992-08-14"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Blood Group</label>
+<select class="bg-stone-50 border-stone-200 rounded-lg px-4 py-2 text-sm focus:ring-primary focus:border-primary">
+<option>O Positive (O+)</option>
+<option>A Positive (A+)</option>
+<option>B Positive (B+)</option>
+<option>AB Positive (AB+)</option>
+</select>
+</div>
+</div>
+</div>
+<div class="mt-6 flex justify-end">
+<button class="px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:opacity-90 transition-colors">Save Profile</button>
+</div>
+</div>
+<!-- Subscription Card -->
+<div class="md:col-span-4 bg-[#173901] text-white rounded-xl border border-[#E8E6DF] p-6 shadow-sm overflow-hidden relative">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-[#2d5016] rounded-full opacity-50"></div>
+<div class="relative z-10 h-full flex flex-col">
+<h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+                                Current Plan
+                            </h3>
+<div class="mb-6">
+<span class="text-3xl font-black">Pro Plan</span>
+<p class="text-primary-fixed text-sm mt-1">₹299/month</p>
+</div>
+<div class="mt-auto space-y-4">
+<div class="bg-[#2d5016]/50 p-3 rounded-lg border border-[#3e6327]/30">
+<p class="text-xs text-primary-fixed/80">Next Billing Date</p>
+<p class="text-sm font-semibold">12 October, 2023</p>
+</div>
+<button class="w-full py-2 bg-white text-primary rounded-lg text-sm font-bold hover:bg-stone-100 transition-colors">
+                                    Manage Billing
+                                </button>
+</div>
+</div>
+</div>
+<!-- Security Card -->
+<div class="md:col-span-6 bg-white rounded-xl border border-[#E8E6DF] p-6 shadow-sm">
+<h3 class="text-xl font-bold text-primary flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+                            Security
+                        </h3>
+<div class="space-y-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">New Password</label>
+<input class="bg-stone-50 border-stone-200 rounded-lg px-4 py-2 text-sm focus:ring-primary focus:border-primary" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Confirm New Password</label>
+<input class="bg-stone-50 border-stone-200 rounded-lg px-4 py-2 text-sm focus:ring-primary focus:border-primary" placeholder="••••••••" type="password"/>
+</div>
+<hr class="border-stone-100 my-4"/>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-on-surface">Two-Factor Authentication</p>
+<p class="text-xs text-on-surface-variant">Add an extra layer of security</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<div class="mt-6">
+<button class="w-full py-2 border border-primary text-primary rounded-lg text-sm font-bold hover:bg-stone-50 transition-colors">Update Security</button>
+</div>
+</div>
+<!-- Notifications Card -->
+<div class="md:col-span-6 bg-white rounded-xl border border-[#E8E6DF] p-6 shadow-sm">
+<h3 class="text-xl font-bold text-primary flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+                            Notifications
+                        </h3>
+<div class="space-y-6">
+<div class="flex items-center justify-between p-3 rounded-lg bg-stone-50 border border-stone-100">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="mail">mail</span>
+<div>
+<p class="text-sm font-bold text-on-surface">Email alerts</p>
+<p class="text-xs text-on-surface-variant">Daily summaries and report updates</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-stone-50 border border-stone-100">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="app_registration">app_registration</span>
+<div>
+<p class="text-sm font-bold text-on-surface">Push notifications</p>
+<p class="text-xs text-on-surface-variant">Real-time alerts for new report results</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="p-4 bg-orange-50 border border-orange-100 rounded-lg">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-orange-700" data-icon="info">info</span>
+<p class="text-xs text-orange-800 leading-relaxed">Changes to notification settings may take up to 24 hours to reflect across all devices.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

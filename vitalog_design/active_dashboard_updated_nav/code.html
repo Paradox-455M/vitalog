@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitalog | Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#43682b",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#e9ffd4",
+                    "surface-container-high": "#eae8e1",
+                    "primary-fixed-dim": "#a8d38a",
+                    "primary": "#3e6327",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "on-primary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f6f4ed",
+                    "surface-dim": "#dcdad3",
+                    "on-surface": "#1b1c18",
+                    "outline-variant": "#c0c9c0",
+                    "on-background": "#1b1c18",
+                    "secondary": "#36684c",
+                    "primary-container": "#567c3d",
+                    "tertiary-container": "#a75f38",
+                    "outline": "#717972",
+                    "surface": "#fbf9f2",
+                    "on-primary-fixed": "#0a2100",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "surface-bright": "#fbf9f2",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "tertiary": "#894823",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#3b6c51",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#ffdbcb",
+                    "surface-variant": "#e4e2dc",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "on-tertiary-container": "#fff6f3",
+                    "surface-container-highest": "#e4e2dc",
+                    "primary-fixed": "#c4efa3",
+                    "inverse-on-surface": "#f3f1ea",
+                    "on-tertiary-fixed": "#341100",
+                    "secondary-container": "#b6ecc9",
+                    "inverse-primary": "#a8d38a",
+                    "secondary-fixed": "#b9efcc",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#30312c",
+                    "on-surface-variant": "#414943",
+                    "background": "#fbf9f2",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#f0eee7",
+                    "on-secondary-fixed": "#002111"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #fbf9f2; color: #1b1c18; }
+        .font-serif { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav { backdrop-filter: blur(20px); }
+        .vitality-gradient { background: linear-gradient(135deg, #3e6327 0%, #567c3d 100%); }
+    </style>
+</head>
+<body class="bg-surface min-h-screen flex overflow-hidden">
+<!-- SideNavBar (Updated for Consistency) -->
+<aside class="flex flex-col h-full py-8 px-6 h-screen w-64 border-r border-[#e4e2dc] bg-white dark:bg-stone-950 transition-all z-50">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl vitality-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="clinical_notes">clinical_notes</span>
+</div>
+<span class="text-2xl font-serif text-[#3e6327] dark:text-[#f6f4ed] font-bold">Vitalog</span>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-4 py-2.5 px-4 rounded-xl transition-all duration-200 text-[#3e6327] bg-[#fbf9f2] dark:text-[#567c3d] font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm tracking-wide">Dashboard</span>
+</a>
+<!-- My Reports with Badge -->
+<a class="flex items-center justify-between py-2.5 px-4 rounded-xl transition-all duration-200 text-stone-500 dark:text-stone-400 font-medium hover:bg-stone-50 dark:hover:bg-stone-800" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-sm tracking-wide">My Reports</span>
+</div>
+<span class="bg-[#b6ecc9] text-[#002111] text-[10px] font-bold px-2 py-0.5 rounded-full">12</span>
+</a>
+<a class="flex items-center gap-4 py-2.5 px-4 rounded-xl transition-all duration-200 text-stone-500 dark:text-stone-400 font-medium hover:bg-stone-50 dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="timeline">timeline</span>
+<span class="text-sm tracking-wide">Health Timeline</span>
+</a>
+<a class="flex items-center gap-4 py-2.5 px-4 rounded-xl transition-all duration-200 text-stone-500 dark:text-stone-400 font-medium hover:bg-stone-50 dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="family_restroom">family_restroom</span>
+<span class="text-sm tracking-wide">Family</span>
+</a>
+<a class="flex items-center gap-4 py-2.5 px-4 rounded-xl transition-all duration-200 text-stone-500 dark:text-stone-400 font-medium hover:bg-stone-50 dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="biotech">biotech</span>
+<span class="text-sm tracking-wide">Biomarker Library</span>
+</a>
+<a class="flex items-center gap-4 py-2.5 px-4 rounded-xl transition-all duration-200 text-stone-500 dark:text-stone-400 font-medium hover:bg-stone-50 dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-sm tracking-wide">Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<div class="bg-[#f0eee7] p-4 rounded-2xl mb-6">
+<p class="text-xs font-bold text-[#3e6327] mb-1">Upgrade to Premium</p>
+<p class="text-[10px] text-stone-600 leading-relaxed">Deep AI insights and unlimited report storage.</p>
+</div>
+<div class="flex items-center gap-3 px-2">
+<img alt="Arjun's profile picture" class="w-10 h-10 rounded-full object-cover border border-stone-100" data-alt="Portrait of Arjun, a smiling Indian man in his 30s with a neat beard, soft indoor studio lighting, warm professional aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlBFyXrQL4eaXGWoIlOlIzve1Yup39kTS4NCzVV08msWc4N0r8ycrdiP-6zqam11aWf5dhezk-DCSYQJWdL4KG84DB9UPr5Jch8iIfqW7ZMnFZEuXIc8el-zWg1bY28YE123R9YWOsI_N4gpL2GEIe79upvMSmmabFHAHPkwOKS2pzQwWigkNq2-onqYKi2Olq4A0tMpnno6tLQYpyDKRkN6AOSFQAAXtl4QZHsKRjp03UejwFLEQqP2C2fsMrn2aNIMlIyYdZwks"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-stone-900">Arjun</span>
+<span class="text-[10px] text-stone-500 uppercase tracking-widest font-medium">The Mindful Curator</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 h-screen overflow-y-auto scroll-smooth">
+<!-- TopNavBar (Execution from JSON) -->
+<header class="flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 bg-[#fbf9f2]/70 dark:bg-stone-950/70 backdrop-blur-md">
+<div>
+<h1 class="font-serif text-2xl font-bold text-[#3e6327]">Good morning, Arjun</h1>
+<p class="text-xs text-stone-500 font-body">Here's your health summary for today.</p>
+</div>
+<div class="flex items-center gap-6">
+<button class="vitality-gradient text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all active:scale-95 hover:shadow-lg hover:shadow-primary/20">
+                    Upload report
+                </button>
+<div class="flex items-center gap-4 text-stone-600 dark:text-stone-400">
+<span class="material-symbols-outlined cursor-pointer hover:opacity-80" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:opacity-80" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<div class="px-8 pb-12 max-w-[1440px] mx-auto space-y-10">
+<!-- Summary Stats Row -->
+<section class="grid grid-cols-4 gap-6">
+<div class="bg-[#EAF2EC] p-6 rounded-xl flex flex-col justify-between h-32">
+<span class="text-xs font-bold text-stone-500 uppercase tracking-widest">Reports uploaded</span>
+<span class="text-4xl font-serif font-bold text-primary">12</span>
+</div>
+<div class="bg-[#EAF2EC] p-6 rounded-xl flex flex-col justify-between h-32">
+<span class="text-xs font-bold text-stone-500 uppercase tracking-widest">Values tracked</span>
+<span class="text-4xl font-serif font-bold text-primary">47</span>
+</div>
+<div class="bg-[#EAF2EC] p-6 rounded-xl flex flex-col justify-between h-32">
+<span class="text-xs font-bold text-stone-500 uppercase tracking-widest">Flagged values</span>
+<span class="text-4xl font-serif font-bold text-[#D4845A]">2</span>
+</div>
+<div class="bg-[#EAF2EC] p-6 rounded-xl flex flex-col justify-between h-32">
+<span class="text-xs font-bold text-stone-500 uppercase tracking-widest">Last upload</span>
+<div class="flex items-baseline gap-1">
+<span class="text-3xl font-serif font-bold text-primary">3</span>
+<span class="text-sm font-bold text-primary">days ago</span>
+</div>
+</div>
+</section>
+<!-- Main Grid Section -->
+<div class="flex gap-10">
+<!-- Recent Reports Section (65%) -->
+<section class="flex-[0.65] space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="font-serif text-2xl font-bold">Recent reports</h2>
+<button class="text-sm text-primary font-bold hover:underline">View all</button>
+</div>
+<div class="space-y-4">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest p-6 rounded-xl transition-all hover:bg-surface-container-low border border-transparent hover:border-outline-variant/20">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg">Blood Test</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-xs text-stone-500 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="lab_profile">lab_profile</span> Apollo Diagnostics
+                                        </span>
+<span class="text-xs text-stone-500">•</span>
+<span class="text-xs text-stone-500">20 Oct 2024</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-stone-400 cursor-pointer" data-icon="more_vert">more_vert</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+<span class="text-primary font-bold">AI Summary:</span> Your iron levels have improved since March.
+                            </p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-[#fcf3eb] text-[#894823] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-[#894823]/10">
+<span class="w-1.5 h-1.5 rounded-full bg-[#894823]"></span>
+                                    Ferritin 22 ng/mL
+                                </span>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest p-6 rounded-xl transition-all hover:bg-surface-container-low border border-transparent hover:border-outline-variant/20">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg">Thyroid Profile</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-xs text-stone-500 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="lab_profile">lab_profile</span> Thyrocare
+                                        </span>
+<span class="text-xs text-stone-500">•</span>
+<span class="text-xs text-stone-500">12 Sep 2024</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-stone-400 cursor-pointer" data-icon="more_vert">more_vert</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+<span class="text-primary font-bold">AI Summary:</span> Thyroid function is stable and within normal range.
+                            </p>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest p-6 rounded-xl transition-all hover:bg-surface-container-low border border-transparent hover:border-outline-variant/20">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg">Lipid Profile</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-xs text-stone-500 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="lab_profile">lab_profile</span> SRL Diagnostics
+                                        </span>
+<span class="text-xs text-stone-500">•</span>
+<span class="text-xs text-stone-500">15 Aug 2024</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-stone-400 cursor-pointer" data-icon="more_vert">more_vert</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+<span class="text-primary font-bold">AI Summary:</span> Cholesterol levels are slightly above the optimal range.
+                            </p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-[#fcf3eb] text-[#894823] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-[#894823]/10">
+<span class="w-1.5 h-1.5 rounded-full bg-[#894823]"></span>
+                                    LDL 132 mg/dL
+                                </span>
+</div>
+</article>
+</div>
+</section>
+<!-- Health Snapshot (35%) -->
+<section class="flex-[0.35] space-y-6">
+<h2 class="font-serif text-2xl font-bold">Health snapshot</h2>
+<div class="space-y-4">
+<!-- Haemoglobin Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-center justify-between border border-outline-variant/10">
+<div>
+<p class="text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">Haemoglobin</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-bold">13.8</span>
+<span class="text-xs text-primary flex items-center font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+</span>
+</div>
+</div>
+<div class="w-20 h-10 overflow-hidden opacity-50">
+<!-- Decorative SVG Sparkline -->
+<svg class="w-full h-full stroke-primary fill-none stroke-2" viewbox="0 0 100 40">
+<path d="M0,35 Q20,30 35,20 T60,25 T100,5" stroke-linecap="round"></path>
+</svg>
+</div>
+</div>
+<!-- Blood Sugar Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-center justify-between border border-outline-variant/10">
+<div>
+<p class="text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">Blood Sugar</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-bold">98</span>
+<span class="text-xs text-stone-400 flex items-center font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_flat">trending_flat</span>
+</span>
+</div>
+</div>
+<div class="w-20 h-10 overflow-hidden opacity-50">
+<svg class="w-full h-full stroke-stone-400 fill-none stroke-2" viewbox="0 0 100 40">
+<path d="M0,20 L25,20 L35,15 L45,25 L55,20 L100,20" stroke-linecap="round"></path>
+</svg>
+</div>
+</div>
+<!-- LDL Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-center justify-between border border-outline-variant/10">
+<div>
+<p class="text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">LDL Cholesterol</p>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-bold">132</span>
+<span class="text-xs text-tertiary flex items-center font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_down">trending_down</span>
+</span>
+</div>
+</div>
+<div class="w-20 h-10 overflow-hidden opacity-50">
+<svg class="w-full h-full stroke-tertiary fill-none stroke-2" viewbox="0 0 100 40">
+<path d="M0,5 Q20,10 35,25 T60,20 T100,35" stroke-linecap="round"></path>
+</svg>
+</div>
+</div>
+</div>
+<a class="block text-center py-4 text-primary font-bold text-sm hover:underline tracking-tight" href="#">
+                        View full timeline <span class="ml-1">→</span>
+</a>
+<!-- Informational Banner -->
+<div class="relative overflow-hidden rounded-2xl vitality-gradient p-6 text-white group cursor-pointer">
+<div class="relative z-10">
+<h4 class="font-serif text-lg font-bold mb-2">Winter Wellness</h4>
+<p class="text-xs opacity-90 leading-relaxed mb-4">Book a Vitamin D screening at home with our partners at 15% off.</p>
+<button class="bg-white text-primary px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest group-hover:scale-105 transition-transform">Claim offer</button>
+</div>
+<img class="absolute top-0 right-0 w-32 h-full object-cover opacity-20 -mr-4 mix-blend-overlay" data-alt="Soft morning sunlight streaming through a window onto a stack of folded clean linen and a small green plant, serene atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQWOESOxYazaOFZ58RCSYRmDKpUEWTakIb4HQdkM57O-6baRuV8z7i5KJ0AB-YyRCtTpeAlIOgsLi40k3AiYVcQY2wmfOlD49GUK3y44GDzjS0kRImgUaC-JLKYX4jMnTljV1Sz_bpVLkTz2IVXi79CNRIGBBzbHXO0iG5v8kdgI6b1BU2etqnO7qOnNDa_-zX5DnPyxTuqvzArfTH7kVC1-GIZcIWVjnRuynwtgDyeIISzD6W5xi7lGsXh_rd8ujXQ7EZOYJKOrU"/>
+</div>
+</section>
+</div>
+<!-- Flagged Values Alert Card (Full Width) -->
+<section class="w-full">
+<div class="bg-[#F5EDE6] p-8 rounded-xl border border-[#D4845A]/10">
+<div class="flex items-start gap-6">
+<div class="w-12 h-12 rounded-full bg-[#D4845A]/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[#D4845A]" data-icon="warning" data-weight="fill" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="flex-1">
+<h3 class="text-lg font-bold text-on-surface mb-4">2 values need your attention</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 mb-6">
+<div class="flex items-center justify-between border-b border-[#D4845A]/10 pb-2">
+<span class="font-bold">Ferritin</span>
+<span class="text-[#D4845A] font-bold">22 ng/mL — <span class="italic font-normal">Low</span></span>
+</div>
+<div class="flex items-center justify-between border-b border-[#D4845A]/10 pb-2">
+<span class="font-bold">LDL</span>
+<span class="text-[#D4845A] font-bold">132 mg/dL — <span class="italic font-normal">Elevated</span></span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-sm text-[#723612] bg-[#fdfaf8] w-fit px-4 py-2 rounded-lg italic">
+<span class="material-symbols-outlined text-[18px]" data-icon="info">info</span>
+                                Worth discussing with your doctor during your next visit.
+                            </div>
+</div>
+<button class="text-sm font-bold text-[#723612] underline decoration-[#723612]/30 hover:decoration-[#723612]">Add to doctor's list</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

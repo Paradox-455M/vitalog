@@ -1,0 +1,11 @@
+{
+  "name": "vitalog-backend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:db:push": "supabase db push --linked",
+    "supabase:functions:deploy": "supabase functions deploy extraction"
+  }
+}

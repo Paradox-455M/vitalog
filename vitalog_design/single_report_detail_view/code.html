@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthIntel - Report Detail View</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "on-secondary-fixed": "#002111",
+                        "surface-tint": "#43682b",
+                        "outline": "#73796c",
+                        "on-background": "#1b1c18",
+                        "inverse-primary": "#a8d38a",
+                        "on-surface": "#1b1c18",
+                        "on-primary-fixed-variant": "#2c4f15",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#a8d38a",
+                        "on-secondary-container": "#3b6c51",
+                        "tertiary": "#562100",
+                        "background": "#fbf9f2",
+                        "inverse-on-surface": "#f3f1ea",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#c3c9b9",
+                        "on-tertiary-container": "#f7a175",
+                        "surface-dim": "#dcdad3",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f6f4ed",
+                        "surface-variant": "#e4e2dc",
+                        "tertiary-container": "#733613",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#eae8e1",
+                        "secondary-fixed": "#b9efcc",
+                        "surface-container-highest": "#e4e2dc",
+                        "secondary-fixed-dim": "#9dd2b1",
+                        "on-surface-variant": "#43493d",
+                        "surface": "#fbf9f2",
+                        "on-tertiary-fixed-variant": "#723612",
+                        "primary-container": "#2d5016",
+                        "surface-container": "#f0eee7",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#30312c",
+                        "on-primary-container": "#98c27b",
+                        "primary-fixed": "#c4efa3",
+                        "surface-bright": "#fbf9f2",
+                        "primary": "#173901",
+                        "secondary-container": "#b6ecc9",
+                        "on-tertiary-fixed": "#341100",
+                        "secondary": "#36684c",
+                        "on-primary-fixed": "#0a2100",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-4 bg-zinc-50 border-r border-zinc-200 w-64 z-50">
+<div class="mb-10 px-4">
+<h1 class="text-lg font-black text-primary-container">Patient Portal</h1>
+<p class="text-xs text-secondary-fixed-dim uppercase tracking-widest font-bold">Intelligence Suite</p>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 hover:bg-zinc-200 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 hover:bg-zinc-200 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">monitor_heart</span>
+<span class="font-medium">Biometrics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 hover:bg-zinc-200 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-medium">Consultations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 hover:bg-zinc-200 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-surface-container rounded-xl">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">JD</div>
+<div>
+<p class="text-sm font-bold">Jane Doe</p>
+<p class="text-xs text-on-surface-variant">Premium Member</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top AppBar -->
+<header class="sticky top-0 z-40 flex justify-between items-center px-8 h-16 w-full bg-white/90 backdrop-blur-md border-b border-zinc-200 ml-64 max-w-[calc(100%-16rem)]">
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant">
+<a class="hover:text-primary" href="#">Reports</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-bold text-on-surface">Complete Blood Count</span>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-zinc-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 hover:bg-zinc-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 hover:bg-zinc-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">print</span>
+</button>
+</div>
+</header>
+<main class="ml-64 p-8 max-w-7xl">
+<!-- Report Header Section -->
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-xs font-bold rounded-full mb-2">DIAGNOSTIC REPORT</span>
+<h1 class="text-4xl font-headline font-bold text-primary">Complete Blood Count</h1>
+<div class="flex items-center gap-4 mt-2 text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-sm">October 24, 2023</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">farsight_digital</span>
+<span class="text-sm">General Diagnostics Lab</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined">analytics</span>
+                    View Lab Source
+                </button>
+</div>
+</div>
+<!-- Hero Section: Plain Language Summary -->
+<section class="mb-10 overflow-hidden rounded-xl bg-primary-container text-on-primary-container shadow-xl">
+<div class="flex flex-col md:flex-row items-stretch">
+<div class="p-8 md:w-2/3">
+<h2 class="text-2xl font-headline mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined">auto_awesome</span>
+                        AI Medical Summary
+                    </h2>
+<p class="text-lg leading-relaxed opacity-90">
+                        This report shows that your general health is excellent, but there are specific markers indicating slight systemic inflammation. Your white blood cell count is within normal limits, however, your SGOT and SGPT levels are elevated, suggesting your liver may be working overtime. We recommend reviewing these findings with your general practitioner to rule out mild infection or reactive changes.
+                    </p>
+</div>
+<div class="bg-primary p-8 md:w-1/3 flex flex-col justify-center border-l border-white/10">
+<div class="mb-4">
+<p class="text-xs uppercase tracking-widest opacity-70 mb-1">Health Score Impact</p>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-black">-12</span>
+<span class="text-xl">points</span>
+</div>
+</div>
+<p class="text-sm opacity-80">Score adjustment based primarily on elevated inflammatory markers (CRP) and liver enzyme deviation.</p>
+</div>
+</div>
+</section>
+<!-- Findings Section: Needs Attention -->
+<section class="mb-12">
+<h3 class="text-xl font-headline font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">warning</span>
+                Markers Requiring Attention
+            </h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- SGOT Card -->
+<div class="bg-[#EAF2EC] border-l-4 border-tertiary p-6 rounded-r-xl shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-sm font-bold text-secondary">SGOT (AST)</p>
+<p class="text-xs text-on-surface-variant">Liver Function</p>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-2 py-1 rounded text-[10px] font-black uppercase">High</span>
+</div>
+<div class="text-3xl font-black text-primary mb-2">54 <span class="text-sm font-normal">U/L</span></div>
+<p class="text-xs text-on-surface-variant mb-4 italic">Reference Range: 5 - 40 U/L</p>
+<p class="text-sm text-secondary leading-snug">Slightly elevated. Often seen with intense physical activity or specific medications.</p>
+</div>
+<!-- SGPT Card -->
+<div class="bg-[#EAF2EC] border-l-4 border-tertiary p-6 rounded-r-xl shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-sm font-bold text-secondary">SGPT (ALT)</p>
+<p class="text-xs text-on-surface-variant">Liver Function</p>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-2 py-1 rounded text-[10px] font-black uppercase">High</span>
+</div>
+<div class="text-3xl font-black text-primary mb-2">61 <span class="text-sm font-normal">U/L</span></div>
+<p class="text-xs text-on-surface-variant mb-4 italic">Reference Range: 7 - 56 U/L</p>
+<p class="text-sm text-secondary leading-snug">Mild elevation. Recommend avoiding alcohol and re-testing in 4 weeks.</p>
+</div>
+<!-- CRP Card -->
+<div class="bg-[#EAF2EC] border-l-4 border-tertiary p-6 rounded-r-xl shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-sm font-bold text-secondary">C-Reactive Protein</p>
+<p class="text-xs text-on-surface-variant">Inflammation Marker</p>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-2 py-1 rounded text-[10px] font-black uppercase">Elevated</span>
+</div>
+<div class="text-3xl font-black text-primary mb-2">8.2 <span class="text-sm font-normal">mg/L</span></div>
+<p class="text-xs text-on-surface-variant mb-4 italic">Reference Range: &lt; 3.0 mg/L</p>
+<p class="text-sm text-secondary leading-snug">Indicates systemic inflammation. Could be due to a recent minor infection.</p>
+</div>
+</div>
+</section>
+<!-- Visual Grid: Key Values -->
+<section class="mb-12">
+<h3 class="text-xl font-headline font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">grid_view</span>
+                Key Values at a Glance
+            </h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Row 1 -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant hover:border-primary-fixed transition-colors">
+<p class="text-xs font-bold text-on-surface-variant">Hemoglobin</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">14.2</span>
+<span class="text-xs text-on-surface-variant mb-1">g/dL</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[70%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-bold">Normal</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-outline-variant">
+<p class="text-xs font-bold text-on-surface-variant">WBC Count</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">7.4</span>
+<span class="text-xs text-on-surface-variant mb-1">10³/µL</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[45%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-bold">Normal</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-outline-variant">
+<p class="text-xs font-bold text-on-surface-variant">Platelets</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">210</span>
+<span class="text-xs text-on-surface-variant mb-1">10³/µL</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[55%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-bold">Normal</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-outline-variant border-tertiary/30 bg-tertiary-fixed/10">
+<p class="text-xs font-bold text-on-surface-variant">Bilirubin</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">1.4</span>
+<span class="text-xs text-on-surface-variant mb-1">mg/dL</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[85%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-tertiary font-bold">Slightly High</p>
+</div>
+<!-- Row 2 -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant">
+<p class="text-xs font-bold text-on-surface-variant">Creatinine</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">0.9</span>
+<span class="text-xs text-on-surface-variant mb-1">mg/dL</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[40%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-bold">Normal</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-outline-variant">
+<p class="text-xs font-bold text-on-surface-variant">HbA1c</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">5.4</span>
+<span class="text-xs text-on-surface-variant mb-1">%</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[50%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-bold">Normal</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-outline-variant">
+<p class="text-xs font-bold text-on-surface-variant">Calcium</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">9.2</span>
+<span class="text-xs text-on-surface-variant mb-1">mg/dL</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[60%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-bold">Normal</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-outline-variant border-tertiary/50 bg-tertiary-fixed/20">
+<p class="text-xs font-bold text-on-surface-variant">Vitamin D</p>
+<div class="flex items-end gap-2 mt-2">
+<span class="text-2xl font-black">18</span>
+<span class="text-xs text-on-surface-variant mb-1">ng/mL</span>
+</div>
+<div class="w-full bg-zinc-100 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[25%]"></div>
+</div>
+<p class="text-[10px] mt-1 text-tertiary font-bold">Low</p>
+</div>
+</div>
+</section>
+<!-- Document Preview & All Clear Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- All Clear Section -->
+<section>
+<h3 class="text-xl font-headline font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">verified</span>
+                    Negative Results / All Clear
+                </h3>
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden">
+<ul class="divide-y divide-outline-variant">
+<li class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<div>
+<p class="text-sm font-bold">Malaria (Smear)</p>
+<p class="text-xs text-on-surface-variant">Parasitology</p>
+</div>
+</div>
+<span class="text-sm font-bold text-secondary">Negative</span>
+</li>
+<li class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<div>
+<p class="text-sm font-bold">Dengue NS1 Antigen</p>
+<p class="text-xs text-on-surface-variant">Serology</p>
+</div>
+</div>
+<span class="text-sm font-bold text-secondary">Negative</span>
+</li>
+<li class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<div>
+<p class="text-sm font-bold">HIV I &amp; II</p>
+<p class="text-xs text-on-surface-variant">Antibody Screen</p>
+</div>
+</div>
+<span class="text-sm font-bold text-secondary">Non-Reactive</span>
+</li>
+</ul>
+<div class="p-4 bg-surface-container-low text-xs text-on-surface-variant italic">
+                        These tests were conducted using standard laboratory assays. No abnormalities detected.
+                    </div>
+</div>
+</section>
+<!-- Document Source Preview -->
+<section>
+<h3 class="text-xl font-headline font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">source</span>
+                    Extracted Document Sources
+                </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-[3/4] border-2 border-outline-variant hover:border-primary transition-all">
+<img alt="Medical report scan" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Close up of a professional medical laboratory report with printed rows of biomarker data on textured paper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNpbYOVkWDOL8yFRh_r4HWknpEOcU-ZiTHMqtOiSNxzTI13QaZNWWmeHXJldM0of83Xo7uCoh8Za-6ZjBbqwIWA6FXj1TgXtRRNLYiNJUlbQ-U_PG432oEuD4sSSSbRxrwdfS1-YsUxOb2f8qjxovpnUn1YgeBmnG4EKjZLvswMHn3xA9rf5CQ8RaPVU1RbGak4kNNBJR4V9i1Oqdl38pOH-a0dRUmz6v49Ff0Wjs1ilUFm5ZL5A4jeudXSvbcp1_w9WJg-p1NEus"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 scale-150">zoom_in</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 p-3">
+<p class="text-white text-[10px] font-bold">Page 1: Hematology</p>
+</div>
+</div>
+<div class="relative group cursor-pointer overflow-hidden rounded-lg aspect-[3/4] border-2 border-outline-variant hover:border-primary transition-all">
+<img alt="Laboratory results printout" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Digital scan of a biochemistry analysis page showing numeric values and reference ranges in a clear table format" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV0eY9pe35frkZVLUIsIucrkAXQDwOUAeBtD6DN5z2xH2DpLxII5sfxQcuhtVwuczb_se_lweOj9l3IZucCKwNCZJzNhjl6jdjiPyjtlBruwdsFAqIc_X7LB2MsNwcuMF2sLqE2Bwyf_2trHk9ZKUU1Kl_qyLRckOZiKR9GMdQlQAkGYIFej92QNgmRgB1LnxLd_rku_KwLccXTpFiE9DpSq0s03cmRuzKpLb3XXxPBBQilg8sttWDymN0I0xPpROVTEG0xDex_4w"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 scale-150">zoom_in</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 p-3">
+<p class="text-white text-[10px] font-bold">Page 2: Biochemistry</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<footer class="mt-20 pt-8 border-t border-outline-variant text-center text-on-surface-variant text-sm">
+<p>© 2023 HealthIntel Intelligence Suite • Confidential Patient Information • Authorized Access Only</p>
+</footer>
+</main>
+</body></html>

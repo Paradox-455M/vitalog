@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up | Vitalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&amp;family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#dcdad3",
+                        "surface-container-highest": "#e4e2dc",
+                        "surface-container": "#f0eee7",
+                        "primary-container": "#567c3d",
+                        "on-primary": "#ffffff",
+                        "background": "#fbf9f2",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#fbf9f2",
+                        "on-primary-fixed-variant": "#2c4f15",
+                        "on-secondary-container": "#3b6c51",
+                        "primary-fixed": "#c4efa3",
+                        "on-surface": "#1b1c18",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "secondary-container": "#b6ecc9",
+                        "on-tertiary-fixed": "#341100",
+                        "surface-tint": "#43682b",
+                        "primary": "#3e6327",
+                        "on-surface-variant": "#414943",
+                        "surface-bright": "#fbf9f2",
+                        "on-tertiary-fixed-variant": "#723612",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#eae8e1",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "outline-variant": "#c0c9c0",
+                        "tertiary-container": "#a75f38",
+                        "primary-fixed-dim": "#a8d38a",
+                        "tertiary": "#894823",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e4e2dc",
+                        "secondary-fixed-dim": "#9dd2b1",
+                        "outline": "#717972",
+                        "on-error": "#ffffff",
+                        "on-background": "#1b1c18",
+                        "on-primary-container": "#e9ffd4",
+                        "secondary": "#36684c",
+                        "surface-container-low": "#f6f4ed",
+                        "on-primary-fixed": "#0a2100",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#002111",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#b9efcc",
+                        "on-tertiary-container": "#fff6f3",
+                        "inverse-on-surface": "#f3f1ea",
+                        "inverse-surface": "#30312c",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffdbcb",
+                        "inverse-primary": "#a8d38a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>body {
+    font-family: "Manrope", sans-serif
+    }
+h1, h2, h3, .serif-quote {
+    font-family: "Noto Serif", serif
+    }
+.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.organic-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuABiHYyrFNyhknrAujSvUZ2MQc8cvdzQSL5qgILBmUS9PnINB2j0HBilIf7-7ZTTG14YRblbxYyhezLwSFDv7fe7FjRy96S2WcqvhFOQaPrW57YMvFZmWcwMoSNee5cN16YiQnZICBBPxuFJ3JQt8UtihCavUeCmUIKgdBPb_6jDnkYq-C8jqDg2PkG9S1P9HmjzZOaD8xf0_vHyGCO1QK1T3Nj25AmM34N9BEMnN_AJrbqTXO0f5RB7GUFp-tDivzNa1f5WTf__8o);
+    background-blend-mode: overlay
+    }</style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<main class="flex min-h-screen">
+<!-- Left Panel (55% width) -->
+<section class="hidden lg:flex lg:w-[55%] bg-[#2D5016] relative overflow-hidden flex-col justify-between p-16">
+<div class="z-10">
+<span class="text-white/80 font-label tracking-widest text-sm uppercase">The Mindful Curator</span>
+</div>
+<div class="z-10 max-w-xl">
+<h1 class="serif-quote text-5xl xl:text-6xl text-white leading-tight mb-8">
+                    Finally understand what your health reports are telling you.
+                </h1>
+<div class="space-y-4">
+<p class="text-white/90 text-xl font-body italic">
+                        "Vitalog has changed how I look at my blood tests. I no longer feel anxious opening a PDF."
+                    </p>
+<p class="text-white/70 font-label">
+                        — Ananya, Mumbai
+                    </p>
+</div>
+</div>
+<div class="z-10 flex items-center gap-2">
+<div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[#2D5016]" data-icon="vital_signs">vital_signs</span>
+</div>
+<span class="text-2xl font-headline font-bold text-white tracking-tight">Vitalog</span>
+</div>
+<!-- Abstract Visual Element -->
+</section>
+<!-- Right Panel (45% width) -->
+<section class="w-full lg:w-[45%] bg-[#FAFAF7] flex items-center justify-center p-8 lg:p-12">
+<div class="w-full max-w-[400px] flex flex-col items-center">
+<!-- Logo Mark -->
+<div class="mb-8 p-3 bg-primary/10 rounded-2xl">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="eco">eco</span>
+</div>
+<!-- Tabs -->
+<div class="flex gap-8 mb-10 w-full justify-center">
+<button class="pb-2 text-[#3e6327] font-bold border-b-2 border-[#3e6327] transition-all">Sign up</button>
+<button class="pb-2 text-[#44483d] hover:text-[#3e6327] transition-all">Log in</button>
+</div>
+<!-- Form -->
+<form class="w-full space-y-5" onsubmit="return false;">
+<div class="space-y-1.5">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1" for="name">Full name</label>
+<input class="w-full px-5 py-3.5 bg-surface-container-highest/30 border-none rounded-xl focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all outline-none" id="name" placeholder="Arjun Sharma" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1" for="email">Email address</label>
+<input class="w-full px-5 py-3.5 bg-surface-container-highest/30 border-none rounded-xl focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all outline-none" id="email" placeholder="arjun@vitalog.health" type="email"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1" for="password">Password</label>
+<div class="relative">
+<input class="w-full px-5 py-3.5 bg-surface-container-highest/30 border-none rounded-xl focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all outline-none" id="password" placeholder="Min. 8 characters" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<button class="w-full py-4 bg-[#4A7C5F] text-white font-semibold rounded-full hover:shadow-lg hover:opacity-90 active:scale-[0.98] transition-all duration-300 mt-2">
+                        Create account
+                    </button>
+</form>
+<!-- Divider -->
+<div class="flex items-center w-full my-8">
+<div class="flex-1 h-[1px] bg-outline-variant/30"></div>
+<span class="px-4 text-xs font-medium text-outline uppercase tracking-widest">or continue with</span>
+<div class="flex-1 h-[1px] bg-outline-variant/30"></div>
+</div>
+<!-- OAuth -->
+<button class="w-full py-3.5 flex items-center justify-center gap-3 bg-white border border-outline-variant/50 rounded-xl hover:bg-surface-container-lowest hover:border-primary/30 transition-all active:scale-[0.98]">
+<img alt="Google" class="w-5 h-5" data-alt="Official Google multicolor logo G icon on a white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYOQZhHFw9_AKYTHwvmtSmR4Ff_phbiGUIjT7zQ0mv4l9Y3C4ld2gqIXgJjYanI_aCg9QHllKwc1gdjdVd_DHtRLm2BVg_ce5gCqt1cA7HfrGy_pDhkXQcrCyf2Z_FcNPU5CgGhkerOghnkQb7gNZ9u4SubohFRPoKaCxrGCDacnEBbaNgt7HoJZeL7p5CW1Eg9vF-M4wR4zFij7aT4V5WbkeAi2mJ057M09Y2eluf_tNhFyBMuFnZhoXRt35qjzcUfw0d03rxp-Y"/>
+<span class="font-medium text-on-surface">Continue with Google</span>
+</button>
+<!-- Footer Terms -->
+<p class="mt-8 text-[12px] leading-relaxed text-outline text-center px-4">
+                    By signing up, you agree to our 
+                    <a class="text-primary hover:underline" href="#">Terms of Service</a> 
+                    and 
+                    <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+                </p>
+</div>
+</section>
+</main>
+<!-- Success Message (Toast-like, hidden by default) -->
+<div class="fixed bottom-8 right-8 bg-primary-container text-on-primary-container px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 border border-primary/20 opacity-0 pointer-events-none transition-opacity">
+<span class="material-symbols-outlined" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body font-medium">Welcome to the sanctuary of health.</span>
+</div>
+</body></html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Detail View - Vitalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #fbf9f2;
+            color: #1b1c18;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Noto Serif', serif;
+        }
+        .glass-nav {
+            background: rgba(251, 249, 242, 0.7);
+            backdrop-filter: blur(20px);
+        }
+        .vitality-gradient {
+            background: linear-gradient(135deg, #3e6327 0%, #567c3d 100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#414943",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#a8d38a",
+                        "surface-container-highest": "#e4e2dc",
+                        "on-tertiary-fixed-variant": "#723612",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#341100",
+                        "tertiary": "#894823",
+                        "on-error": "#ffffff",
+                        "outline": "#717972",
+                        "on-primary-fixed": "#0a2100",
+                        "on-error-container": "#93000a",
+                        "background": "#fbf9f2",
+                        "surface-container-low": "#f6f4ed",
+                        "surface-container-high": "#eae8e1",
+                        "on-secondary-container": "#3b6c51",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#a8d38a",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#30312c",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#b9efcc",
+                        "surface": "#fbf9f2",
+                        "surface-dim": "#dcdad3",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#002111",
+                        "secondary-fixed-dim": "#9dd2b1",
+                        "surface-tint": "#43682b",
+                        "surface-variant": "#e4e2dc",
+                        "primary-container": "#567c3d",
+                        "secondary": "#36684c",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "on-background": "#1b1c18",
+                        "surface-container": "#f0eee7",
+                        "outline-variant": "#c0c9c0",
+                        "primary": "#3e6327",
+                        "on-primary-container": "#e9ffd4",
+                        "secondary-container": "#b6ecc9",
+                        "on-surface": "#1b1c18",
+                        "on-primary-fixed-variant": "#2c4f15",
+                        "on-tertiary-container": "#fff6f3",
+                        "primary-fixed": "#c4efa3",
+                        "surface-bright": "#fbf9f2",
+                        "inverse-on-surface": "#f3f1ea",
+                        "tertiary-container": "#a75f38"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-6 h-screen w-72 border-r border-outline-variant/15 bg-surface dark:bg-stone-950 z-50">
+<div class="mb-10 flex items-center gap-3">
+<div class="w-10 h-10 vitality-gradient rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">vital_signs</span>
+</div>
+<span class="text-2xl font-bold tracking-tight text-primary dark:text-[#567c3d]">Vitalog</span>
+</div>
+<nav class="flex flex-col space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-medium hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary dark:text-[#567c3d] font-bold bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>My Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-medium hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="timeline">timeline</span>
+<span>Health Timeline</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-medium hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="family_restroom">family_restroom</span>
+<span>Family</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-medium hover:bg-surface-container-low transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 flex items-center gap-3 px-4 border-t border-outline-variant/15 pt-8">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of a modern professional woman with a warm expression in a sunlit interior studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzFbknmDi_EtND5G6gCnfztFjT8Z3GmiqFm0eHbQBSXuhRk_PG9I0aGA7eR3cpL1Bw4KCl82XJSo3jug8RUae_WIS2OeRlHaf1t1SbT6Fyp3de0D84TuT_7_Em3X0C_ppjjgDyppoG_n8eMqyvWTErBSLsGXuZfMKTRh5oJzVGymO_q_10w7W2ZAW53F94gB5yMMJV3dDHzxiebe5_bQqswnUC-bd6pk95BL2QojOlA_Dx_pwOeQO0H_g-kdLuAt7eN9lxJ9vvfcA"/>
+<div>
+<p class="text-sm font-bold text-on-surface">The Mindful Curator</p>
+<p class="text-xs text-stone-500">Premium Member</p>
+</div>
+</div>
+</aside>
+<!-- Main Page Content -->
+<main class="ml-72 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 glass-nav flex justify-between items-center w-full px-12 py-5">
+<div class="flex items-center gap-3 text-sm font-medium">
+<span class="text-stone-400">Dashboard</span>
+<span class="material-symbols-outlined text-xs text-stone-300">chevron_right</span>
+<span class="text-stone-400">My Reports</span>
+<span class="material-symbols-outlined text-xs text-stone-300">chevron_right</span>
+<span class="text-primary font-semibold">Complete Blood Count</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 text-stone-600 hover:text-primary transition-opacity opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined text-xl" data-icon="share">share</span>
+<span class="text-sm font-medium">Share</span>
+</button>
+<button class="flex items-center gap-2 text-stone-600 hover:text-primary transition-opacity opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined text-xl" data-icon="download">download</span>
+<span class="text-sm font-medium">Download original</span>
+</button>
+<button class="flex items-center gap-2 text-stone-600 hover:text-primary transition-opacity opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined text-xl" data-icon="print">print</span>
+</button>
+</div>
+</div>
+</header>
+<div class="px-12 py-8 max-w-7xl mx-auto">
+<!-- Header Section -->
+<section class="mb-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">lab_profile</span>
+</div>
+<div>
+<h1 class="text-4xl font-bold tracking-tight text-on-surface mb-2">Complete Blood Count</h1>
+<div class="flex items-center gap-4 text-stone-500">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">apartment</span>
+                                    Apollo Diagnostics
+                                </span>
+<span class="w-1 h-1 rounded-full bg-stone-300"></span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                    20 Oct 2024
+                                </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Grid Layout -->
+<div class="grid grid-cols-10 gap-8 items-start">
+<!-- AI Explanation Column (60%) -->
+<div class="col-span-6 space-y-8">
+<article class="bg-surface-container-low border-l-4 border-primary/20 rounded-xl p-8">
+<header class="flex items-center gap-3 mb-6">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<h2 class="text-xl font-bold serif-font text-on-surface">Vitalog's explanation</h2>
+</header>
+<p class="text-lg leading-relaxed text-on-surface-variant mb-8">
+                            Your blood count shows overall healthy levels, though your iron stores (Ferritin) are currently lower than the optimal range. This might explain any recent tiredness. Your oxygen-carrying hemoglobin remains within normal limits.
+                        </p>
+<div class="space-y-4">
+<h3 class="text-sm font-bold uppercase tracking-wider text-stone-400">Findings</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-tertiary-fixed/30 border border-tertiary/10 p-5 rounded-xl flex justify-between items-center">
+<div>
+<p class="text-sm font-medium text-stone-600 mb-1">Ferritin</p>
+<p class="font-bold text-on-surface">22 ng/mL</p>
+</div>
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary text-xs font-bold rounded-full">Low</span>
+</div>
+<div class="bg-primary/5 border border-primary/10 p-5 rounded-xl flex justify-between items-center">
+<div>
+<p class="text-sm font-medium text-stone-600 mb-1">Haemoglobin</p>
+<p class="font-bold text-on-surface">13.8 g/dL</p>
+</div>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">Normal</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/10">
+<h3 class="text-sm font-bold uppercase tracking-wider text-stone-400 mb-4">All clear</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-2 bg-white/50 border border-outline-variant/15 text-stone-600 rounded-full text-sm">WBC Count</span>
+<span class="px-4 py-2 bg-white/50 border border-outline-variant/15 text-stone-600 rounded-full text-sm">RBC Count</span>
+<span class="px-4 py-2 bg-white/50 border border-outline-variant/15 text-stone-600 rounded-full text-sm">MCV</span>
+<span class="px-4 py-2 bg-white/50 border border-outline-variant/15 text-stone-600 rounded-full text-sm">Platelets</span>
+<span class="px-4 py-2 bg-white/50 border border-outline-variant/15 text-stone-600 rounded-full text-sm">Hematocrit</span>
+</div>
+</div>
+</article>
+<!-- Trends Teaser Card -->
+<div class="bg-surface-container-low rounded-xl p-8 relative overflow-hidden group cursor-pointer border border-outline-variant/5">
+<div class="flex items-center justify-between relative z-10">
+<div class="max-w-xs">
+<h2 class="text-2xl font-bold serif-font mb-2">Start seeing trends</h2>
+<p class="text-stone-500 mb-6">Connect your history to visualize how your markers evolve over seasons.</p>
+<button class="flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all">
+                                    Upload another <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="w-64 h-32 relative">
+<!-- Abstract blurred chart representation -->
+<div class="absolute inset-0 flex items-end gap-2 px-4 opacity-40 blur-[1px]">
+<div class="w-full bg-primary/20 h-1/2 rounded-t-lg"></div>
+<div class="w-full bg-primary/30 h-2/3 rounded-t-lg"></div>
+<div class="w-full bg-primary/40 h-3/4 rounded-t-lg"></div>
+<div class="w-full bg-primary/30 h-1/2 rounded-t-lg"></div>
+<div class="w-full bg-primary/50 h-full rounded-t-lg"></div>
+</div>
+<svg class="absolute inset-0 w-full h-full text-primary/40" fill="none" viewbox="0 0 100 40">
+<path d="M0 35C10 32 20 15 35 20C50 25 70 5 100 10" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Subtle background texture -->
+<div class="absolute -right-12 -bottom-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+</div>
+</div>
+<!-- Values Table Column (40%) -->
+<div class="col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant/10 overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10">
+<h2 class="text-lg font-bold serif-font">Extracted Values</h2>
+</div>
+<div class="divide-y divide-outline-variant/10">
+<!-- Category 1 -->
+<div class="p-0">
+<div class="bg-surface-container-low px-6 py-2">
+<span class="text-xs font-bold uppercase tracking-widest text-primary/70">Erythrocytes</span>
+</div>
+<table class="w-full text-left">
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-4 px-6">
+<p class="text-sm font-semibold">Haemoglobin</p>
+<p class="text-[10px] text-stone-400 font-medium uppercase tracking-tighter">Reference: 13.5-17.5</p>
+</td>
+<td class="py-4 text-right px-6">
+<div class="flex items-center justify-end gap-3">
+<span class="text-sm font-bold">13.8 <span class="text-stone-400 font-normal">g/dL</span></span>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</td>
+</tr>
+<tr class="bg-tertiary-fixed/10 hover:bg-tertiary-fixed/20 transition-colors">
+<td class="py-4 px-6">
+<p class="text-sm font-semibold">Ferritin</p>
+<p class="text-[10px] text-stone-400 font-medium uppercase tracking-tighter">Reference: 30.0-400.0</p>
+</td>
+<td class="py-4 text-right px-6">
+<div class="flex items-center justify-end gap-3">
+<span class="text-sm font-bold text-tertiary">22.0 <span class="text-tertiary/60 font-normal">ng/mL</span></span>
+<div class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-4 px-6">
+<p class="text-sm font-semibold">RBC Count</p>
+<p class="text-[10px] text-stone-400 font-medium uppercase tracking-tighter">Reference: 4.5-5.9</p>
+</td>
+<td class="py-4 text-right px-6">
+<div class="flex items-center justify-end gap-3">
+<span class="text-sm font-bold">5.12 <span class="text-stone-400 font-normal">10^6/µL</span></span>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Category 2 -->
+<div class="p-0">
+<div class="bg-surface-container-low px-6 py-2">
+<span class="text-xs font-bold uppercase tracking-widest text-primary/70">Platelets</span>
+</div>
+<table class="w-full text-left">
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-4 px-6">
+<p class="text-sm font-semibold">Platelet Count</p>
+<p class="text-[10px] text-stone-400 font-medium uppercase tracking-tighter">Reference: 150-450</p>
+</td>
+<td class="py-4 text-right px-6">
+<div class="flex items-center justify-end gap-3">
+<span class="text-sm font-bold">245 <span class="text-stone-400 font-normal">10^3/µL</span></span>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-4 px-6">
+<p class="text-sm font-semibold">Mean Platelet Vol</p>
+<p class="text-[10px] text-stone-400 font-medium uppercase tracking-tighter">Reference: 7.4-10.4</p>
+</td>
+<td class="py-4 text-right px-6">
+<div class="flex items-center justify-end gap-3">
+<span class="text-sm font-bold">9.1 <span class="text-stone-400 font-normal">fL</span></span>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Element (Contextual for Home/Dashboard but hidden here as per rules) -->
+</body></html>

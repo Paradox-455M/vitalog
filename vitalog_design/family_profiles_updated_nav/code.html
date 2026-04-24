@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-low": "#f6f4ed",
+                    "secondary-fixed": "#b9efcc",
+                    "on-primary-container": "#e9ffd4",
+                    "secondary-container": "#b6ecc9",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#a8d38a",
+                    "primary-container": "#567c3d",
+                    "surface-container-high": "#eae8e1",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "surface-dim": "#dcdad3",
+                    "surface-container-highest": "#e4e2dc",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#36684c",
+                    "on-surface": "#1b1c18",
+                    "surface-variant": "#e4e2dc",
+                    "on-secondary-container": "#3b6c51",
+                    "tertiary": "#894823",
+                    "inverse-on-surface": "#f3f1ea",
+                    "primary-fixed-dim": "#a8d38a",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#341100",
+                    "on-tertiary-container": "#fff6f3",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#0a2100",
+                    "background": "#fbf9f2",
+                    "inverse-surface": "#30312c",
+                    "tertiary-fixed": "#ffdbcb",
+                    "outline": "#717972",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "error": "#ba1a1a",
+                    "surface-container": "#f0eee7",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "tertiary-container": "#a75f38",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "primary": "#3e6327",
+                    "surface": "#fbf9f2",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "on-surface-variant": "#414943",
+                    "surface-bright": "#fbf9f2",
+                    "primary-fixed": "#c4efa3",
+                    "on-secondary-fixed": "#002111",
+                    "on-background": "#1b1c18",
+                    "surface-tint": "#43682b",
+                    "outline-variant": "#c0c9c0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0px 12px 32px rgba(27, 28, 24, 0.06);
+        }
+        .vitality-gradient { background: linear-gradient(135deg, #3e6327 0%, #567c3d 100%); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen">
+<!-- SideNavBar (Authority: JSON from SCREEN_6) -->
+<aside class="fixed left-0 top-0 flex flex-col py-8 px-6 h-screen w-64 border-r-0 bg-[#fbf9f2] dark:bg-stone-950 transition-all z-50">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl vitality-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="clinical_notes">clinical_notes</span>
+</div>
+<span class="text-2xl font-serif text-[#3e6327] dark:text-[#f6f4ed] font-bold">Vitalog</span>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm tracking-wide">Dashboard</span>
+</a>
+<!-- My Reports with Badge -->
+<a class="flex items-center justify-between py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-sm tracking-wide">My Reports</span>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full">12</span>
+</a>
+<!-- Health Timeline -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="timeline">timeline</span>
+<span class="text-sm tracking-wide">Health Timeline</span>
+</a>
+<!-- Family (Active) -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-[#3e6327] dark:text-[#567c3d] font-bold border-r-4 border-[#3e6327] hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="family_restroom">family_restroom</span>
+<span class="text-sm tracking-wide">Family</span>
+</a>
+<!-- Biomarker Library -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="experiment">experiment</span>
+<span class="text-sm tracking-wide">Biomarker Library</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-sm tracking-wide">Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<div class="bg-surface-container-high p-4 rounded-2xl mb-6">
+<p class="text-xs font-bold text-primary mb-1">Upgrade to Premium</p>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">Deep AI insights and unlimited report storage.</p>
+</div>
+<div class="flex items-center gap-3 px-2">
+<img alt="Arjun's profile picture" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlBFyXrQL4eaXGWoIlOlIzve1Yup39kTS4NCzVV08msWc4N0r8ycrdiP-6zqam11aWf5dhezk-DCSYQJWdL4KG84DB9UPr5Jch8iIfqW7ZMnFZEuXIc8el-zWg1bY28YE123R9YWOsI_N4gpL2GEIe79upvMSmmabFHAHPkwOKS2pzQwWigkNq2-onqYKi2Olq4A0tMpnno6tLQYpyDKRkN6AOSFQAAXtl4QZHsKRjp03UejwFLEQqP2C2fsMrn2aNIMlIyYdZwks"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold">Arjun</span>
+<span class="text-[10px] text-stone-500 uppercase tracking-widest">The Mindful Curator</span>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-64 min-h-screen relative">
+<!-- TopAppBar (Authority: JSON) -->
+<header class="bg-[#fbf9f2]/70 dark:bg-stone-900/70 backdrop-blur-xl docked full-width top-0 sticky z-40 flex justify-between items-center px-8 h-20 w-full">
+<h2 class="text-xl font-serif text-[#3e6327] dark:text-[#f6f4ed] font-bold">Health Intelligence</h2>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-stone-500 hover:opacity-80 transition-opacity" data-icon="notifications">notifications</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label text-sm font-bold flex items-center gap-2 hover:opacity-90 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                Add Member
+            </button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7KV3SJDvnvpmtNO5USFljbu1D9V2hfWSHvtwCIwaKRzF5tqWCxakK9DQs1hPbJPsYGHfoUs7ZY0vrhw7rSafOnM_vZ_e2ku2MoI8DQOwzfJD-0yF0dUA4VR4sGXqM9wYjUwEslqEab2-T4qa1Q2yc-aBCgXD41isDBiWxS8_uPN7_c11KCh9_QYg1o_dTlkrI_eTW-PW32_-WihLohzfeiDNwth8GvC48LB6cVFUeNp8uO0UlwBNr4ADAktDsih2FAm0Wvb9W64E"/>
+</div>
+</div>
+</header>
+<section class="max-w-6xl mx-auto px-8 py-12">
+<!-- Editorial Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+<div class="max-w-2xl">
+<h2 class="font-headline text-5xl font-bold text-on-surface mb-4 leading-tight">Family profiles</h2>
+<p class="font-body text-lg text-on-surface-variant leading-relaxed">Manage health records for your family members in a single, curated space.</p>
+</div>
+</div>
+<!-- Profile Bento-inspired Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Profile Card: Arjun (Self) -->
+<div class="bg-surface-container-lowest border border-outline-variant/15 rounded-xl editorial-shadow p-8 flex flex-col items-center text-center transition-all hover:translate-y-[-4px]">
+<div class="w-24 h-24 rounded-full bg-primary-container/20 flex items-center justify-center mb-6 border-4 border-surface-container-lowest outline outline-2 outline-primary-container/10">
+<span class="font-headline text-3xl font-bold text-primary">A</span>
+</div>
+<div class="mb-2">
+<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-[10px] font-bold tracking-widest uppercase">Self</span>
+</div>
+<h3 class="font-headline text-2xl text-on-surface mb-1">Arjun</h3>
+<div class="flex items-center gap-4 text-on-surface-variant text-sm font-body mb-6">
+<span>12 reports</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>42 values tracked</span>
+</div>
+<div class="w-full h-[1px] bg-surface-container-high mb-6"></div>
+<p class="text-xs text-stone-400 font-label mb-8">Last upload 2 weeks ago</p>
+<div class="w-full flex flex-col gap-3">
+<button class="w-full py-3 px-6 bg-surface-container-low text-on-surface font-semibold rounded-full hover:bg-surface-container-high transition-colors">Switch to profile</button>
+<a class="text-secondary font-semibold text-sm flex items-center justify-center gap-2 hover:underline" href="#">
+                        View records <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Profile Card: Maya (Spouse) -->
+<div class="bg-surface-container-lowest border border-outline-variant/15 rounded-xl editorial-shadow p-8 flex flex-col items-center text-center transition-all hover:translate-y-[-4px]">
+<div class="w-24 h-24 rounded-full bg-secondary-container/30 flex items-center justify-center mb-6 border-4 border-surface-container-lowest outline outline-2 outline-secondary-container/20">
+<span class="font-headline text-3xl font-bold text-secondary">M</span>
+</div>
+<div class="mb-2">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold tracking-widest uppercase">Spouse</span>
+</div>
+<h3 class="font-headline text-2xl text-on-surface mb-1">Maya</h3>
+<div class="flex items-center gap-4 text-on-surface-variant text-sm font-body mb-6">
+<span>8 reports</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>28 values tracked</span>
+</div>
+<div class="w-full h-[1px] bg-surface-container-high mb-6"></div>
+<p class="text-xs text-stone-400 font-label mb-8">Last upload 3 days ago</p>
+<div class="w-full flex flex-col gap-3">
+<button class="w-full py-3 px-6 bg-surface-container-low text-on-surface font-semibold rounded-full hover:bg-surface-container-high transition-colors">Switch to profile</button>
+<a class="text-secondary font-semibold text-sm flex items-center justify-center gap-2 hover:underline" href="#">
+                        View records <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Profile Card: Ramesh (Parent) -->
+<div class="bg-surface-container-lowest border border-outline-variant/15 rounded-xl editorial-shadow p-8 flex flex-col items-center text-center transition-all hover:translate-y-[-4px]">
+<div class="w-24 h-24 rounded-full bg-tertiary-fixed flex items-center justify-center mb-6 border-4 border-surface-container-lowest outline outline-2 outline-tertiary-fixed/40">
+<span class="font-headline text-3xl font-bold text-tertiary">R</span>
+</div>
+<div class="mb-2">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-[10px] font-bold tracking-widest uppercase">Parent</span>
+</div>
+<h3 class="font-headline text-2xl text-on-surface mb-1">Ramesh</h3>
+<div class="flex items-center gap-4 text-on-surface-variant text-sm font-body mb-6">
+<span>24 reports</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>64 values tracked</span>
+</div>
+<div class="w-full h-[1px] bg-surface-container-high mb-6"></div>
+<p class="text-xs text-stone-400 font-label mb-8">Last upload 1 month ago</p>
+<div class="w-full flex flex-col gap-3">
+<button class="w-full py-3 px-6 bg-surface-container-low text-on-surface font-semibold rounded-full hover:bg-surface-container-high transition-colors">Switch to profile</button>
+<a class="text-secondary font-semibold text-sm flex items-center justify-center gap-2 hover:underline" href="#">
+                        View records <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Add New Member Card -->
+<button class="bg-background border-2 border-dashed border-outline-variant/40 rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all hover:bg-surface-container-low min-h-[400px] group">
+<div class="w-16 h-16 rounded-full border-2 border-dashed border-primary/40 flex items-center justify-center mb-4 group-hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="add">add</span>
+</div>
+<span class="text-secondary font-semibold font-headline text-xl">Add family member</span>
+<p class="text-sm text-stone-500 mt-2 max-w-[180px]">Expand your mindful health circle</p>
+</button>
+</div>
+<!-- Lower Detail Section: Asymmetric Insight -->
+<div class="mt-24 grid grid-cols-12 gap-8 items-center">
+<div class="col-span-12 lg:col-span-5 relative">
+<div class="aspect-square rounded-xl overflow-hidden editorial-shadow">
+<img alt="Family sharing a moment" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVbgtlp9HBia45G0OoqpugduD63AwvbPT6fyqwFmKVCij9-00LJZM1MNDwzxfbVAcQuEKvxoA8PT-d1FXc3hTq9mhsK3e24S-n2-LDBCJR1ifqX2ICxWdGmnt6VLKbm3-w8mOF0oUGhoTp2gtsUXehfQm5NmDvuDkG85xoW8-gwrkH333LPwLB2hkvKCyNHWP1FGPzQ9NzVePoez3dXIKGNIJPaRbf1t0exYAI2fGKe9yPEXkZOxy70bsSijs7BmyqqSlVxOXMn3A"/>
+</div>
+<div class="absolute -bottom-6 -right-6 bg-tertiary-container text-on-tertiary-container p-6 rounded-xl editorial-shadow max-w-[200px]">
+<span class="material-symbols-outlined mb-2" data-icon="verified">verified</span>
+<p class="text-sm font-semibold">All family records are end-to-end encrypted for privacy.</p>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-6 lg:offset-1 px-4">
+<h4 class="font-headline text-3xl text-on-surface mb-6">Why manage family health here?</h4>
+<ul class="space-y-8">
+<li class="flex gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="history">history</span>
+</div>
+<div>
+<h5 class="font-bold text-on-surface mb-1">Unified Timeline</h5>
+<p class="text-on-surface-variant text-sm">See patterns across the family, from seasonal allergies to chronic conditions.</p>
+</div>
+</li>
+<li class="flex gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="share">share</span>
+</div>
+<div>
+<h5 class="font-bold text-on-surface mb-1">Easy Sharing</h5>
+<p class="text-on-surface-variant text-sm">Export complete medical histories for any family member to share with specialists in one click.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Floating Action Button for Mobile Context -->
+<button class="md:hidden fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full editorial-shadow flex items-center justify-center z-50">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</main>
+</body></html>

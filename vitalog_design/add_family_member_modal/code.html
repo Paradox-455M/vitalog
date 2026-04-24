@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Family Member - Vitalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f6f4ed",
+                        "secondary-fixed": "#b9efcc",
+                        "on-primary-container": "#e9ffd4",
+                        "secondary-container": "#b6ecc9",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#a8d38a",
+                        "primary-container": "#567c3d",
+                        "surface-container-high": "#eae8e1",
+                        "secondary-fixed-dim": "#9dd2b1",
+                        "surface-dim": "#dcdad3",
+                        "surface-container-highest": "#e4e2dc",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#36684c",
+                        "on-surface": "#1b1c18",
+                        "surface-variant": "#e4e2dc",
+                        "on-secondary-container": "#3b6c51",
+                        "tertiary": "#894823",
+                        "inverse-on-surface": "#f3f1ea",
+                        "primary-fixed-dim": "#a8d38a",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#341100",
+                        "on-tertiary-container": "#fff6f3",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#0a2100",
+                        "background": "#fbf9f2",
+                        "inverse-surface": "#30312c",
+                        "tertiary-fixed": "#ffdbcb",
+                        "outline": "#717972",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#2c4f15",
+                        "error": "#ba1a1a",
+                        "surface-container": "#f0eee7",
+                        "on-tertiary-fixed-variant": "#723612",
+                        "tertiary-container": "#a75f38",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "primary": "#3e6327",
+                        "surface": "#fbf9f2",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "on-surface-variant": "#414943",
+                        "surface-bright": "#fbf9f2",
+                        "primary-fixed": "#c4efa3",
+                        "on-secondary-fixed": "#002111",
+                        "on-background": "#1b1c18",
+                        "surface-tint": "#43682b",
+                        "outline-variant": "#c0c9c0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Noto Serif', serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen overflow-hidden">
+<!-- Background Content (Dimmed Family Profiles Grid) -->
+<div class="fixed inset-0 z-0 flex pointer-events-none opacity-40 grayscale-[20%]">
+<!-- Sidebar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 bg-[#f6f4ed] w-64 border-r-0">
+<div class="px-8 mb-12">
+<span class="font-serif text-2xl font-bold text-[#3e6327]">The Mindful Curator</span>
+<p class="text-xs tracking-widest uppercase text-stone-400 mt-1">Health Intelligence</p>
+</div>
+<nav class="flex-1 space-y-2">
+<div class="flex items-center text-[#3e6327] font-bold border-l-4 border-[#3e6327] pl-4 h-12">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-sans text-sm font-medium tracking-wide">Dashboard</span>
+</div>
+<div class="flex items-center text-stone-500 pl-5 h-12">
+<span class="material-symbols-outlined mr-3">description</span>
+<span class="font-sans text-sm font-medium tracking-wide">My Reports</span>
+</div>
+<div class="flex items-center text-stone-500 pl-5 h-12">
+<span class="material-symbols-outlined mr-3">timeline</span>
+<span class="font-sans text-sm font-medium tracking-wide">Health Timeline</span>
+</div>
+<div class="flex items-center text-stone-500 pl-5 h-12">
+<span class="material-symbols-outlined mr-3">family_restroom</span>
+<span class="font-sans text-sm font-medium tracking-wide">Family</span>
+</div>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 w-full p-12">
+<header class="mb-12">
+<h1 class="text-4xl font-bold text-primary mb-2">Family Profiles</h1>
+<p class="text-on-surface-variant font-body">Manage the health circles of your loved ones.</p>
+</header>
+<div class="grid grid-cols-3 gap-8">
+<!-- Profile Card Placeholder -->
+<div class="bg-surface-container-high p-8 rounded-2xl h-64 flex flex-col items-center justify-center text-center">
+<div class="w-20 h-20 rounded-full bg-primary-container/20 mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">person</span>
+</div>
+<div class="h-4 w-24 bg-surface-dim rounded-full mb-2"></div>
+<div class="h-3 w-16 bg-surface-dim rounded-full"></div>
+</div>
+<div class="bg-surface-container-high p-8 rounded-2xl h-64 flex flex-col items-center justify-center text-center border-2 border-dashed border-outline-variant">
+<div class="w-20 h-20 rounded-full bg-surface-dim mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-3xl">add</span>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm">
+<!-- Modal Container -->
+<div class="w-full max-w-[640px] bg-surface-container-lowest rounded-2xl shadow-[0px_12px_32px_rgba(27,28,24,0.06)] overflow-hidden">
+<!-- Modal Header -->
+<div class="px-10 pt-10 pb-6">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-3xl font-headline font-bold text-on-surface tracking-tight">Add a family member</h3>
+<p class="mt-2 text-on-surface-variant text-sm font-body">Input details to personalize their health intelligence journey.</p>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<!-- Modal Form -->
+<div class="px-10 pb-10 space-y-8">
+<!-- Name Input -->
+<div class="space-y-2">
+<label class="block text-sm font-label font-semibold text-on-surface-variant px-1" for="member-name">Full Name</label>
+<input class="w-full h-14 px-5 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-stone-400 font-body text-on-surface" id="member-name" placeholder="Enter name" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<!-- Relationship Dropdown -->
+<div class="space-y-2">
+<label class="block text-sm font-label font-semibold text-on-surface-variant px-1" for="relationship">Relationship</label>
+<div class="relative">
+<select class="appearance-none w-full h-14 px-5 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body text-on-surface" id="relationship">
+<option>Self</option>
+<option>Parent</option>
+<option>Spouse</option>
+<option>Child</option>
+<option>Other</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Date of Birth -->
+<div class="space-y-2">
+<label class="block text-sm font-label font-semibold text-on-surface-variant px-1" for="dob">Date of Birth</label>
+<div class="relative">
+<input class="w-full h-14 px-5 bg-surface-container-low border border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body text-on-surface" id="dob" type="date"/>
+</div>
+</div>
+</div>
+<!-- Avatar Color Picker -->
+<div class="space-y-4">
+<label class="block text-sm font-label font-semibold text-on-surface-variant px-1">Avatar Color Palette</label>
+<div class="flex items-center space-x-4">
+<!-- Sage-family swatches -->
+<button class="w-12 h-12 rounded-full bg-[#f1f3ee] border-2 border-primary ring-4 ring-primary/5 transition-all"></button>
+<button class="w-10 h-10 rounded-full bg-[#e1eadd] hover:scale-110 transition-transform"></button>
+<button class="w-10 h-10 rounded-full bg-[#cbd9c3] hover:scale-110 transition-transform"></button>
+<button class="w-10 h-10 rounded-full bg-[#aec2a2] hover:scale-110 transition-transform"></button>
+<button class="w-10 h-10 rounded-full bg-[#91ab82] hover:scale-110 transition-transform"></button>
+<button class="w-10 h-10 rounded-full bg-[#759363] hover:scale-110 transition-transform"></button>
+<div class="flex-1 text-right">
+<span class="text-xs font-label text-stone-400">Chosen: Sage Light</span>
+</div>
+</div>
+</div>
+<!-- Form Footer Actions -->
+<div class="pt-6 flex items-center justify-between">
+<button class="text-on-surface-variant font-label font-semibold hover:text-on-surface transition-colors px-4 py-2">
+                        Cancel
+                    </button>
+<button class="bg-gradient-to-br from-[#3e6327] to-[#567c3d] text-on-primary font-body font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-xl hover:opacity-95 transition-all active:scale-95">
+                        Add member
+                    </button>
+</div>
+</div>
+<!-- Health Context Note -->
+<div class="bg-surface-container-low px-10 py-5 border-t border-outline-variant/10">
+<div class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-primary-container mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="text-xs text-on-secondary-container leading-relaxed font-body">
+                        By adding a family member, you enable Vitalog to track age-specific health markers and generate relative wellness scores for your household circle.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

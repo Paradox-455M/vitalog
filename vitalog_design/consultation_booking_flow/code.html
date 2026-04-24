@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Health Intelligence - Book a Consultation</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Lora:wght@400;700&amp;family=DM+Sans:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#b9efcc",
+                        "primary-container": "#2d5016",
+                        "on-background": "#1b1c18",
+                        "inverse-on-surface": "#f3f1ea",
+                        "surface-bright": "#fbf9f2",
+                        "surface-variant": "#e4e2dc",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#0a2100",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#3b6c51",
+                        "on-secondary-fixed": "#002111",
+                        "inverse-surface": "#30312c",
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-tertiary-fixed": "#341100",
+                        "tertiary-container": "#733613",
+                        "outline": "#73796c",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#f7a175",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#1b1c18",
+                        "primary-fixed": "#c4efa3",
+                        "on-surface-variant": "#43493d",
+                        "surface": "#fbf9f2",
+                        "on-tertiary-fixed-variant": "#723612",
+                        "on-secondary": "#ffffff",
+                        "primary": "#173901",
+                        "on-primary-fixed-variant": "#2c4f15",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#9dd2b1",
+                        "surface-dim": "#dcdad3",
+                        "secondary-container": "#b6ecc9",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "surface-tint": "#43682b",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#36684c",
+                        "on-primary-container": "#98c27b",
+                        "background": "#fbf9f2",
+                        "tertiary": "#562100",
+                        "surface-container": "#f0eee7",
+                        "surface-container-low": "#f6f4ed",
+                        "inverse-primary": "#a8d38a",
+                        "primary-fixed-dim": "#a8d38a",
+                        "outline-variant": "#c3c9b9",
+                        "surface-container-high": "#eae8e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"],
+                        "lora": ["Lora"],
+                        "dmsans": ["DM Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .warm-border { border-color: #e4e2dc; }
+        .hover-sage-border:hover { border-color: #36684c; }
+        .glass-blur { backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-4 gap-2 bg-stone-50 border-r border-stone-200 w-64 z-50">
+<div class="flex items-center gap-3 mb-8 px-4">
+<div class="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-icon="health_and_safety">health_and_safety</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-emerald-900 font-headline leading-none">HealthIntel</h1>
+<p class="text-[10px] text-stone-500 font-medium tracking-wider">Health Intelligence Platform</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-stone-600 px-4 py-3 hover:translate-x-1 transition-transform font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 text-stone-600 px-4 py-3 hover:translate-x-1 transition-transform font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span>
+                My Reports
+            </a>
+<a class="flex items-center gap-3 text-stone-600 px-4 py-3 hover:translate-x-1 transition-transform font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="timeline">timeline</span>
+                Health Timeline
+            </a>
+<a class="flex items-center gap-3 bg-emerald-50 text-emerald-900 rounded-lg px-4 py-3 shadow-sm font-semibold text-sm" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="family_restroom">family_restroom</span>
+                Consultation
+            </a>
+<a class="flex items-center gap-3 text-stone-600 px-4 py-3 hover:translate-x-1 transition-transform font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="mt-auto p-4 bg-surface-container rounded-xl">
+<p class="text-xs font-bold text-primary mb-1">PRO PLAN</p>
+<p class="text-[11px] text-stone-600 mb-3 leading-tight">Get priority access to top specialists.</p>
+<button class="w-full py-2 bg-primary text-white rounded-lg text-xs font-bold">Upgrade Now</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar (Authority: JSON) -->
+<header class="sticky top-0 z-40 w-full flex justify-between items-center px-8 py-4 bg-white/80 backdrop-blur-md border-b border-stone-200">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-lg" data-icon="search">search</span>
+<input class="w-full bg-stone-100 border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-secondary/20" placeholder="Search specialists or specialties..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-primary-container text-white px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm" data-icon="upload_file">upload_file</span>
+                    Upload report
+                </button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container-high">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="Close up portrait of a professional woman with a warm friendly expression in a brightly lit studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUp8Ul2aiIEzlitUHaR-QtTrGgyco4D3-pOXxP8KsdKgvNiwcA-NuqipZP7srGi3NgpXYcn_5JE3P3HRxRm-XF2KRISd423-HdTles_J3Pv2jD-UzNOOAVRr9OKGkHpW51IPqgYcwBWlHhgblISR2mknbmNblddiSEvjQl7F5zG141YwafN794TTfBZmlRWHYGReb6G0mVfZuSsGCFyAtp0J2YBEI9kR_KqTEgTnuucQsHH2nUE6S83CN-ckWNc0Vr8iCLz7q-vpU"/>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-6xl mx-auto">
+<!-- Header Section -->
+<div class="mb-10">
+<h2 class="font-lora text-4xl font-bold text-primary leading-tight mb-2">Book a Consultation</h2>
+<p class="text-secondary font-medium opacity-80">Connect with a specialist to discuss your reports.</p>
+</div>
+<!-- Discovery Bar -->
+<div class="flex flex-col md:flex-row gap-4 mb-12 items-end">
+<div class="flex-1 space-y-2">
+<label class="text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Specialist Search</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" data-icon="stethoscope">stethoscope</span>
+<input class="w-full h-14 bg-white warm-border border rounded-xl pl-12 pr-4 focus:border-secondary focus:ring-0" placeholder="Find by name or clinic..." type="text"/>
+</div>
+</div>
+<div class="w-full md:w-64 space-y-2">
+<label class="text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Specialty</label>
+<select class="w-full h-14 bg-white warm-border border rounded-xl px-4 focus:border-secondary focus:ring-0 text-stone-700">
+<option>Filter by specialty</option>
+<option>Hepatologist</option>
+<option>Cardiologist</option>
+<option>Neurologist</option>
+<option>Endocrinologist</option>
+</select>
+</div>
+<button class="h-14 px-8 bg-secondary text-white rounded-xl font-bold flex items-center gap-2 hover:bg-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+                    Apply Filters
+                </button>
+</div>
+<!-- Doctor Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-white border warm-border rounded-2xl p-6 hover-sage-border transition-all group flex flex-col h-full shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-secondary-container">
+<img class="w-full h-full object-cover" data-alt="Professional male doctor with stethoscope smiling, wearing a white lab coat in a modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhMUWKJEo7sXefB7jfkpPgKLEUiREXVRGKhOnc6l5sCGIkbxrjLX8fjFVYHPIuSggx7QC0Y8U0XPOsR_60tpPibq1Ec5G0nVJTlPz1eIBdum4eaQ5o6aCns5ahdKg4QeoTWkQNy20eZw34N_KhglisiQ8222ceo97nBSvBxzMVE4dRgtthxrqg7IAoSKCYpHcvEUrKK42oYyCr2DwgHYzBohPT53_l0N9cxWBH9T4myNndM4aEY53RHjPZ8kM3Lsy6CSUzXkfvyZM"/>
+</div>
+<span class="bg-secondary-container/30 text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold">Cardiologist</span>
+</div>
+<h3 class="font-lora text-[18px] font-bold text-on-background mb-1">Dr. Julian Thorne</h3>
+<p class="font-dmsans text-sm text-stone-500 line-clamp-2 mb-4 leading-relaxed">Specializing in preventive cardiology and metabolic heart health with a data-driven approach.</p>
+<div class="flex items-center gap-4 text-[13px] text-stone-400 font-medium mb-4">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="work">work</span>
+                            12 years exp.
+                        </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="chat">chat</span>
+                            1.2k+ consults
+                        </span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-lg mb-6">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-xs font-bold text-secondary">Vitalog-friendly</span>
+</div>
+<div class="mt-auto flex items-center gap-3">
+<button class="flex-1 py-3 text-sm font-bold text-secondary border border-secondary/20 rounded-xl hover:bg-secondary/5 transition-colors">View Profile</button>
+<button class="flex-1 py-3 text-sm font-bold bg-secondary text-white rounded-xl hover:bg-primary transition-colors">Book now</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white border warm-border rounded-2xl p-6 hover-sage-border transition-all group flex flex-col h-full shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-secondary-container">
+<img class="w-full h-full object-cover" data-alt="Female medical specialist with short dark hair in professional attire, clinical setting, soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBegGYCDtzUrmfjavbecPmpmRnsopThqWzTrmvGkm_Yi_kFLsHPYalWW1jCuVmcCcjTtIUTezUjqAxfpEx5CGc0tNUIA9-xv7hyn4WgIHrdwkw1oNyeXKHeIjOkwZ_BreFofnBs9syCVIH9z6a3jK4yY1RM541OS8fIGkoHAZ7xy-bunWA1vpbKeZDECoKmIXIyyjfzwOM06TpQYAVzPC2wqQpu4WUeNflME6BLN8CHtHXJTprSbAj4UNLJTKUYmmdWs7YmyrSfcws"/>
+</div>
+<span class="bg-secondary-container/30 text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold">Hepatologist</span>
+</div>
+<h3 class="font-lora text-[18px] font-bold text-on-background mb-1">Dr. Elena Rodriguez</h3>
+<p class="font-dmsans text-sm text-stone-500 line-clamp-2 mb-4 leading-relaxed">Expert in non-alcoholic fatty liver disease and personalized metabolic recovery protocols.</p>
+<div class="flex items-center gap-4 text-[13px] text-stone-400 font-medium mb-4">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="work">work</span>
+                            9 years exp.
+                        </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="chat">chat</span>
+                            850+ consults
+                        </span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-lg mb-6">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-xs font-bold text-secondary">Vitalog-friendly</span>
+</div>
+<div class="mt-auto flex items-center gap-3">
+<button class="flex-1 py-3 text-sm font-bold text-secondary border border-secondary/20 rounded-xl hover:bg-secondary/5 transition-colors">View Profile</button>
+<button class="flex-1 py-3 text-sm font-bold bg-secondary text-white rounded-xl hover:bg-primary transition-colors">Book now</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white border warm-border rounded-2xl p-6 hover-sage-border transition-all group flex flex-col h-full shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-secondary-container">
+<img class="w-full h-full object-cover" data-alt="Senior male doctor with glasses and salt-and-pepper hair, confident smiling face, professional clinic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9smtyj57ISLKDADFBWC9I9_JFaCAdKXCMb4wAjg3TloDcADGOKknj0T9AXnp01xal98j7Ptx3V-UqPPthRA2dc0drrpyVdGDHH_ESVbdEIm6Jbym7Lkn3qVGWpVUOLjatUzpDvidEqZQjz7xZAwJAQ1JcllDv39wIH0X6DW7tAC2tI0QPu-f25KxQtKu1ogCG0I0Qe_ykniljL1rL-_e3jsXvCbXikjAxaEa3PcMo8NN8UzLaAyqwaXXK7bd8WwMGvfiEQQfa5Hk"/>
+</div>
+<span class="bg-secondary-container/30 text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold">Endocrinologist</span>
+</div>
+<h3 class="font-lora text-[18px] font-bold text-on-background mb-1">Dr. Samuel Chen</h3>
+<p class="font-dmsans text-sm text-stone-500 line-clamp-2 mb-4 leading-relaxed">Focusing on hormonal balance and advanced lipid profile analysis for longevity.</p>
+<div class="flex items-center gap-4 text-[13px] text-stone-400 font-medium mb-4">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="work">work</span>
+                            22 years exp.
+                        </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="chat">chat</span>
+                            3.4k+ consults
+                        </span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-2 rounded-lg mb-6">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="text-xs font-bold text-secondary">Vitalog-friendly</span>
+</div>
+<div class="mt-auto flex items-center gap-3">
+<button class="flex-1 py-3 text-sm font-bold text-secondary border border-secondary/20 rounded-xl hover:bg-secondary/5 transition-colors">View Profile</button>
+<button class="flex-1 py-3 text-sm font-bold bg-secondary text-white rounded-xl hover:bg-primary transition-colors">Book now</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Scheduling Modal (Authority: User Intent) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm p-4">
+<div class="bg-white w-full max-w-[640px] rounded-[24px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<div class="px-8 pt-8 pb-6 border-b border-stone-100 flex justify-between items-start">
+<div>
+<h2 class="font-lora text-2xl font-bold text-primary mb-1">Schedule with Dr. Elena Rodriguez</h2>
+<p class="text-sm text-stone-500 font-medium">Video consultation • 45 minutes</p>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-100 transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="p-8">
+<!-- Report Sharing Toggle -->
+<div class="flex items-center justify-between bg-emerald-50/50 p-4 rounded-2xl mb-8 border border-emerald-100">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-emerald-800" data-icon="share_reviews">share_reviews</span>
+<div>
+<p class="text-sm font-bold text-emerald-900">Securely share your Vitalog reports</p>
+<p class="text-xs text-emerald-700/70">Dr. Rodriguez will see your latest health insights.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Calendar/Slot Picker -->
+<div class="mb-8">
+<p class="text-xs font-bold text-stone-500 uppercase tracking-widest mb-4">Available Time Slots</p>
+<div class="grid grid-cols-3 gap-4">
+<!-- Day 1 -->
+<div class="space-y-3">
+<p class="text-center text-sm font-bold text-on-surface">Tomorrow</p>
+<button class="w-full py-2 bg-white border border-stone-200 rounded-lg text-sm hover:border-secondary hover:text-secondary transition-all">09:00 AM</button>
+<button class="w-full py-2 bg-secondary/10 border border-secondary text-secondary font-bold rounded-lg text-sm">11:30 AM</button>
+<button class="w-full py-2 bg-white border border-stone-200 rounded-lg text-sm hover:border-secondary hover:text-secondary transition-all">03:00 PM</button>
+</div>
+<!-- Day 2 -->
+<div class="space-y-3">
+<p class="text-center text-sm font-bold text-on-surface">Wed, Oct 25</p>
+<button class="w-full py-2 bg-white border border-stone-200 rounded-lg text-sm hover:border-secondary hover:text-secondary transition-all">10:00 AM</button>
+<button class="w-full py-2 bg-white border border-stone-200 rounded-lg text-sm hover:border-secondary hover:text-secondary transition-all">01:30 PM</button>
+<button class="w-full py-2 bg-white border border-stone-200 rounded-lg text-sm hover:border-secondary hover:text-secondary transition-all">04:30 PM</button>
+</div>
+<!-- Day 3 -->
+<div class="space-y-3">
+<p class="text-center text-sm font-bold text-on-surface">Thu, Oct 26</p>
+<button class="w-full py-2 bg-white border border-stone-200 rounded-lg text-sm hover:border-secondary hover:text-secondary transition-all">09:30 AM</button>
+<button class="w-full py-2 bg-stone-50 border border-stone-100 rounded-lg text-sm text-stone-400 cursor-not-allowed">02:00 PM</button>
+<button class="w-full py-2 bg-white border border-stone-200 rounded-lg text-sm hover:border-secondary hover:text-secondary transition-all">05:00 PM</button>
+</div>
+</div>
+</div>
+<!-- CTA -->
+<div class="flex flex-col gap-4">
+<button class="w-full py-4 bg-secondary text-white rounded-xl font-bold text-base shadow-lg shadow-secondary/20 hover:bg-primary transition-all">Confirm Booking</button>
+<p class="text-center text-[11px] text-stone-400">By confirming, you agree to Vitalog's Professional Consultation Terms.</p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

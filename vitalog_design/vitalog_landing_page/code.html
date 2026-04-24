@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitalog | Health Intelligence Understood</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@300;400;500;600;700;800&amp;family=Lora:ital,wght@0,400;0,700;1,400&amp;family=DM+Sans:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-low": "#f6f4ed",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#fbf9f2",
+                    "on-primary-fixed": "#0a2100",
+                    "surface": "#fbf9f2",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "on-tertiary-container": "#fff6f3",
+                    "secondary-container": "#b6ecc9",
+                    "inverse-primary": "#a8d38a",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#b9efcc",
+                    "surface-container-high": "#eae8e1",
+                    "inverse-surface": "#30312c",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#1b1c18",
+                    "primary-fixed": "#c4efa3",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#f3f1ea",
+                    "on-surface-variant": "#414943",
+                    "outline-variant": "#c0c9c0",
+                    "on-tertiary-fixed": "#341100",
+                    "on-surface": "#1b1c18",
+                    "surface-variant": "#e4e2dc",
+                    "on-secondary-container": "#3b6c51",
+                    "error-container": "#ffdad6",
+                    "outline": "#717972",
+                    "tertiary": "#894823",
+                    "surface-container-highest": "#e4e2dc",
+                    "background": "#fbf9f2",
+                    "tertiary-container": "#a75f38",
+                    "surface-container": "#f0eee7",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "on-secondary-fixed": "#002111",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "on-secondary": "#ffffff",
+                    "primary": "#3e6327",
+                    "secondary": "#36684c",
+                    "primary-container": "#567c3d",
+                    "tertiary-fixed": "#ffdbcb",
+                    "primary-fixed-dim": "#a8d38a",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#e9ffd4",
+                    "surface-tint": "#43682b",
+                    "surface-dim": "#dcdad3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1.5rem",
+                    "3xl": "1.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"],
+                    "lora": ["Lora"],
+                    "dm": ["DM Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0px 12px 32px rgba(27, 28, 24, 0.06);
+        }
+        .glass-nav {
+            background: rgba(251, 249, 242, 0.7);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-background antialiased selection:bg-primary/20 selection:text-primary">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full h-16 z-50 glass-nav border-b border-outline-variant/15">
+<div class="flex justify-between items-center px-8 h-full w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center space-x-3 group cursor-pointer">
+<div class="w-10 h-10 bg-secondary-container/30 flex items-center justify-center rounded-xl overflow-hidden group-hover:scale-95 transition-all">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<span class="text-2xl font-bold font-headline text-primary">Vitalog</span>
+</div>
+<div class="hidden md:flex items-center space-x-10">
+<a class="font-dm text-[14px] text-on-surface-variant hover:text-primary transition-colors" href="#">How it works</a>
+<a class="font-dm text-[14px] text-on-surface-variant hover:text-primary transition-colors" href="#">Features</a>
+<a class="font-dm text-[14px] text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a>
+</div>
+<button class="bg-[#4A7C5F] text-white px-6 py-2 rounded-lg font-dm font-medium text-sm hover:opacity-90 transition-all scale-95 hover:scale-100">
+                Get started free
+            </button>
+</div>
+</nav>
+<main class="relative">
+<!-- Hero Section -->
+<section class="pt-[140px] pb-24 px-8 max-w-screen-2xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<!-- Hero Left Content -->
+<div class="space-y-8">
+<div class="inline-flex items-center space-x-2 bg-[#EAF2EC] px-4 py-2 rounded-full border border-primary/10">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-primary font-bold font-dm text-xs uppercase tracking-wider">Your personal health companion</span>
+</div>
+<h1 class="font-lora text-6xl xl:text-7xl leading-[1.1] text-on-background">
+                        Your health,<br/>
+<span class="italic text-[#4A7C5F]">finally</span><br/>
+                        understood.
+                    </h1>
+<p class="text-lg font-dm font-light text-on-surface-variant leading-relaxed max-w-lg">
+                        Upload any medical report. Vitalog's AI explains it in plain language, tracks your values over time, and surfaces what actually matters about your health.
+                    </p>
+<div class="flex items-center space-x-6 pt-4">
+<button class="bg-[#2D5016] text-white px-8 py-4 rounded-full font-dm font-semibold text-base hover:shadow-lg transition-all flex items-center group">
+                            Start for free
+                            <span class="material-symbols-outlined ml-2 transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+<button class="flex items-center font-dm font-medium text-primary hover:underline transition-all">
+                            See how it works <span class="material-symbols-outlined ml-1 text-sm">play_circle</span>
+</button>
+</div>
+<div class="flex items-center space-x-4 pt-4">
+<div class="flex -space-x-3">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="portrait of a confident woman smiling in natural daylight with soft professional bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMWDT2cl3GCzyGA3sLVIuQm9dBNUOfBsaUxlB94FzJxwumRHhKPOvpyg_6FIXlZ1hqCNXxHVOEBOwP9wanJw2f5dww76HoRRTJP7_FtMCOdImyanrAVQvWiOa8i58cqwFJAC9gmYhFXGECX1YX-4_0nByX8SCmhcUYV_ci92XjtVWfk2eh_d-McA0_rR_SWnJMz43gqy5enTs0dbtzdOoeuiwD81vBE8IcGnevTHs29flTAn0ldqAFP1JFHWemsd_Tt-Z1cyRWERg"/>
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="professional man smiling warmly in a light grey environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1ROXHMpdwfXdVGnEjOtBdDwRdRZyK6HUZmI4cwh8RfcqsA5Kwn8HPjRZX9ZWRoHSKxtMueTYACk_1t5g5T7CXZF1dnDMToZUFp7q_-w6mcMUAwmK7WlOw_O-yGk1MSqccGo_1ZzNOioceI9ptW_tyui_6D_9AoUruL6k2iEaS9l69ymzzRosHsEXKjUfmvEj5XphY-REfx3pQ9xmSvI_hFuld5COXqrVmPEMfbA93D1YDh8P4HYu84QBzufvA-l3T1Wv2Lwe3RJA"/>
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="close up of a professional woman with a calm and welcoming expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuu8Jo3U6HwdqhtB62IRHV-FDbweGCSTyVCZlqJ7SBsxBXc3dAcV5KPa3756r6kdM_hydGPauPmo9V3htjkpNKuATED_QTVL0k2Ii-d-gc2Dc0iGCxhQAwxO9lYuaFKmLUql9dDQ68mKN3jjlK1LOhR5TIWYQlheP7MKrZpcV5olU59269iD1w04SMURSq4CbNWZU7t4AEnrMPsYYPPk_5TLTdcJ0So1cFqQAUYgi6w1Tay06QtqdGReyrFgWoCtVjrbOB2FfQ9rY"/>
+<div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-primary">+2k</div>
+</div>
+<p class="font-dm text-sm text-on-surface-variant/80">2,400+ reports understood this month</p>
+</div>
+</div>
+<!-- Hero Right Visual -->
+<div class="relative">
+<!-- Main Report Card -->
+<div class="bg-white rounded-3xl p-8 editorial-shadow relative z-10 w-full max-w-lg mx-auto">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline font-bold text-xl text-on-background">Blood Work Analysis</h3>
+<span class="text-xs font-label text-outline uppercase tracking-widest">Oct 24, 2024</span>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between p-4 bg-surface rounded-2xl">
+<span class="font-dm font-medium text-on-surface">Haemoglobin</span>
+<div class="flex items-center space-x-3">
+<span class="px-3 py-1 bg-secondary-container/20 text-secondary text-xs rounded-full font-bold uppercase">Normal</span>
+<span class="font-headline font-bold text-primary">13.8 g/dL</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface rounded-2xl">
+<span class="font-dm font-medium text-on-surface">WBC Count</span>
+<div class="flex items-center space-x-3">
+<span class="px-3 py-1 bg-secondary-container/20 text-secondary text-xs rounded-full font-bold uppercase">Normal</span>
+<span class="font-headline font-bold text-primary">6.4 K/μL</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface rounded-2xl border-2 border-[#D4845A]/20">
+<span class="font-dm font-medium text-on-surface">Ferritin</span>
+<div class="flex items-center space-x-3">
+<span class="px-3 py-1 bg-[#D4845A]/10 text-[#D4845A] text-xs rounded-full font-bold uppercase">Attention</span>
+<span class="font-headline font-bold text-[#D4845A]">22 ng/mL</span>
+</div>
+</div>
+</div>
+<!-- AI Insight Overlay -->
+<div class="mt-8 p-6 bg-[#EAF2EC] rounded-2xl border border-primary/10">
+<div class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+<div>
+<p class="font-dm text-sm leading-relaxed text-on-primary-fixed-variant">
+                                        Your <span class="font-bold">ferritin</span> is 40% lower than 6 months ago. This often links to dietary iron intake or absorption patterns.
+                                    </p>
+</div>
+</div>
+</div>
+<!-- Mini Trend Chart -->
+<div class="mt-8 pt-6 border-t border-outline-variant/10">
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-headline font-semibold">Ferritin History</span>
+<span class="px-2 py-1 bg-[#894823]/10 text-[#894823] text-[10px] font-bold rounded-md uppercase">Trending down</span>
+</div>
+<div class="h-24 w-full bg-surface-container-low rounded-xl overflow-hidden flex items-end px-4 space-x-2">
+<div class="w-full bg-primary/20 h-full rounded-t-sm"></div>
+<div class="w-full bg-primary/30 h-[80%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[65%] rounded-t-sm"></div>
+<div class="w-full bg-primary/50 h-[50%] rounded-t-sm"></div>
+<div class="w-full bg-[#D4845A] h-[35%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Floating Elements -->
+<div class="absolute -top-12 -right-8 bg-white rounded-2xl p-4 editorial-shadow z-20 w-48 border border-outline-variant/10">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Haemoglobin</span>
+<span class="text-[10px] font-bold text-secondary">↑ Improved</span>
+</div>
+<div class="text-lg font-headline font-bold text-primary">13.8 g/dL</div>
+<div class="mt-2 flex space-x-1 h-2">
+<div class="flex-1 bg-primary rounded-full"></div>
+<div class="flex-1 bg-primary/30 rounded-full"></div>
+</div>
+</div>
+<div class="absolute -bottom-6 -left-12 bg-[#2D5016] text-white rounded-2xl p-5 editorial-shadow z-20 w-48">
+<div class="flex items-center space-x-3">
+<div class="p-2 bg-white/10 rounded-lg">
+<span class="material-symbols-outlined text-white text-lg">folder_shared</span>
+</div>
+<div>
+<div class="text-xs font-dm opacity-70 leading-none mb-1">Total Assets</div>
+<div class="text-sm font-headline font-bold leading-none">24 reports</div>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-white/10 text-[10px] font-dm opacity-80 uppercase tracking-widest">3 family profiles</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works Section -->
+<section class="py-24 px-8 bg-surface-container-low/50">
+<div class="max-w-screen-2xl mx-auto">
+<div class="grid md:grid-cols-3 bg-white border border-outline-variant/20 rounded-3xl overflow-hidden editorial-shadow">
+<!-- Step 1 -->
+<div class="p-12 md:border-r border-outline-variant/20 space-y-6">
+<span class="font-lora text-6xl text-[#C8DFD0]">01</span>
+<h3 class="font-lora text-2xl font-bold text-on-background">Upload Report</h3>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">
+                            Snap a photo or upload a PDF of your latest lab results. We support everything from basic blood panels to complex genetics.
+                        </p>
+</div>
+<!-- Step 2 -->
+<div class="p-12 md:border-r border-outline-variant/20 space-y-6">
+<span class="font-lora text-6xl text-[#C8DFD0]">02</span>
+<h3 class="font-lora text-2xl font-bold text-on-background">AI Transformation</h3>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">
+                            Vitalog translates medical jargon into a clear health story. We identify trends and flag markers that need your attention.
+                        </p>
+</div>
+<!-- Step 3 -->
+<div class="p-12 space-y-6">
+<span class="font-lora text-6xl text-[#C8DFD0]">03</span>
+<h3 class="font-lora text-2xl font-bold text-on-background">Actionable Insight</h3>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">
+                            Get personalized advice based on your history. Know exactly what to ask your doctor in your next consultation.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="py-24 px-8 max-w-screen-2xl mx-auto space-y-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-4">
+<h2 class="font-lora text-4xl text-on-background">Health intelligence for <br/><span class="italic text-primary">everybody.</span></h2>
+<p class="font-dm text-on-surface-variant max-w-md">Powerful tools to manage your longevity journey with confidence.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Large Card -->
+<div class="md:col-span-2 bg-[#f6f4ed] rounded-3xl p-10 flex flex-col md:flex-row items-center gap-12 overflow-hidden">
+<div class="flex-1 space-y-6">
+<div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center editorial-shadow">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<h3 class="font-lora text-3xl font-bold">AI that actually explains</h3>
+<p class="font-dm text-on-surface-variant leading-relaxed">
+                            No more Googling "low hemoglobin causes." Vitalog gives you the nuance of your results in the context of your personal health history and age bracket.
+                        </p>
+<button class="text-primary font-bold font-dm flex items-center group">
+                            Learn about our AI <span class="material-symbols-outlined ml-2 transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+<div class="flex-1 w-full space-y-4">
+<div class="bg-white border border-primary/20 p-6 rounded-2xl editorial-shadow">
+<div class="flex items-center space-x-3 mb-2">
+<span class="material-symbols-outlined text-primary">info</span>
+<span class="font-headline font-bold text-sm">Optimal Range Insight</span>
+</div>
+<p class="text-xs font-dm text-on-surface-variant">Your Vitamin D is within range but below the 'optimal' longevity threshold of 50 ng/mL.</p>
+</div>
+<div class="bg-white border border-tertiary/20 p-6 rounded-2xl editorial-shadow ml-8">
+<div class="flex items-center space-x-3 mb-2">
+<span class="material-symbols-outlined text-tertiary">warning</span>
+<span class="font-headline font-bold text-sm text-tertiary">Critical Marker Warning</span>
+</div>
+<p class="text-xs font-dm text-on-surface-variant">Glucose (Fasting) has increased by 15% year-over-year. Discuss pre-diabetic monitoring with your physician.</p>
+</div>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="bg-white border border-outline-variant/15 rounded-3xl p-10 space-y-6 hover:shadow-xl transition-all">
+<div class="w-12 h-12 bg-secondary-container/20 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">family_restroom</span>
+</div>
+<h3 class="font-lora text-2xl font-bold">Family Profiles</h3>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">
+                        Manage health records for your parents, children, and partner from a single dashboard. Secure sharing for doctors and caregivers.
+                    </p>
+</div>
+<!-- Small Card 2 -->
+<div class="bg-white border border-outline-variant/15 rounded-3xl p-10 space-y-6 hover:shadow-xl transition-all">
+<div class="w-12 h-12 bg-primary-fixed/20 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">history_edu</span>
+</div>
+<h3 class="font-lora text-2xl font-bold">Trend Tracking</h3>
+<p class="font-dm text-sm text-on-surface-variant leading-relaxed">
+                        Vitalog visualizes how your biomarkers change over decades, not just months. Identify subtle shifts before they become health issues.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-24 px-8 bg-surface-container-low/30">
+<div class="max-w-screen-2xl mx-auto space-y-12">
+<h2 class="font-lora text-center text-4xl text-on-background italic">"The piece of mind I've been looking for."</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-white p-8 rounded-2xl editorial-shadow space-y-6">
+<p class="font-lora italic text-lg text-on-surface-variant">"Finally, I can understand my thyroid reports without feeling overwhelmed. The AI explanation is spot-on and very human."</p>
+<div class="flex items-center space-x-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="portrait of a woman with a genuine happy expression and natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgUAbTJrle6oUfIs4374-rBXgehR6tnEO0TWFBYY-2KDFVnhlrFHnKSS9GDDgo1Ij6CwSYPKik698QIIX2Vy4lAZXCYQsrQIap29f3xnmBplADFiAIg81z01vxmKxSlduwsytXl30MRUZbgvMk01ihXCSyelKc8asrT9pNEPeQltLTvx5IMX4maD5bRGlcLx_tZJfS_-PDmEAHPyHuS0i123YEV8wyqV333Dc5qjBEiDmpttyj2prjpm9btYZImOcAu59OOo_sVv8"/>
+<div>
+<div class="font-headline font-bold text-on-background">Ananya Mehta</div>
+<div class="text-xs font-dm text-outline uppercase">Yoga Instructor</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white p-8 rounded-2xl editorial-shadow space-y-6">
+<p class="font-lora italic text-lg text-on-surface-variant">"Vitalog caught a downward trend in my ferritin that my regular doctor hadn't mentioned. It changed how I approach my nutrition."</p>
+<div class="flex items-center space-x-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="middle aged professional man with a friendly and composed look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPya44gaiS1jcz7gFZFyslJFq1FzqEJnmkMvArvBHqr9cFUvjSWfxZ6buha1c16b5bMxTI98Um1v_FVotgY2TjJ6wwBvy05abH8dZhfLxBSV882WJBLmFWNZTrWEvo0iQKNr0hMzjfwQHWixRAQ50bqwrQj0S5GNtZuGy8WnBmuy4UnKPZIP7DyYZUWHerLUw5AaxzL67CSC7ZvnOKkpzb3qbDivSts93x_hQu5NxPWHUONt05h8Wr0Zt6E77RbaXltXyg_cqT1Jw"/>
+<div>
+<div class="font-headline font-bold text-on-background">Rahul Sharma</div>
+<div class="text-xs font-dm text-outline uppercase">Tech Lead</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white p-8 rounded-2xl editorial-shadow space-y-6">
+<p class="font-lora italic text-lg text-on-surface-variant">"As a caregiver for my elderly parents, Vitalog is a lifesaver. All their records in one place and clear AI summaries."</p>
+<div class="flex items-center space-x-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="kind-looking woman in her 40s with a warm and supportive expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTYa3Xp_E5Y9Q-rURmw76In84GmHG1lMPfqo8O_SaqnetFwVKTxzT1PyNLZDQI06gq56P6MWzl086OH74plp4A1WHBEWryHUNk7ooToEk0Rsabn7co_O8xoINJMZ7v-MA4_K2OgpxVD82rhvCozNAoy76pc31Whgty3UIavuCvAp-dBB9XXilTO6Ba3KMS108saRriDOTcAHijswJiP-Sn2fYSAfOap9YJMUwDq0UEXSByXbCtH7GW1dBNm54mPoRhqvspipAlS08"/>
+<div>
+<div class="font-headline font-bold text-on-background">Sarah Jenkins</div>
+<div class="text-xs font-dm text-outline uppercase">Freelance Designer</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="py-24 px-8 max-w-screen-2xl mx-auto">
+<div class="text-center space-y-4 mb-16">
+<h2 class="font-lora text-4xl font-bold">Simple, transparent pricing.</h2>
+<p class="font-dm text-on-surface-variant">Invest in your longevity, starting today.</p>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-center gap-8">
+<!-- Free Card -->
+<div class="w-full max-w-sm bg-white border border-outline-variant/30 rounded-3xl p-10 space-y-8 h-full">
+<div class="space-y-2">
+<h3 class="font-lora text-2xl font-bold">Standard</h3>
+<p class="text-on-surface-variant text-sm font-dm">For personal report tracking.</p>
+</div>
+<div class="font-headline text-5xl font-bold">Free</div>
+<ul class="space-y-4 pt-4">
+<li class="flex items-center space-x-3 text-sm font-dm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Up to 3 reports / month</span>
+</li>
+<li class="flex items-center space-x-3 text-sm font-dm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Basic AI explanations</span>
+</li>
+<li class="flex items-center space-x-3 text-sm font-dm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>1 year history storage</span>
+</li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-primary text-primary font-bold font-dm hover:bg-primary/5 transition-all">Get Started</button>
+</div>
+<!-- Pro Card -->
+<div class="w-full max-w-sm bg-[#2D5016] text-white rounded-3xl p-10 space-y-8 editorial-shadow transform scale-105">
+<div class="flex justify-between items-start">
+<div class="space-y-2">
+<h3 class="font-lora text-2xl font-bold">Vitalog Pro</h3>
+<p class="text-white/70 text-sm font-dm">The complete health stack.</p>
+</div>
+<span class="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-3 py-1 rounded-full uppercase">Most Popular</span>
+</div>
+<div class="font-headline text-5xl font-bold">
+                        $12 <span class="text-lg font-dm opacity-70">/mo</span>
+</div>
+<ul class="space-y-4 pt-4">
+<li class="flex items-center space-x-3 text-sm font-dm text-white/90">
+<span class="material-symbols-outlined text-primary-fixed text-lg">check_circle</span>
+<span>Unlimited report uploads</span>
+</li>
+<li class="flex items-center space-x-3 text-sm font-dm text-white/90">
+<span class="material-symbols-outlined text-primary-fixed text-lg">check_circle</span>
+<span>Advanced trend forecasting</span>
+</li>
+<li class="flex items-center space-x-3 text-sm font-dm text-white/90">
+<span class="material-symbols-outlined text-primary-fixed text-lg">check_circle</span>
+<span>5 family member profiles</span>
+</li>
+<li class="flex items-center space-x-3 text-sm font-dm text-white/90">
+<span class="material-symbols-outlined text-primary-fixed text-lg">check_circle</span>
+<span>Doctor PDF reports &amp; Export</span>
+</li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-white text-primary font-bold font-dm hover:opacity-90 transition-all">Go Pro</button>
+</div>
+</div>
+</section>
+<!-- Footer CTA -->
+<section class="mt-24 py-24 bg-[#2D5016] text-white text-center px-8 relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="absolute top-0 left-0 w-64 h-64 bg-primary-fixed blur-[100px]"></div>
+<div class="absolute bottom-0 right-0 w-96 h-96 bg-primary-container blur-[150px]"></div>
+</div>
+<div class="max-w-screen-md mx-auto space-y-10 relative z-10">
+<h2 class="font-lora text-5xl md:text-6xl leading-tight">Your health has a story.<br/>Start reading it.</h2>
+<div class="flex flex-col md:flex-row items-center justify-center gap-4">
+<button class="bg-white text-primary px-10 py-5 rounded-full font-dm font-bold text-lg hover:shadow-2xl transition-all">
+                        Create your free account
+                    </button>
+<button class="bg-transparent border border-white/30 text-white px-10 py-5 rounded-full font-dm font-bold text-lg hover:bg-white/5 transition-all">
+                        View demo
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface py-16 px-8 border-t border-outline-variant/15">
+<div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 bg-secondary-container/30 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-primary text-base" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<span class="text-xl font-bold font-headline text-primary">Vitalog</span>
+</div>
+<div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-6">
+<a class="text-xs font-dm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-xs font-dm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-xs font-dm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Cookie Policy</a>
+<a class="text-xs font-dm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Us</a>
+</div>
+<p class="text-xs font-dm uppercase tracking-widest text-on-surface-variant/60">
+                © 2024 Vitalog Health Intelligence.
+            </p>
+</div>
+</footer>
+</body></html>

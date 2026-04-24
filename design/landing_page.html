@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitalog — Your Health, Understood</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAFAF7;
+    --white: #FFFFFF;
+    --sage: #4A7C5F;
+    --sage-light: #6B9E7E;
+    --sage-pale: #EAF2EC;
+    --sage-muted: #C8DFD0;
+    --forest: #2D5016;
+    --warm-gray: #6B6860;
+    --warm-gray-light: #A8A69F;
+    --warm-border: #E8E6DF;
+    --text-primary: #1C1C1A;
+    --text-secondary: #5A5A55;
+    --amber: #D4845A;
+    --amber-light: #F5EDE6;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(250,250,247,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--warm-border);
+    padding: 0 48px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 32px; height: 32px; border-radius: 10px;
+    background: var(--sage);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-mark svg { width: 18px; height: 18px; }
+  .logo-name {
+    font-family: 'Lora', serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--forest); letter-spacing: -0.3px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    text-decoration: none; font-size: 14px; font-weight: 400;
+    color: var(--text-secondary); transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--sage); }
+  .nav-cta {
+    background: var(--sage); color: white !important;
+    padding: 8px 20px; border-radius: 8px;
+    font-weight: 500 !important; font-size: 14px !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--forest) !important; }
+
+  /* HERO */
+  .hero {
+    padding: 140px 48px 80px;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center; min-height: 100vh;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--sage-pale); border: 1px solid var(--sage-muted);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 13px; font-weight: 500; color: var(--sage); margin-bottom: 28px;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--sage);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .hero-title {
+    font-family: 'Lora', serif; font-size: 56px; font-weight: 600;
+    line-height: 1.1; letter-spacing: -1.5px; color: var(--text-primary); margin-bottom: 24px;
+  }
+  .hero-title em { font-style: italic; color: var(--sage); }
+  .hero-subtitle {
+    font-size: 18px; font-weight: 300; color: var(--text-secondary);
+    line-height: 1.7; margin-bottom: 40px; max-width: 440px;
+  }
+  .hero-actions { display: flex; align-items: center; gap: 16px; }
+  .btn-primary {
+    background: var(--sage); color: white; padding: 14px 28px;
+    border-radius: 10px; font-size: 15px; font-weight: 500;
+    text-decoration: none; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(74,124,95,0.25);
+  }
+  .btn-primary:hover { background: var(--forest); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(74,124,95,0.3); }
+  .btn-secondary {
+    color: var(--text-secondary); font-size: 15px; font-weight: 400;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;
+  }
+  .btn-secondary:hover { color: var(--sage); }
+  .hero-trust { margin-top: 40px; display: flex; align-items: center; gap: 16px; }
+  .trust-avatars { display: flex; }
+  .trust-avatar {
+    width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--cream);
+    margin-left: -8px; font-size: 12px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center; color: white;
+  }
+  .trust-avatar:first-child { margin-left: 0; }
+  .trust-text { font-size: 13px; color: var(--warm-gray-light); }
+  .trust-text strong { color: var(--text-secondary); font-weight: 500; }
+
+  /* HERO VISUAL */
+  .hero-visual { position: relative; }
+  .phone-frame {
+    background: var(--white); border-radius: 28px;
+    border: 1px solid var(--warm-border); padding: 20px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.04);
+    position: relative; z-index: 2;
+  }
+  .report-card {
+    background: var(--cream); border-radius: 16px; padding: 16px;
+    margin-bottom: 12px; border: 1px solid var(--warm-border);
+  }
+  .report-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .report-tag { font-size: 11px; font-weight: 500; color: var(--sage); background: var(--sage-pale); padding: 3px 10px; border-radius: 100px; }
+  .report-date { font-size: 11px; color: var(--warm-gray-light); }
+  .report-title { font-family: 'Lora', serif; font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+  .report-summary { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .values-row { display: flex; gap: 8px; margin-top: 12px; }
+  .value-chip { flex: 1; background: var(--white); border: 1px solid var(--warm-border); border-radius: 10px; padding: 8px 10px; text-align: center; }
+  .value-chip.alert { border-color: var(--amber); background: var(--amber-light); }
+  .value-num { font-size: 16px; font-weight: 500; color: var(--text-primary); display: block; }
+  .value-chip.alert .value-num { color: var(--amber); }
+  .value-label { font-size: 10px; color: var(--warm-gray-light); }
+  .value-chip.alert .value-label { color: var(--amber); }
+  .ai-insight {
+    background: linear-gradient(135deg, var(--sage-pale), #F0F7F2);
+    border: 1px solid var(--sage-muted); border-radius: 12px; padding: 12px 14px;
+    margin-top: 12px; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .ai-icon {
+    width: 24px; height: 24px; border-radius: 8px; background: var(--sage);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ai-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .ai-text strong { color: var(--sage); font-weight: 500; }
+
+  /* FLOATING CARDS */
+  .float-card {
+    position: absolute; background: var(--white); border: 1px solid var(--warm-border);
+    border-radius: 14px; padding: 12px 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); z-index: 3;
+  }
+  .float-card-1 { right: -60px; top: 40px; width: 160px; animation: floatA 4s ease-in-out infinite; }
+  .float-card-2 { left: -50px; bottom: 80px; width: 140px; animation: floatB 5s ease-in-out infinite; }
+  @keyframes floatA { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+  @keyframes floatB { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(6px); } }
+  .float-label { font-size: 10px; font-weight: 500; color: var(--warm-gray-light); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .float-value { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; color: var(--text-primary); }
+  .float-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .trend-ok { color: var(--sage) !important; }
+  .mini-bar { display: flex; align-items: flex-end; gap: 3px; margin-top: 8px; height: 28px; }
+  .mini-bar span { flex: 1; border-radius: 3px 3px 0 0; background: var(--sage-muted); }
+  .mini-bar span.hi { background: var(--sage); }
+
+  /* SECTIONS */
+  section { max-width: 1200px; margin: 0 auto; padding: 80px 48px; }
+  .section-label { font-size: 12px; font-weight: 500; color: var(--sage); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .section-title { font-family: 'Lora', serif; font-size: 40px; font-weight: 600; line-height: 1.15; letter-spacing: -0.8px; color: var(--text-primary); margin-bottom: 16px; }
+  .section-title em { font-style: italic; color: var(--sage); }
+  .section-subtitle { font-size: 16px; font-weight: 300; color: var(--text-secondary); line-height: 1.7; max-width: 500px; }
+
+  /* HOW IT WORKS */
+  .how-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; margin-top: 56px; background: var(--warm-border); border-radius: 20px; overflow: hidden;
+  }
+  .how-step { background: var(--white); padding: 40px 32px; position: relative; }
+  .how-step:first-child { border-radius: 20px 0 0 20px; }
+  .how-step:last-child { border-radius: 0 20px 20px 0; }
+  .step-num { font-family: 'Lora', serif; font-size: 56px; font-weight: 600; color: var(--sage-muted); line-height: 1; margin-bottom: 20px; }
+  .step-title { font-family: 'Lora', serif; font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+  .step-desc { font-size: 14px; font-weight: 300; color: var(--text-secondary); line-height: 1.7; }
+  .step-icon { position: absolute; top: 32px; right: 32px; width: 40px; height: 40px; background: var(--sage-pale); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+
+  /* FEATURES */
+  .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 56px; }
+  .feature-card {
+    background: var(--white); border: 1px solid var(--warm-border); border-radius: 20px; padding: 32px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .feature-card:hover { border-color: var(--sage-muted); box-shadow: 0 8px 32px rgba(74,124,95,0.08); }
+  .feature-card.large { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .feature-icon { width: 48px; height: 48px; background: var(--sage-pale); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+  .feature-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+  .feature-desc { font-size: 14px; font-weight: 300; color: var(--text-secondary); line-height: 1.7; }
+
+  /* TIMELINE PREVIEW */
+  .timeline-preview { background: var(--cream); border-radius: 16px; padding: 20px; border: 1px solid var(--warm-border); }
+  .tl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .tl-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .tl-badge { font-size: 11px; color: var(--sage); background: var(--sage-pale); padding: 3px 10px; border-radius: 100px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+  .chart-bar { flex: 1; border-radius: 4px 4px 0 0; background: var(--sage-muted); position: relative; }
+  .chart-bar.current { background: var(--sage); }
+  .chart-bar.low { background: var(--amber-light); border: 1px solid var(--amber); }
+  .chart-labels { display: flex; gap: 6px; margin-top: 6px; }
+  .chart-labels span { flex: 1; text-align: center; font-size: 9px; color: var(--warm-gray-light); }
+  .tl-insight { margin-top: 12px; padding: 10px 12px; background: var(--white); border-radius: 10px; font-size: 12px; color: var(--text-secondary); border-left: 3px solid var(--sage); line-height: 1.5; }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--white); border-top: 1px solid var(--warm-border); border-bottom: 1px solid var(--warm-border); }
+  .testimonials section { padding: 80px 48px; }
+  .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+  .test-card { background: var(--cream); border: 1px solid var(--warm-border); border-radius: 16px; padding: 28px; }
+  .test-quote { font-family: 'Lora', serif; font-size: 15px; font-style: italic; color: var(--text-primary); line-height: 1.7; margin-bottom: 20px; }
+  .test-author { display: flex; align-items: center; gap: 12px; }
+  .test-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: white; }
+  .test-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .test-role { font-size: 12px; color: var(--warm-gray-light); }
+
+  /* PRICING */
+  .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 56px; max-width: 720px; margin-left: auto; margin-right: auto; }
+  .price-card { background: var(--white); border: 1px solid var(--warm-border); border-radius: 20px; padding: 36px; }
+  .price-card.featured { background: var(--forest); border-color: var(--forest); }
+  .price-tier { font-size: 12px; font-weight: 500; color: var(--warm-gray-light); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .price-card.featured .price-tier { color: var(--sage-muted); }
+  .price-amount { font-family: 'Lora', serif; font-size: 44px; font-weight: 600; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
+  .price-card.featured .price-amount { color: white; }
+  .price-period { font-size: 13px; color: var(--warm-gray-light); margin-bottom: 28px; }
+  .price-card.featured .price-period { color: var(--sage-muted); }
+  .price-features { list-style: none; margin-bottom: 28px; }
+  .price-features li { font-size: 14px; color: var(--text-secondary); padding: 8px 0; border-bottom: 1px solid var(--warm-border); display: flex; align-items: center; gap: 10px; }
+  .price-card.featured .price-features li { color: var(--sage-muted); border-bottom-color: rgba(255,255,255,0.1); }
+  .price-features li:last-child { border-bottom: none; }
+  .check { color: var(--sage); font-size: 14px; }
+  .price-card.featured .check { color: #7DC99A; }
+  .price-btn { width: 100%; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
+  .price-btn.outline { background: transparent; border: 1px solid var(--warm-border); color: var(--text-primary); }
+  .price-btn.outline:hover { border-color: var(--sage); color: var(--sage); }
+  .price-btn.filled { background: var(--sage); color: white; }
+  .price-btn.filled:hover { background: var(--sage-light); }
+
+  /* CTA */
+  .cta-section { background: var(--forest); padding: 100px 48px; text-align: center; }
+  .cta-section .section-title { color: white; font-size: 48px; }
+  .cta-section .section-title em { color: #7DC99A; }
+  .cta-subtitle { font-size: 18px; font-weight: 300; color: var(--sage-muted); max-width: 480px; margin: 0 auto 40px; line-height: 1.7; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 10px; background: white; color: var(--forest); padding: 16px 36px; border-radius: 12px; font-size: 16px; font-weight: 500; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+  .cta-note { margin-top: 16px; font-size: 13px; color: var(--sage-muted); }
+
+  /* FOOTER */
+  .footer-inner { max-width: 1200px; margin: 0 auto; padding: 48px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-logo { font-family: 'Lora', serif; font-size: 18px; font-weight: 600; color: var(--forest); }
+  .footer-links { display: flex; gap: 28px; }
+  .footer-links a { font-size: 13px; color: var(--warm-gray-light); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sage); }
+  .footer-copy { font-size: 12px; color: var(--warm-gray-light); }
+
+  /* ANIMATIONS */
+  .fade-up { opacity: 0; transform: translateY(24px); animation: fadeUp 0.7s ease forwards; }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9 2C9 2 4 5 4 10C4 12.76 6.24 15 9 15C11.76 15 14 12.76 14 10C14 5 9 2 9 2Z" fill="white" opacity="0.9"/>
+        <path d="M9 7V11M7 9H11" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="logo-name">Vitalog</span>
+  </div>
+  <div class="nav-links">
+    <a href="#">How it works</a>
+    <a href="#">Features</a>
+    <a href="#">Pricing</a>
+    <a href="#" class="nav-cta">Get started free</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow fade-up"><span class="eyebrow-dot"></span>Your personal health companion</div>
+    <h1 class="hero-title fade-up delay-1">Your health,<br><em>finally</em><br>understood.</h1>
+    <p class="hero-subtitle fade-up delay-2">Upload any medical report. Vitalog's AI explains it in plain language, tracks your values over time, and surfaces what actually matters about your health.</p>
+    <div class="hero-actions fade-up delay-3">
+      <a href="#" class="btn-primary">Start for free <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9 4L13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="#" class="btn-secondary">See how it works <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 5.5L8.5 7L5.5 8.5" fill="currentColor"/></svg></a>
+    </div>
+    <div class="hero-trust fade-up delay-4">
+      <div class="trust-avatars">
+        <div class="trust-avatar" style="background:#4A7C5F;">AR</div>
+        <div class="trust-avatar" style="background:#6B9E7E;">PS</div>
+        <div class="trust-avatar" style="background:#2D5016;">KM</div>
+        <div class="trust-avatar" style="background:#D4845A;">NR</div>
+      </div>
+      <p class="trust-text"><strong>2,400+ reports</strong> understood this month</p>
+    </div>
+  </div>
+
+  <div class="hero-visual fade-up delay-2">
+    <div class="float-card float-card-1">
+      <div class="float-label">Haemoglobin</div>
+      <div class="float-value trend-ok">13.8 <span style="font-size:13px;color:#6B6860">g/dL</span></div>
+      <div class="float-sub trend-ok">↑ Improved from last</div>
+      <div class="mini-bar">
+        <span style="height:40%"></span><span style="height:55%"></span>
+        <span style="height:48%"></span><span style="height:65%" class="hi"></span><span style="height:72%" class="hi"></span>
+      </div>
+    </div>
+    <div class="phone-frame">
+      <div class="report-card">
+        <div class="report-card-header">
+          <span class="report-tag">Blood Test</span>
+          <span class="report-date">12 Mar 2025</span>
+        </div>
+        <div class="report-title">Complete Blood Count</div>
+        <div class="report-summary">Apollo Diagnostics · Your red blood cells are healthy. One value needs attention.</div>
+        <div class="values-row">
+          <div class="value-chip"><span class="value-num">13.8</span><span class="value-label">Hb (g/dL)</span></div>
+          <div class="value-chip"><span class="value-num">4.2</span><span class="value-label">WBC ×10³</span></div>
+          <div class="value-chip alert"><span class="value-num">58</span><span class="value-label">Ferritin ↓</span></div>
+        </div>
+        <div class="ai-insight">
+          <div class="ai-icon">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="white" stroke-width="1.2"/><path d="M5 7C5 7 5.5 9 7 9C8.5 9 9 7 9 7" stroke="white" stroke-width="1.2" stroke-linecap="round"/><circle cx="5.2" cy="5.5" r="0.7" fill="white"/><circle cx="8.8" cy="5.5" r="0.7" fill="white"/></svg>
+          </div>
+          <div class="ai-text">Your ferritin is <strong>40% lower than 6 months ago</strong>. This often links to dietary iron. Worth discussing with your doctor.</div>
+        </div>
+      </div>
+      <div class="timeline-preview">
+        <div class="tl-header"><span class="tl-title">Ferritin over 12 months</span><span class="tl-badge">Trending down</span></div>
+        <div class="chart-bars">
+          <div class="chart-bar" style="height:80%"></div><div class="chart-bar" style="height:85%"></div>
+          <div class="chart-bar" style="height:70%"></div><div class="chart-bar" style="height:60%"></div>
+          <div class="chart-bar low" style="height:45%"></div><div class="chart-bar low current" style="height:38%"></div>
+        </div>
+        <div class="chart-labels"><span>Jul</span><span>Aug</span><span>Sep</span><span>Nov</span><span>Jan</span><span>Mar</span></div>
+        <div class="tl-insight">Dropped from <strong>97 → 58 ng/mL</strong> in 8 months. Most people don't catch this until symptoms appear.</div>
+      </div>
+    </div>
+    <div class="float-card float-card-2">
+      <div class="float-label">Reports stored</div>
+      <div class="float-value">24</div>
+      <div class="float-sub" style="color:#4A7C5F;">3 family profiles</div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">Three steps to <em>clarity</em></h2>
+  <p class="section-subtitle">No medical training needed. No confusing jargon. Just your health, in plain language.</p>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="step-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4H12L16 8V17H4V4Z" stroke="#4A7C5F" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 4V9H16" stroke="#4A7C5F" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 12H13M7 14.5H10" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="step-num">01</div>
+      <div class="step-title">Upload any report</div>
+      <div class="step-desc">PDF, photo, or scan — from any lab or hospital across India. Takes under 30 seconds.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6.5" stroke="#4A7C5F" stroke-width="1.5"/><path d="M7 10C7 10 8 12.5 10 12.5C12 12.5 13 10 13 10" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round"/><circle cx="7.5" cy="8" r="1" fill="#4A7C5F"/><circle cx="12.5" cy="8" r="1" fill="#4A7C5F"/></svg></div>
+      <div class="step-num">02</div>
+      <div class="step-title">AI explains everything</div>
+      <div class="step-desc">Every value decoded in plain English. What's normal, what changed, and what it means for you.</div>
+    </div>
+    <div class="how-step">
+      <div class="step-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polyline points="3,14 7,9 10,12 14,6 17,8" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="6" r="1.5" fill="#4A7C5F"/></svg></div>
+      <div class="step-num">03</div>
+      <div class="step-title">Track over time</div>
+      <div class="step-desc">Each new report builds your health timeline. Trends emerge. You notice what matters — before symptoms do.</div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="section-label">Features</div>
+  <h2 class="section-title">Everything your health <em>deserves</em></h2>
+  <div class="features-grid">
+    <div class="feature-card large">
+      <div>
+        <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3C12 3 6 7 6 13C6 16.31 8.69 19 12 19C15.31 19 18 16.31 18 13C18 7 12 3 12 3Z" stroke="#4A7C5F" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 9V13M10 11H14" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="feature-title">AI that actually explains</div>
+        <div class="feature-desc">Not just a list of values. Vitalog's AI reads your report the way a knowledgeable friend would — context, nuance, and plain language that makes sense to a non-doctor.</div>
+      </div>
+      <div class="timeline-preview">
+        <div style="font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:12px;">What your CBC means</div>
+        <div style="background:var(--white);border-radius:10px;padding:12px;font-size:13px;color:var(--text-secondary);line-height:1.6;border-left:3px solid var(--sage);">Your red blood cell count is <strong style="color:var(--sage)">healthy and normal</strong>. Your white blood cells are slightly elevated — this is common after a minor infection and usually returns to normal on its own.</div>
+        <div style="margin-top:8px;background:var(--amber-light);border-radius:10px;padding:12px;font-size:13px;color:var(--text-secondary);line-height:1.6;border-left:3px solid var(--amber);">Your ferritin (iron stores) is <strong style="color:var(--amber)">lower than last time</strong>. This isn't an emergency, but worth mentioning to your doctor — it can cause fatigue if it keeps dropping.</div>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="#4A7C5F" stroke-width="1.5"/><path d="M7 9H17M7 13H13M7 17H10" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="feature-title">Every format, every lab</div>
+      <div class="feature-desc">Apollo, Thyrocare, SRL, government hospitals, handwritten prescriptions. If you can photograph it, Vitalog can read it.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17 21V19C17 16.79 15.21 15 13 15H5C2.79 15 1 16.79 1 19V21" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="9" r="4" stroke="#4A7C5F" stroke-width="1.5"/><path d="M23 21V19C22.99 17.12 21.73 15.48 20 15.08" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round"/><path d="M16 3.13C17.74 3.53 19 5.17 19 7.05C19 8.93 17.74 10.57 16 10.97" stroke="#4A7C5F" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="feature-title">Family profiles</div>
+      <div class="feature-desc">One account, up to 5 profiles. Manage your own health and your parents' in one place, completely separate.</div>
+    </div>
+  </div>
+</section>
+
+<div class="testimonials">
+  <section>
+    <div class="section-label">Early users</div>
+    <h2 class="section-title">People who actually <em>get it</em></h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="test-quote">"I've had borderline cholesterol for two years and never actually understood what my reports were saying. Vitalog explained it in 30 seconds."</div>
+        <div class="test-author"><div class="test-avatar" style="background:#4A7C5F;">AR</div><div><div class="test-name">Arjun R.</div><div class="test-role">Software engineer, Bangalore</div></div></div>
+      </div>
+      <div class="test-card">
+        <div class="test-quote">"My mother has diabetes and her reports are scattered across three hospitals. Finally everything is in one place and I can actually see what's changing."</div>
+        <div class="test-author"><div class="test-avatar" style="background:#D4845A;">PS</div><div><div class="test-name">Priya S.</div><div class="test-role">Product manager, Mumbai</div></div></div>
+      </div>
+      <div class="test-card">
+        <div class="test-quote">"I never knew what ferritin was until Vitalog told me mine had been dropping for months. That was the push I needed to actually see a doctor."</div>
+        <div class="test-author"><div class="test-avatar" style="background:#2D5016;">KM</div><div><div class="test-name">Kiran M.</div><div class="test-role">Consultant, Delhi</div></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section>
+  <div style="text-align:center;">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, honest <em>pricing</em></h2>
+    <p class="section-subtitle" style="margin:0 auto;">Start free. Upgrade when Vitalog becomes part of how you manage your health.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Free</div>
+      <div class="price-amount">₹0</div>
+      <div class="price-period">forever</div>
+      <ul class="price-features">
+        <li><span class="check">✓</span> 3 report uploads</li>
+        <li><span class="check">✓</span> AI explanation for each</li>
+        <li><span class="check">✓</span> Value extraction</li>
+        <li style="opacity:0.4;"><span>–</span> Trend charts</li>
+        <li style="opacity:0.4;"><span>–</span> Family profiles</li>
+      </ul>
+      <button class="price-btn outline">Get started</button>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tier">Pro</div>
+      <div class="price-amount">₹299</div>
+      <div class="price-period">per month</div>
+      <ul class="price-features">
+        <li><span class="check">✓</span> Unlimited reports</li>
+        <li><span class="check">✓</span> Full AI explanation</li>
+        <li><span class="check">✓</span> Trend charts & timeline</li>
+        <li><span class="check">✓</span> Up to 5 family profiles</li>
+        <li><span class="check">✓</span> Data export</li>
+      </ul>
+      <button class="price-btn filled">Start Pro free for 14 days</button>
+    </div>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div style="max-width:600px;margin:0 auto;">
+    <h2 class="section-title">Your health has a story.<br><em>Start reading it.</em></h2>
+    <p class="cta-subtitle">Join thousands of Indians who understand their health for the first time.</p>
+    <a href="#" class="cta-btn">Upload your first report — it's free <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9H14M10 5L14 9L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <p class="cta-note">No credit card required · Your data stays private · Delete anytime</p>
+  </div>
+</div>
+
+<div style="background:var(--cream);border-top:1px solid var(--warm-border);">
+  <div class="footer-inner">
+    <div class="footer-logo">Vitalog</div>
+    <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a><a href="#">Contact</a></div>
+    <div class="footer-copy">© 2025 Vitalog</div>
+  </div>
+</div>
+
+</body>
+</html>

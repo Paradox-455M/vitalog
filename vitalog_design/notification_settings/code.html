@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitalog | Notification Settings</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;900&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb691",
+                    "on-surface-variant": "#43493d",
+                    "inverse-on-surface": "#f3f1ea",
+                    "surface-container-low": "#f6f4ed",
+                    "on-secondary-container": "#3b6c51",
+                    "on-background": "#1b1c18",
+                    "secondary-container": "#b6ecc9",
+                    "inverse-surface": "#30312c",
+                    "surface-container-high": "#eae8e1",
+                    "secondary-fixed": "#b9efcc",
+                    "error": "#ba1a1a",
+                    "surface": "#fbf9f2",
+                    "on-secondary-fixed": "#002111",
+                    "on-primary-container": "#98c27b",
+                    "surface-bright": "#fbf9f2",
+                    "surface-container-highest": "#e4e2dc",
+                    "secondary": "#36684c",
+                    "primary-fixed-dim": "#a8d38a",
+                    "tertiary-fixed": "#ffdbcb",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#a8d38a",
+                    "outline": "#73796c",
+                    "on-tertiary-fixed": "#341100",
+                    "surface-variant": "#e4e2dc",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "background": "#fbf9f2",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "primary": "#173901",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#0a2100",
+                    "tertiary-container": "#733613",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "on-surface": "#1b1c18",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#43682b",
+                    "tertiary": "#562100",
+                    "outline-variant": "#c3c9b9",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#2d5016",
+                    "primary-fixed": "#c4efa3",
+                    "on-tertiary-container": "#f7a175",
+                    "surface-dim": "#dcdad3",
+                    "surface-container": "#f0eee7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #FAFAF7; }
+        .font-noto-serif { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .border-custom { border-color: #E8E6DF; }
+    </style>
+</head>
+<body class="text-on-surface antialiased">
+<!-- Shared SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-custom bg-stone-50 z-50">
+<div class="p-8">
+<h1 class="text-2xl font-bold text-green-900 tracking-tight font-noto-serif">Vitalog</h1>
+<p class="text-xs text-stone-500 uppercase tracking-widest mt-1">Health Intelligence</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-medium">Insights</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span class="font-medium">Privacy</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-green-800 font-bold border-r-4 border-green-800 bg-stone-100 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="notifications" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-medium">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-medium">Health Data</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-medium">Profile</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<div class="bg-primary-container rounded-xl p-4 text-white">
+<p class="text-sm font-semibold mb-2">Upgrade Plan</p>
+<p class="text-xs opacity-80 mb-3">Get advanced health alerts and priority support.</p>
+<button class="w-full bg-white text-primary py-2 rounded-lg text-xs font-bold hover:bg-stone-100 transition-all">View Details</button>
+</div>
+<div class="mt-4 flex items-center gap-3 px-4">
+<div class="w-10 h-10 rounded-full bg-stone-200 overflow-hidden">
+<img alt="User profile" data-alt="close-up portrait of a professional woman with a calm expression in a bright modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX1SrVstBuOZQtPpPqwLhyiZOHDzc80FK1lolx5icPnDp09bKZPfpu4lpZX3MWLzf4ClO9YgV0lXjOspvi-sM1zwI6WxMrtxQTCJgnMIcFvJNCOycTAmsuNVSjjDjGuLvfevuRn6UiZGHmUG-WGEW40yVwja0tBoUapIGDnphgZtvWAFmTQOgs8pdGAumla0UAuFfmHOmztct0qSGN1PEirg_6zqsPmPYJDD2uRn5xRsMWi7W147127C_-kfxX6zR4RS40mDLoWuo"/>
+</div>
+<div>
+<p class="text-sm font-bold">Elena Vance</p>
+<p class="text-[10px] text-stone-500">Premium Member</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Shared TopNavBar -->
+<header class="flex justify-between items-center px-8 h-16 w-full border-b border-custom bg-stone-50/80 backdrop-blur-md sticky top-0 z-40">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black text-green-900 font-noto-serif">Vitalog</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-stone-600 hover:text-green-700 transition-all text-sm font-medium" href="#">Dashboard</a>
+<a class="text-stone-600 hover:text-green-700 transition-all text-sm font-medium" href="#">History</a>
+<a class="text-stone-600 hover:text-green-700 transition-all text-sm font-medium" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 scale-75">search</span>
+<input class="bg-stone-100 border-none rounded-full py-1.5 pl-10 pr-4 text-sm w-64 focus:ring-1 focus:ring-primary transition-all" placeholder="Search settings..." type="text"/>
+</div>
+<button class="p-2 text-stone-500 hover:text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<button class="p-2 text-stone-500 hover:text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<!-- Notification Settings Content -->
+<section class="max-w-5xl mx-auto py-12 px-8">
+<header class="mb-10">
+<h2 class="text-4xl font-black text-primary font-noto-serif mb-2">Notification Settings</h2>
+<p class="text-stone-600 max-w-2xl">Tailor how and when Vitalog communicates with you. Our 'Soft &amp; Supportive' tone is recommended for a calmer health journey.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Granular Controls -->
+<div class="lg:col-span-2 space-y-6">
+<div class="bg-white rounded-xl p-8 border border-custom shadow-sm">
+<h3 class="text-lg font-bold text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-xl" data-icon="tune">tune</span>
+                            Alert Types
+                        </h3>
+<div class="divide-y divide-stone-100">
+<!-- New Report Ready -->
+<div class="py-5 flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">New Report Ready</p>
+<p class="text-sm text-stone-500">Get notified immediately when lab results or monthly summaries are generated.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Significant Trend Detected -->
+<div class="py-5 flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">Significant Trend Detected</p>
+<p class="text-sm text-stone-500">Insights into metabolic changes, sleep patterns, or activity shifts.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Family Member Updates -->
+<div class="py-5 flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">Family Member Updates</p>
+<p class="text-sm text-stone-500">Receive alerts from linked profiles in your household plan.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Health Tips -->
+<div class="py-5 flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">Health Tips</p>
+<p class="text-sm text-stone-500">Personalized wellness recommendations based on your recent activity.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Tone Selection -->
+<div class="bg-white rounded-xl p-8 border border-custom shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h3 class="text-lg font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-xl" data-icon="forum">forum</span>
+                                    Alert Tone
+                                </h3>
+<p class="text-sm text-stone-500 mt-1">Choose the communication style for Vitalog messages.</p>
+</div>
+</div>
+<div class="grid grid-cols-2 p-1.5 bg-stone-100 rounded-xl">
+<button class="py-3 px-4 rounded-lg text-sm font-bold flex flex-col items-center gap-1 transition-all text-stone-500 hover:text-primary">
+<span>Direct</span>
+<span class="text-[10px] font-normal opacity-70">Action-oriented &amp; concise</span>
+</button>
+<button class="py-3 px-4 rounded-lg text-sm font-bold flex flex-col items-center gap-1 transition-all bg-white text-primary shadow-sm border border-stone-200">
+<span>Soft &amp; Supportive</span>
+<span class="text-[10px] font-normal opacity-70">Empathetic &amp; encouraging</span>
+</button>
+</div>
+<div class="mt-6 p-4 rounded-lg bg-surface-container-low border border-stone-100 flex gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="auto_awesome">auto_awesome</span>
+<div class="text-xs italic text-stone-600 leading-relaxed">
+                                "Preview: Hello Elena! It looks like you've been resting well. Since your recovery score is high, today might be a great day for a light walk if you're feeling up to it."
+                            </div>
+</div>
+</div>
+</div>
+<!-- Right Column: Channel Selection & Visuals -->
+<div class="space-y-6">
+<div class="bg-white rounded-xl p-8 border border-custom shadow-sm h-fit">
+<h3 class="text-lg font-bold text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-xl" data-icon="hub">hub</span>
+                            Channels
+                        </h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 rounded-lg border border-stone-50 hover:border-stone-200 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary scale-90" data-icon="mail">mail</span>
+</div>
+<span class="text-sm font-semibold">Email</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-stone-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg border border-stone-50 hover:border-stone-200 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary scale-90" data-icon="notifications_active">notifications_active</span>
+</div>
+<span class="text-sm font-semibold">Push Alerts</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-stone-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg border border-stone-50 hover:border-stone-200 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary scale-90" data-icon="chat">chat</span>
+</div>
+<span class="text-sm font-semibold">WhatsApp</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-stone-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+</div>
+</div>
+</div>
+<div class="relative rounded-xl overflow-hidden aspect-[4/5] border border-custom shadow-lg group">
+<img alt="Yoga practice" class="absolute inset-0 w-full h-full object-cover grayscale opacity-20 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" data-alt="Peaceful person practicing yoga in a sun-drenched minimalist studio with warm wooden floors and soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfjoyZ1elPIjg9oZ602HsTYsWuL4FBfDfmvo_4Ff8z-A60FS4itMBKL4EZ-3-xftU4LTM_nWIWm1uoM9Fe5oS6SROTSYHHRHJkYiag-1Q4gffolDQbdXLu5iQ32W8qydQljSURz0dAisA4m-HFoI5rCDUDkJT1et3Q8BCRSWwIQIkD5PmuI4ld4QnFNhdsKAXTu3L14gv6KJxugEE_fhsDgXTfamrEJMK8zUIX_BeTVkFvQOrfAlqaktmuatPYvufSTYdzoHfCTYs"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/40 to-transparent p-8 flex flex-col justify-end">
+<p class="text-white font-noto-serif text-xl font-bold mb-2">Restorative Pulse</p>
+<p class="text-white/80 text-sm leading-relaxed mb-4">Our 'Soft' tone uses physiological data to recommend recovery windows without the stress of rigid goal-tracking.</p>
+<div class="flex items-center gap-2 text-primary-fixed font-bold text-xs">
+<span>Learn about Tone Mapping</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="mt-12 pt-8 border-t border-custom flex justify-end gap-4">
+<button class="px-6 py-2.5 text-sm font-bold text-stone-600 hover:text-primary transition-all">Discard Changes</button>
+<button class="px-8 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-md hover:bg-opacity-90 active:scale-95 transition-all">Save Preferences</button>
+</div>
+</section>
+</main>
+</body></html>

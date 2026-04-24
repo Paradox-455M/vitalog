@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Privacy &amp; Security | Vitalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;900&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb691",
+                    "on-surface-variant": "#43493d",
+                    "inverse-on-surface": "#f3f1ea",
+                    "surface-container-low": "#f6f4ed",
+                    "on-secondary-container": "#3b6c51",
+                    "on-background": "#1b1c18",
+                    "secondary-container": "#b6ecc9",
+                    "inverse-surface": "#30312c",
+                    "surface-container-high": "#eae8e1",
+                    "secondary-fixed": "#b9efcc",
+                    "error": "#ba1a1a",
+                    "surface": "#fbf9f2",
+                    "on-secondary-fixed": "#002111",
+                    "on-primary-container": "#98c27b",
+                    "surface-bright": "#fbf9f2",
+                    "surface-container-highest": "#e4e2dc",
+                    "secondary": "#36684c",
+                    "primary-fixed-dim": "#a8d38a",
+                    "tertiary-fixed": "#ffdbcb",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#a8d38a",
+                    "outline": "#73796c",
+                    "on-tertiary-fixed": "#341100",
+                    "surface-variant": "#e4e2dc",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "background": "#fbf9f2",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "primary": "#173901",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#0a2100",
+                    "tertiary-container": "#733613",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "on-surface": "#1b1c18",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#43682b",
+                    "tertiary": "#562100",
+                    "outline-variant": "#c3c9b9",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#2d5016",
+                    "primary-fixed": "#c4efa3",
+                    "on-tertiary-container": "#f7a175",
+                    "surface-dim": "#dcdad3",
+                    "surface-container": "#f0eee7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .font-headline { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar Component -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-stone-200 bg-stone-50 font-noto-serif antialiased">
+<div class="p-6">
+<h1 class="text-2xl font-bold text-green-900 tracking-tight">Vitalog</h1>
+<p class="text-xs text-stone-500 uppercase tracking-widest mt-1">Health Intelligence</p>
+</div>
+<nav class="flex-1 mt-4 px-3 space-y-1">
+<a class="flex items-center px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="insights">insights</span>
+<span class="text-sm font-medium">Insights</span>
+</a>
+<!-- Active Tab: Privacy -->
+<a class="flex items-center px-4 py-3 text-green-800 font-bold border-r-4 border-green-800 bg-stone-100 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="lock">lock</span>
+<span class="text-sm">Privacy</span>
+</a>
+<a class="flex items-center px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="notifications">notifications</span>
+<span class="text-sm font-medium">Notifications</span>
+</a>
+<a class="flex items-center px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="favorite">favorite</span>
+<span class="text-sm font-medium">Health Data</span>
+</a>
+<a class="flex items-center px-4 py-3 text-stone-600 hover:text-green-700 hover:bg-stone-100 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="person">person</span>
+<span class="text-sm font-medium">Profile</span>
+</a>
+</nav>
+<div class="p-4 border-t border-stone-200">
+<button class="w-full py-3 bg-primary-container text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-all active:scale-95">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 h-16 w-[calc(100%-16rem)] flex justify-between items-center px-8 bg-stone-50/80 backdrop-blur-md border-b border-stone-200 z-10">
+<div class="flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="text-stone-600 hover:text-green-700 text-sm font-medium transition-all" href="#">Dashboard</a>
+<a class="text-stone-600 hover:text-green-700 text-sm font-medium transition-all" href="#">History</a>
+<a class="text-stone-600 hover:text-green-700 text-sm font-medium transition-all" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-stone-400 text-lg">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full text-sm focus:ring-1 focus:ring-primary w-64" placeholder="Search logs..." type="text"/>
+</div>
+<div class="flex gap-4 text-stone-600">
+<span class="material-symbols-outlined cursor-pointer hover:text-green-700 transition-all" data-icon="settings">settings</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-green-700 transition-all" data-icon="help_outline">help_outline</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-stone-200 overflow-hidden border border-stone-300">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="Close-up professional portrait of a man in his 30s with friendly expression against a soft-focus office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIkvuKx4CywfPvGm3FH1_ulTXb6d97NBm8WYeM0yN-fR3KeYRFi865e1Vy7yhsiTb9EaOUGdwUTVI3MDt8wZv5caK4Zg5SGPsfzrrKXQoUt02GEvml0nPyOCllBcqR9PlDDJQzSkosCk7hfO6BbapiZjVbra1-ewlUHm3vpmde5q58bWkhNvc4vN-Of7V7rtgGQZ0w4mEGYw-oMB9o0A539YOe4U8w9W4M22XqMhwxyD0fIWrwmFCIdEg-xzu0FV1_opcFq4y6hsE"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-8 min-h-screen">
+<div class="max-w-6xl mx-auto">
+<header class="mb-10">
+<h1 class="font-headline text-4xl font-bold text-primary mb-2">Privacy &amp; Security</h1>
+<p class="text-stone-500 max-w-2xl">Manage your digital footprint, data exports, and monitor account activity to ensure your health intelligence stays yours alone.</p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Encryption Overview (Prominent Card) -->
+<div class="col-span-12 lg:col-span-8 bg-white p-8 rounded-xl shadow-sm border border-stone-100 flex items-start gap-6 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full"></div>
+<div class="bg-primary/10 p-4 rounded-full text-primary shrink-0">
+<span class="material-symbols-outlined text-4xl" data-icon="shield_with_heart" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+</div>
+<div>
+<h2 class="font-headline text-2xl font-bold mb-3 text-stone-800">Your Health Data is Fortified</h2>
+<p class="text-stone-600 leading-relaxed mb-4">
+                            We use end-to-end AES-256 encryption for all biometric and clinical data stored on our servers. In plain English: your health insights are locked behind a digital vault that only your credentials can open. Not even the Vitalog team can view your raw health records without explicit, time-limited permission from you.
+                        </p>
+<div class="flex flex-wrap gap-4">
+<div class="flex items-center gap-2 text-sm font-semibold text-secondary">
+<span class="material-symbols-outlined text-base">verified_user</span>
+                                HIPAA Compliant
+                            </div>
+<div class="flex items-center gap-2 text-sm font-semibold text-secondary">
+<span class="material-symbols-outlined text-base">lock_clock</span>
+                                Auto-Rotation Keys
+                            </div>
+<div class="flex items-center gap-2 text-sm font-semibold text-secondary">
+<span class="material-symbols-outlined text-base">analytics</span>
+                                Anonymized Research
+                            </div>
+</div>
+</div>
+</div>
+<!-- Profile Data Quick View (Small Card) -->
+<div class="col-span-12 lg:col-span-4 bg-stone-900 text-white p-8 rounded-xl flex flex-col justify-between">
+<div>
+<p class="text-stone-400 text-xs font-bold uppercase tracking-widest mb-2">Identity Status</p>
+<h3 class="text-xl font-headline font-semibold">Arjun's Account</h3>
+</div>
+<div class="mt-4">
+<div class="flex items-center justify-between text-sm py-2 border-b border-stone-800">
+<span class="text-stone-400">Two-Factor</span>
+<span class="text-secondary-fixed font-bold">Enabled</span>
+</div>
+<div class="flex items-center justify-between text-sm py-2">
+<span class="text-stone-400">Last Password Change</span>
+<span>42 days ago</span>
+</div>
+</div>
+<button class="mt-6 w-full py-2 bg-stone-800 hover:bg-stone-700 text-white rounded-lg text-sm transition-all">
+                        Update Security Settings
+                    </button>
+</div>
+<!-- Data Management Section -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+<!-- Download Data -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-stone-200 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">download_for_offline</span>
+<h3 class="font-headline text-xl font-bold">Download My Data</h3>
+</div>
+<p class="text-stone-600 text-sm mb-6">
+                                Portability is your right. Generate a secure archive of all your health metrics, activity history, and insights in structured JSON or CSV formats.
+                            </p>
+</div>
+<button class="inline-flex items-center justify-center gap-2 w-fit px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-container transition-all">
+                            Export My Data (PDF/CSV)
+                        </button>
+</div>
+<!-- Delete Account -->
+<div class="bg-orange-50/50 p-8 rounded-xl border border-orange-100 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-tertiary">delete_forever</span>
+<h3 class="font-headline text-xl font-bold">Delete My Account</h3>
+</div>
+<p class="text-stone-600 text-sm mb-6">
+                                We respect "the right to be forgotten." Deleting your account will permanently purge your health history, credentials, and personalized models within 30 days.
+                            </p>
+</div>
+<button class="inline-flex items-center justify-center gap-2 w-fit px-6 py-3 border border-tertiary-container text-tertiary-container font-bold rounded-lg hover:bg-tertiary-container hover:text-white transition-all">
+                            Request Account Deletion
+                        </button>
+</div>
+</div>
+<!-- Access Logs -->
+<div class="col-span-12 bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden mt-4">
+<div class="px-8 py-6 border-b border-stone-100 flex justify-between items-center">
+<h3 class="font-headline text-xl font-bold">Recent Access Logs</h3>
+<button class="text-sm font-bold text-primary hover:underline">Log Out All Other Devices</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-stone-50 border-b border-stone-100">
+<tr>
+<th class="px-8 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Date &amp; Time</th>
+<th class="px-8 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Location</th>
+<th class="px-8 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider">Device</th>
+<th class="px-8 py-4 text-xs font-bold text-stone-500 uppercase tracking-wider text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-stone-100">
+<tr>
+<td class="px-8 py-4 text-sm font-medium text-stone-700">Oct 24, 2023 · 14:22 PM</td>
+<td class="px-8 py-4 text-sm text-stone-600">San Francisco, USA (IP: 192.168.1.1)</td>
+<td class="px-8 py-4 text-sm text-stone-600 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">laptop_mac</span>
+                                        Chrome on macOS
+                                    </td>
+<td class="px-8 py-4 text-sm text-right font-bold text-green-600">Current Session</td>
+</tr>
+<tr>
+<td class="px-8 py-4 text-sm font-medium text-stone-700">Oct 23, 2023 · 09:15 AM</td>
+<td class="px-8 py-4 text-sm text-stone-600">San Francisco, USA (IP: 192.168.1.1)</td>
+<td class="px-8 py-4 text-sm text-stone-600 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">smartphone</span>
+                                        Vitalog App on iPhone 15 Pro
+                                    </td>
+<td class="px-8 py-4 text-sm text-right text-stone-400">Success</td>
+</tr>
+<tr>
+<td class="px-8 py-4 text-sm font-medium text-stone-700">Oct 21, 2023 · 18:45 PM</td>
+<td class="px-8 py-4 text-sm text-stone-600">Austin, USA (IP: 172.16.254.1)</td>
+<td class="px-8 py-4 text-sm text-stone-600 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">tablet_mac</span>
+                                        Safari on iPadOS
+                                    </td>
+<td class="px-8 py-4 text-sm text-right text-stone-400">Success</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Decorative Visual Element -->
+<div class="mt-12 rounded-xl overflow-hidden h-48 relative shadow-inner">
+<img alt="Encryption visual" class="w-full h-full object-cover" data-alt="Abstract macro shot of computer circuitry glowing with soft emerald and gold light, representing sophisticated digital security and encryption" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCKVTNn8eSwEDg3eHRvD1qSCoTR5szOMPeuJW_KR1TaXgp1OGIehp4xNpiZlJyLNQKxhViedt2IXV_XQxWKvaY1AmeTq0GiWUWzAJjSDssnpYvUcGvchdkdEy8EPy9bysqEAQ3yqLeQyftg4KKM1sq7h8VqArVdEktZxne-9Qw_0bfN3_YiHHYxl1ypzxFV0jxvPC0CJ2SWaQzWUrbl4Com4D_v35OGCkebehUYtF7Ev_PBhOhiwOThQcSaZjaUYYJ07SLyLmYfko"/>
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-[2px] flex items-center justify-center">
+<p class="font-headline text-white text-lg font-bold tracking-wide flex items-center gap-3">
+<span class="material-symbols-outlined">verified</span>
+                        Vitalog Data Trust &amp; Compliance Standards 2024
+                    </p>
+</div>
+</div>
+<footer class="mt-12 pb-12 border-t border-stone-200 pt-8 flex justify-between items-center text-stone-400 text-xs">
+<p>© 2024 Vitalog Health Systems. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Global Privacy Policy</a>
+<a class="hover:text-primary" href="#">Support Center</a>
+</div>
+</footer>
+</div>
+</main>
+</body></html>

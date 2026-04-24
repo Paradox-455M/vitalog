@@ -1,0 +1,16 @@
+{
+  "name": "vitalog",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "frontend:install": "npm --prefix frontend install",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:lint": "npm --prefix frontend run lint",
+    "frontend:preview": "npm --prefix frontend run preview",
+    "backend:supabase:start": "npm --prefix backend run supabase:start",
+    "backend:supabase:stop": "npm --prefix backend run supabase:stop",
+    "backend:supabase:db:push": "npm --prefix backend run supabase:db:push",
+    "backend:supabase:functions:deploy": "npm --prefix backend run supabase:functions:deploy"
+  }
+}

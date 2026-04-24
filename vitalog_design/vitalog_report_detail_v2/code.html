@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitalog Health Intelligence - Health Report Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#f0eee7",
+                    "on-primary-fixed": "#0a2100",
+                    "inverse-primary": "#a8d38a",
+                    "surface-variant": "#e4e2dc",
+                    "surface-container-highest": "#e4e2dc",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "secondary-fixed": "#b9efcc",
+                    "on-secondary-container": "#3b6c51",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "on-tertiary-fixed": "#341100",
+                    "on-primary-container": "#98c27b",
+                    "inverse-on-surface": "#f3f1ea",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#b6ecc9",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#002111",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffdbcb",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "on-error": "#ffffff",
+                    "on-surface": "#1b1c18",
+                    "surface-container-high": "#eae8e1",
+                    "tertiary": "#562100",
+                    "primary-container": "#2d5016",
+                    "on-tertiary-container": "#f7a175",
+                    "surface-tint": "#43682b",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "inverse-surface": "#30312c",
+                    "surface-dim": "#dcdad3",
+                    "surface-container-low": "#f6f4ed",
+                    "primary": "#173901",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#43493d",
+                    "surface-bright": "#fbf9f2",
+                    "tertiary-container": "#733613",
+                    "surface": "#fbf9f2",
+                    "primary-fixed": "#c4efa3",
+                    "outline": "#73796c",
+                    "secondary": "#36684c",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "on-background": "#1b1c18",
+                    "outline-variant": "#c3c9b9",
+                    "background": "#fbf9f2",
+                    "primary-fixed-dim": "#a8d38a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fbf9f2; /* Light cream per design system background token */
+        }
+    </style>
+</head>
+<body class="font-body text-on-surface">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 bottom-0 w-64 z-50 flex flex-col py-6 bg-stone-50 dark:bg-stone-900 border-r border-stone-200 dark:border-stone-800 font-['Manrope'] text-sm shadow-sm dark:shadow-none">
+<div class="px-6 mb-10">
+<h1 class="text-2xl font-black text-green-900 dark:text-green-50">Vitalog</h1>
+<p class="text-xs text-stone-500 uppercase tracking-widest font-bold">Health Intelligence</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- ACTIVE TAB: Health Reports -->
+<a class="flex items-center gap-3 bg-green-800 text-white rounded-lg px-4 py-3 mx-2 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Health Reports</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="Bloodtype">bloodtype</span>
+<span>Biomarkers</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+<span>Consultations</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-4 py-4 mt-auto">
+<button class="w-full py-3 bg-primary-container text-white rounded-lg font-bold hover:opacity-90 active:scale-95 transition-all">
+                Upgrade Plan
+            </button>
+</div>
+<div class="border-t border-stone-200 dark:border-stone-800 pt-4 space-y-1">
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 left-0 z-40 flex justify-between items-center px-6 h-16 ml-64 bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 font-['Noto_Serif'] text-base">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-green-900 dark:text-green-100">Comprehensive Health Panel</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-stone-100 dark:bg-stone-800 border-none rounded-full text-sm focus:ring-2 focus:ring-green-800 w-64" placeholder="Search reports..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors cursor-pointer active:scale-95" title="Notifications">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors cursor-pointer active:scale-95" title="Settings">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-stone-200">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="close-up portrait of a professional male doctor in his 40s with a warm and confident expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0EfOkjRvViCIaitHMnJnZUNZfx2p8ZnykS7M4CqXsnl7P7RDKZFlYL-NgW_3JMoSPAX_-_9BCpJtoABTPoSAcd0w2ee1n9b3-oqEgaOKRMzm9NmuQ1OiedASgFN-aQ-S7Bv5T4d6XOsWgF9I1swVuNwTJ7KEc4z6ho7wDLP0DnBnCn9AKWGLvR1kLuEqY4nOP_6GjJqnqd7jASNRytjJOBk92cd9HPYiEH5B0mubZFnQEHqMVtcDfzxBrC7xcaQhndVVu8LRg_0A"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 pb-12 px-8 max-w-6xl">
+<!-- Overall Summary Card -->
+<section class="mb-10 overflow-hidden rounded-xl bg-primary-container shadow-lg">
+<div class="p-8">
+<div class="flex items-start gap-4 text-white">
+<span class="material-symbols-outlined text-4xl mt-1" data-icon="info" style="font-variation-settings: 'FILL' 1;">info</span>
+<div>
+<h2 class="text-2xl font-headline font-bold mb-3">Overall summary:</h2>
+<p class="text-lg leading-relaxed opacity-90 font-body">
+                            This report shows some values that need attention — your liver enzymes (SGOT and SGPT) and inflammation marker (CRP) are significantly elevated...
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Needs Attention Section -->
+<section class="mb-12">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+<h3 class="text-xl font-headline font-bold text-on-surface">Needs attention</h3>
+</div>
+<div class="space-y-4">
+<!-- Block 1 -->
+<div class="p-6 bg-error-container/30 border-l-4 border-error rounded-lg">
+<h4 class="text-lg font-bold text-on-error-container mb-2 font-headline">Needs attention — SGOT (liver enzyme)</h4>
+<p class="text-on-surface-variant font-body">
+                        Your SGOT is 124 U/L against a normal limit of under 50. This is about 2.5 times higher than it should be. Elevated SGOT levels can indicate liver cell injury or inflammation. It is important to monitor these levels and consult with your physician for further diagnostic steps.
+                    </p>
+</div>
+<!-- Block 2 -->
+<div class="p-6 bg-error-container/30 border-l-4 border-error rounded-lg">
+<h4 class="text-lg font-bold text-on-error-container mb-2 font-headline">Needs attention — SGPT (liver enzyme)</h4>
+<p class="text-on-surface-variant font-body">
+                        Your SGPT is 147.7 U/L against a normal limit of under 50. Much like SGOT, SGPT is an enzyme found primarily in the liver. A value this high suggests acute liver stress or inflammation that requires medical follow-up to determine the underlying cause.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Key Values at a Glance Dashboard -->
+<section class="mb-12">
+<h3 class="text-xl font-headline font-bold mb-6 text-on-surface">Key Values at a Glance</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Muted Red (Error) Cards -->
+<div class="p-5 bg-error-container rounded-xl border border-error/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-error-container/70 mb-1">SGOT</span>
+<span class="text-2xl font-black text-on-error-container">124</span>
+<span class="text-xs text-on-error-container/60">U/L</span>
+</div>
+<div class="p-5 bg-error-container rounded-xl border border-error/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-error-container/70 mb-1">SGPT</span>
+<span class="text-2xl font-black text-on-error-container">147.7</span>
+<span class="text-xs text-on-error-container/60">U/L</span>
+</div>
+<div class="p-5 bg-error-container rounded-xl border border-error/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-error-container/70 mb-1">CRP</span>
+<span class="text-2xl font-black text-on-error-container">100</span>
+<span class="text-xs text-on-error-container/60">mg/L</span>
+</div>
+<!-- Amber/Yellow Cards -->
+<div class="p-5 bg-tertiary-fixed rounded-xl border border-tertiary/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-tertiary-fixed-variant mb-1">Haemoglobin</span>
+<span class="text-2xl font-black text-on-tertiary-fixed-variant">12.4</span>
+<span class="text-xs text-on-tertiary-fixed-variant/60">g/dL</span>
+</div>
+<div class="p-5 bg-tertiary-fixed rounded-xl border border-tertiary/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-tertiary-fixed-variant mb-1">RBC Count</span>
+<span class="text-2xl font-black text-on-tertiary-fixed-variant">3.88</span>
+<span class="text-xs text-on-tertiary-fixed-variant/60">10⁶/µL</span>
+</div>
+<!-- Green (Healthy) Cards -->
+<div class="p-5 bg-secondary-container rounded-xl border border-secondary/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-secondary-container mb-1">WBC Count</span>
+<span class="text-2xl font-black text-on-secondary-container">7.0</span>
+<span class="text-xs text-on-secondary-container/60">10³/µL</span>
+</div>
+<div class="p-5 bg-secondary-container rounded-xl border border-secondary/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-secondary-container mb-1">Platelets</span>
+<span class="text-2xl font-black text-on-secondary-container">159</span>
+<span class="text-xs text-on-secondary-container/60">K/uL</span>
+</div>
+<div class="p-5 bg-secondary-container rounded-xl border border-secondary/20 flex flex-col items-center text-center shadow-sm">
+<span class="text-xs font-bold uppercase text-on-secondary-container mb-1">ESR</span>
+<span class="text-2xl font-black text-on-secondary-container">12</span>
+<span class="text-xs text-on-secondary-container/60">mm/hr</span>
+</div>
+</div>
+</section>
+<!-- All Clear — Infection Tests Panel -->
+<section class="bg-surface-container-low p-8 rounded-2xl border border-outline-variant/30">
+<div class="flex items-center gap-3 mb-8">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<h3 class="text-xl font-headline font-bold text-on-surface">All Clear — Infection Tests</h3>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="px-5 py-2.5 bg-secondary-container/40 text-on-secondary-container rounded-full border border-secondary-container flex items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                    Malaria — not found
+                </div>
+<div class="px-5 py-2.5 bg-secondary-container/40 text-on-secondary-container rounded-full border border-secondary-container flex items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                    Dengue IgG — negative
+                </div>
+<div class="px-5 py-2.5 bg-secondary-container/40 text-on-secondary-container rounded-full border border-secondary-container flex items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                    Typhoid IgG — negative
+                </div>
+<div class="px-5 py-2.5 bg-secondary-container/40 text-on-secondary-container rounded-full border border-secondary-container flex items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                    Hepatitis B — negative
+                </div>
+<div class="px-5 py-2.5 bg-secondary-container/40 text-on-secondary-container rounded-full border border-secondary-container flex items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                    HIV-1 &amp; HIV-2 — negative
+                </div>
+<div class="px-5 py-2.5 bg-secondary-container/40 text-on-secondary-container rounded-full border border-secondary-container flex items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                    Syphilis — negative
+                </div>
+</div>
+<div class="mt-10 p-6 bg-white/50 rounded-xl border border-dashed border-outline-variant/50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary-container rounded-lg flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-3xl" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Full Laboratory Report.pdf</p>
+<p class="text-sm text-stone-500">Certified by Global Health Labs • 2.4 MB</p>
+</div>
+</div>
+<button class="px-6 py-2 bg-stone-100 hover:bg-stone-200 text-on-surface font-bold rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="download">download</span>
+                        Download PDF
+                    </button>
+</div>
+</div>
+</section>
+<!-- Doctor Consultation CTA (Additional value-add component) -->
+<section class="mt-12 p-8 rounded-2xl bg-white border border-stone-200 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex items-center gap-6">
+<img alt="Doctor recommendation" class="w-20 h-20 rounded-full object-cover" data-alt="professional female doctor in a white lab coat with a stethoscope around her neck smiling warmly in a clinical setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO32p_6JAOPUudfKs9-_UwOTXatKXI7sKAllIluU5j1ZAWW4lY_xhEOmljfX0RctQ02VyCXvY2ZDeoE5sb1iPQ1JzSsyZMt9xQgU-ock_eQFPM94usIC-hk7JreQPLfmhUE1xJZNaM1ZXBuTNJikW1P96BDM3temjZh5pWs-4q8H3tZBy_pLXpFTsgUUiIm2nCllQ6om1cut0LEUiJ4HeuoserLsPxhLR3s4_4Jit7jrSuuRx5mLusdsWNLVX1FXvQPqPqjJRghck"/>
+<div>
+<h4 class="text-xl font-headline font-bold text-on-surface mb-1">Discuss these results with a Specialist</h4>
+<p class="text-on-surface-variant max-w-md">Our hepatologists can help you understand these enzyme levels and plan the next steps.</p>
+</div>
+</div>
+<button class="whitespace-nowrap px-8 py-4 bg-primary text-white font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                Book Consultation
+            </button>
+</section>
+</main>
+<!-- FAB for quick AI help -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-green-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-3xl" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</button>
+</body></html>

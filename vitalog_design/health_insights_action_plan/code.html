@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Health Insights &amp; Action Plan - Vitalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;800;900&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb691",
+                    "on-surface-variant": "#43493d",
+                    "inverse-on-surface": "#f3f1ea",
+                    "surface-container-low": "#f6f4ed",
+                    "on-secondary-container": "#3b6c51",
+                    "on-background": "#1b1c18",
+                    "secondary-container": "#b6ecc9",
+                    "inverse-surface": "#30312c",
+                    "surface-container-high": "#eae8e1",
+                    "secondary-fixed": "#b9efcc",
+                    "error": "#ba1a1a",
+                    "surface": "#fbf9f2",
+                    "on-secondary-fixed": "#002111",
+                    "on-primary-container": "#98c27b",
+                    "surface-bright": "#fbf9f2",
+                    "surface-container-highest": "#e4e2dc",
+                    "secondary": "#36684c",
+                    "primary-fixed-dim": "#a8d38a",
+                    "tertiary-fixed": "#ffdbcb",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#a8d38a",
+                    "outline": "#73796c",
+                    "on-tertiary-fixed": "#341100",
+                    "surface-variant": "#e4e2dc",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "background": "#fbf9f2",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "primary": "#173901",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e4e2dc",
+                    "on-primary-fixed": "#0a2100",
+                    "tertiary-container": "#733613",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "on-surface": "#1b1c18",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#43682b",
+                    "tertiary": "#562100",
+                    "outline-variant": "#c3c9b9",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#2d5016",
+                    "primary-fixed": "#c4efa3",
+                    "on-tertiary-container": "#f7a175",
+                    "surface-dim": "#dcdad3",
+                    "surface-container": "#f0eee7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Noto Serif', serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased font-body">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 font-noto-serif antialiased">
+<div class="px-6 py-8">
+<h1 class="text-2xl font-bold text-green-900 dark:text-green-200 tracking-tight">Vitalog</h1>
+<p class="text-xs uppercase tracking-widest text-stone-500 mt-1">Health Intelligence</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<!-- Active Tab: Insights -->
+<a class="flex items-center gap-3 px-4 py-3 text-green-800 dark:text-green-400 font-bold border-r-4 border-green-800 dark:border-green-400 bg-stone-100 dark:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span>Insights</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-stone-100 dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span>Privacy</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-stone-100 dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span>Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-stone-100 dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span>Health Data</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-stone-100 dark:hover:bg-stone-900 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm tracking-wide hover:opacity-90 transition-opacity">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="flex justify-between items-center px-8 h-16 w-full border-b border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-md sticky top-0 z-10">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black text-green-900 dark:text-green-200">Vitalog</span>
+<nav class="hidden md:flex gap-6 text-sm font-medium">
+<a class="text-stone-600 dark:text-stone-400 hover:text-green-700 dark:hover:text-green-300 transition-all" href="#">Dashboard</a>
+<a class="text-green-800 dark:text-green-400 border-b-2 border-green-800 pb-1" href="#">History</a>
+<a class="text-stone-600 dark:text-stone-400 hover:text-green-700 dark:hover:text-green-300 transition-all" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm" data-icon="search">search</span>
+<input class="bg-surface-container border-none rounded-full py-1.5 pl-10 pr-4 text-sm w-64 focus:ring-1 focus:ring-primary-container" placeholder="Search markers..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-stone-600 hover:bg-stone-100 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 text-stone-600 hover:bg-stone-100 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<img alt="User avatar" class="w-8 h-8 rounded-full object-cover border border-stone-200" data-alt="Close up portrait of a professional man in his 40s with a kind expression and natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMaBPfg4pXLj98ZeNNYgWV8cmO88aAl6r_CxYV-AILEPRU57aBgPVCvbdIHI_COiI6iwsGVlXE4bIUy2d0CFNNGI_j70xaKwIMJT0Hu8wex5-jQv2cP58zWhChvnc5DRi9p4AesuX9haHjZGUsqRiLmjMMUzeieAA03_84hUXjLUlAJ7UWRtqoSriKOP-RuuYHZEDBWXqf0gTJWQN5f3SbujAk1wOsLUGOAhBOdnu6eZMpdFn03FzRdnHpljR3pvCKQp-ZFXf56mM"/>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-10 max-w-6xl mx-auto space-y-12">
+<!-- Header Section -->
+<section>
+<h2 class="text-4xl font-bold text-primary tracking-tight mb-2">Health Insights &amp; Action Plan</h2>
+<p class="text-stone-500 font-medium">Deep-dive analysis for Arjun • Last updated Oct 24, 2023</p>
+</section>
+<!-- AI Narrative Card -->
+<section class="bg-surface-container-low border border-[#E8E6DF] rounded-xl p-8 shadow-sm">
+<div class="flex items-start gap-6">
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-primary mb-4">Current Health Summary</h3>
+<div class="space-y-4 text-stone-700 leading-relaxed max-w-3xl">
+<p>Arjun, based on your three most recent reports, your metabolic profile shows a high degree of stability, though a few key markers suggest areas for optimization. Your glucose management remains excellent, but we have noticed a slight downward trend in your serum ferritin levels which may explain the mild fatigue you've reported.</p>
+<p>Your lipid panel shows a 12% improvement in LDL since August, likely due to your increased cardiovascular activity. However, your TSH levels are currently at the high end of the optimal range. While not clinically concerning, this warrants a focused check-in to ensure your thyroid remains supportive of your energy levels.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Priority Actions Section -->
+<section class="space-y-6">
+<h3 class="text-2xl font-bold text-primary">Priority Actions</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Action Card 1 -->
+<div class="bg-white border border-[#E8E6DF] rounded-xl p-6 hover:shadow-md transition-shadow">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant">restaurant</span>
+</div>
+<h4 class="font-bold text-lg text-primary mb-2">Increase iron-rich foods</h4>
+<p class="text-sm text-stone-600 leading-snug">Focus on spinach, lentils, and lean red meat twice weekly to address declining ferritin levels.</p>
+</div>
+<!-- Action Card 2 -->
+<div class="bg-white border border-[#E8E6DF] rounded-xl p-6 hover:shadow-md transition-shadow">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="event_note">event_note</span>
+</div>
+<h4 class="font-bold text-lg text-primary mb-2">Schedule TSH follow-up</h4>
+<p class="text-sm text-stone-600 leading-snug">Book a 3-month follow-up test to monitor your thyroid stimulating hormone levels.</p>
+</div>
+<!-- Action Card 3 -->
+<div class="bg-white border border-[#E8E6DF] rounded-xl p-6 hover:shadow-md transition-shadow">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="bedtime">bedtime</span>
+</div>
+<h4 class="font-bold text-lg text-primary mb-2">Improve sleep consistency</h4>
+<p class="text-sm text-stone-600 leading-snug">Aim for a consistent 11 PM bedtime to help regulate cortisol and metabolic recovery.</p>
+</div>
+</div>
+</section>
+<!-- Recommended Reading -->
+<section class="space-y-6">
+<div class="flex justify-between items-end">
+<h3 class="text-2xl font-bold text-primary">Recommended Reading</h3>
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                        Biomarker Library <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3">
+<img alt="Ferritin Science" class="w-full h-full object-cover transition-transform group-hover:scale-105" data-alt="Abstract microscopic visualization of iron molecules and red blood cells with warm orange and red tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKmvHeZvn7C9GB5lyC7L-kfWk6gctwm9GHhVPfFscPobCf8Ji6DAS3lfRZUGtSmfybN7zLK7OE78C_TZyNoBezKAqBGAxdeSsXOC4lorw0JdlI4vu-X2y--PWJLpH9Lx_tv_gHbkTe10s_Fk5VLyMvBJ5SWhyRFsISaMdRX2sq3RL9jsQ0y3AMWsOiKGVKuHx3_mSo22vlUxH9WXElU_Ykpe0-8dcnLcpYDZf-_awePMJKx2eMPVWDNfsD5N9Fie9aJRRelcxGfBY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<span class="absolute bottom-2 left-3 text-white text-xs font-bold px-2 py-0.5 bg-tertiary rounded-full">Ferritin</span>
+</div>
+<h5 class="font-bold text-primary leading-tight">Understanding Iron Storage &amp; Energy</h5>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3">
+<img alt="LDL Management" class="w-full h-full object-cover transition-transform group-hover:scale-105" data-alt="Healthy organic heart-healthy foods like avocados and walnuts arranged neatly on a light stone surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi0MXzPzlhabkvycXnBVUP6iT5Eg7syXhk7FwPQVhTkD5aZTzf0KzRHolSIItNTIkCWHLwW_bS7b8TyTZkL5XRpvEBMHSfty7ugyXRu_SbhbBzDXTN-4WzoGBQSvmDIlDqjT7eG1Kyc8vwUpXcA1G6FCBFs5rjsc1Sjsf70Yyro_wfYyvY6B13-ZtNJoByxHgKPjFMCdWg97Dgj3sRSpgfIJcjnmSNHcqrbRrk_hrE2BSG1MDo_vubRq8516qrtTny7VLA2T-O0mQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<span class="absolute bottom-2 left-3 text-white text-xs font-bold px-2 py-0.5 bg-primary-container rounded-full">LDL</span>
+</div>
+<h5 class="font-bold text-primary leading-tight">The Modern Guide to Cholesterol</h5>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3">
+<img alt="TSH Hormones" class="w-full h-full object-cover transition-transform group-hover:scale-105" data-alt="Minimalist butterfly shape representing the thyroid gland in soft ethereal light and green tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_VlHze6Z_ZN00rXV3BfcmZq1ESm2kZZ3lufFN6ZzXtP90FxKOB0xRixWlxNfg1Zz3ikWnod2wyWIeMa4M0nXSeeB-aFWX4KnUCxD-ePv2Zrjz6hKEZTVF6P7spzE-MALETRArkkocJfsyqbpYqz9I5sTo9QE2GNBY1kqKYyE3tLsq94RfqaCIxED55FrGoEiCipXhim8m0VN8GbagJKWDiFD9soNGjSor7ZuRGNkGHSBwH8A-uy53ggLoMia74sCFhDKTCc6B8rw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<span class="absolute bottom-2 left-3 text-white text-xs font-bold px-2 py-0.5 bg-secondary rounded-full">TSH</span>
+</div>
+<h5 class="font-bold text-primary leading-tight">Thyroid Health and Metabolism</h5>
+</div>
+<div class="group cursor-pointer">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3">
+<img alt="Sleep Hygiene" class="w-full h-full object-cover transition-transform group-hover:scale-105" data-alt="Morning sunlight filtering through a window onto a comfortable bed with soft linens" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxZ1PKL9SCooWtmTxvclMsU4h9cwVteTTZqR5g-T7G-Hf4mtlMQFzcXjpypTOlyR4HXPvdC9e72_ycAgxadV-tSNCPpXWR1LT9wO-KqTneEz2Mjzk-hc9Z7LXJDTO9QWiittQyRuEJstiDTA7oDmLIM9Us_UAWcxZKXxflOGHFSK_GyvQtOYSbnz1IEkhcVlmmmC8tr3mhvc92oxDk2YGEF_C4r40XEk0oNdOlICC7V0xUsSvZcbYOxFv9FNnqBmT0YgwQPcMBGkE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<span class="absolute bottom-2 left-3 text-white text-xs font-bold px-2 py-0.5 bg-stone-600 rounded-full">Sleep</span>
+</div>
+<h5 class="font-bold text-primary leading-tight">Optimizing Your Circadian Rhythm</h5>
+</div>
+</div>
+</section>
+<!-- Doctor Discussion Guide -->
+<section class="pb-16">
+<div class="bg-primary text-white rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<h3 class="text-2xl font-bold mb-1">Doctor Discussion Guide</h3>
+<p class="text-on-primary-container text-white/80">A condensed, clinical summary of your latest trends to review with your PCP.</p>
+</div>
+</div>
+<button class="bg-white text-primary px-8 py-3 rounded-lg font-extrabold flex items-center gap-2 hover:bg-stone-100 transition-colors">
+<span>Download Guide</span>
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+</body></html>

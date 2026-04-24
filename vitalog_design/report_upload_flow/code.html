@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitalog | The Mindful Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f3f1ea",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#eae8e1",
+                        "surface-container-low": "#f6f4ed",
+                        "secondary-container": "#b6ecc9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#414943",
+                        "secondary": "#36684c",
+                        "on-secondary": "#ffffff",
+                        "outline": "#717972",
+                        "secondary-fixed-dim": "#9dd2b1",
+                        "on-primary-fixed": "#0a2100",
+                        "on-primary-container": "#e9ffd4",
+                        "surface-container-highest": "#e4e2dc",
+                        "on-primary-fixed-variant": "#2c4f15",
+                        "on-tertiary-fixed": "#341100",
+                        "background": "#fbf9f2",
+                        "surface-tint": "#43682b",
+                        "primary-container": "#567c3d",
+                        "surface-bright": "#fbf9f2",
+                        "outline-variant": "#c0c9c0",
+                        "secondary-fixed": "#b9efcc",
+                        "on-secondary-fixed-variant": "#1d5036",
+                        "surface-container": "#f0eee7",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#fff6f3",
+                        "on-secondary-container": "#3b6c51",
+                        "error-container": "#ffdad6",
+                        "on-background": "#1b1c18",
+                        "primary": "#3e6327",
+                        "inverse-surface": "#30312c",
+                        "surface-dim": "#dcdad3",
+                        "on-tertiary-fixed-variant": "#723612",
+                        "tertiary-fixed": "#ffdbcb",
+                        "tertiary-container": "#a75f38",
+                        "primary-fixed-dim": "#a8d38a",
+                        "surface": "#fbf9f2",
+                        "primary-fixed": "#c4efa3",
+                        "surface-variant": "#e4e2dc",
+                        "tertiary": "#894823",
+                        "on-secondary-fixed": "#002111",
+                        "inverse-primary": "#a8d38a",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "on-surface": "#1b1c18",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 180px;
+            gap: 1.5rem;
+        }
+        .modal-blur {
+            backdrop-filter: blur(8px);
+            background-color: rgba(27, 28, 24, 0.4);
+        }
+        .custom-dashed {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='24' ry='24' stroke='%23C8DFD0' stroke-width='3' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fbf9f2]/70 dark:bg-[#1b1c18]/70 backdrop-blur-xl flex justify-between items-center px-8 py-4 w-full">
+<div class="flex items-center gap-2">
+<span class="text-2xl font-bold text-[#3e6327] dark:text-[#567c3d] italic font-headline">Vitalog</span>
+</div>
+<div class="hidden md:flex items-center gap-8 font-headline text-lg">
+<a class="text-[#3e6327] dark:text-[#567c3d] border-b-2 border-[#3e6327] hover:opacity-100 transition-opacity duration-300" href="#">Journal</a>
+<a class="text-[#1b1c18] dark:text-[#fbf9f2] opacity-60 hover:opacity-100 transition-opacity duration-300" href="#">Vitals</a>
+<a class="text-[#1b1c18] dark:text-[#fbf9f2] opacity-60 hover:opacity-100 transition-opacity duration-300" href="#">Reports</a>
+<a class="text-[#1b1c18] dark:text-[#fbf9f2] opacity-60 hover:opacity-100 transition-opacity duration-300" href="#">Community</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-highest border-none rounded-full text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search insights..." type="text"/>
+</div>
+<span class="material-symbols-outlined text-[#3e6327] cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-[#3e6327] cursor-pointer">settings</span>
+<img alt="User profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="Portrait of a professional Indian woman in a modern office with soft natural lighting and minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5RxVQc26TLSDbNyRfonPc1STZWXL4NoK_vqxifXfN1hYWsuQ-xYNpD3jPlV6YA2XzHufE0_K1qK7YRJhILXRmf1BQCzqES2z_CYt-bYjGVZNQkqlSGITIDuHL84F4-HTomNccGZTBAo6E8N3MSCdiZ3VIFlt_mfIRp5Hs8ciaDDoXR27SkVMdHHzEi-l42r3zRhjg92OOXmGbnDi66-7l37Bn4t-hkDPFOJ0NVZTaU53JFN03qCG3fp-4j69IjraCPnd7896bhwU"/>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 z-40 bg-[#f6f4ed] dark:bg-[#1b1c18] hidden md:flex flex-col pt-24 pb-8">
+<div class="px-6 mb-8">
+<h2 class="font-headline font-bold text-[#3e6327] text-xl">The Mindful Curator</h2>
+<p class="text-xs text-on-background opacity-70">Elevating your health narrative</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 px-6 py-3 text-[#3e6327] dark:text-[#567c3d] font-bold bg-[#fbf9f2] dark:bg-[#242620] rounded-r-full hover:bg-[#e4e2dc] transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-medium text-sm">Journal</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-[#1b1c18] dark:text-[#fbf9f2] opacity-70 hover:bg-[#e4e2dc] transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">monitor_heart</span>
+<span class="font-medium text-sm">Vitals</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-[#1b1c18] dark:text-[#fbf9f2] opacity-70 hover:bg-[#e4e2dc] transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-medium text-sm">Reports</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-[#1b1c18] dark:text-[#fbf9f2] opacity-70 hover:bg-[#e4e2dc] transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-medium text-sm">Insights</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-[#1b1c18] dark:text-[#fbf9f2] opacity-70 hover:bg-[#e4e2dc] transition-colors active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-medium text-sm">Community</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:shadow-lg transition-shadow">
+<span class="material-symbols-outlined">upload_file</span>
+                Upload Report
+            </button>
+</div>
+</aside>
+<!-- Main Content (Dashboard Background) -->
+<main class="md:ml-64 pt-24 px-8 pb-12">
+<header class="mb-12">
+<h1 class="font-headline text-5xl text-on-background mb-4">Namaste, Arjun</h1>
+<p class="text-body-lg text-on-surface-variant max-w-2xl">Your health journal is waiting for its first entry. Let's start by curating your recent medical records into actionable insights.</p>
+</header>
+<!-- Bento Grid Skeleton for Background -->
+<div class="bento-grid opacity-20">
+<div class="col-span-2 row-span-2 bg-surface-container rounded-2xl p-8 flex flex-col justify-center items-center">
+<span class="material-symbols-outlined text-6xl text-outline-variant mb-4">history_edu</span>
+<p class="font-headline text-xl">History of Wellness</p>
+</div>
+<div class="col-span-2 row-span-1 bg-surface-container-high rounded-2xl"></div>
+<div class="col-span-1 row-span-1 bg-surface-container-low rounded-2xl"></div>
+<div class="col-span-1 row-span-2 bg-surface-container-highest rounded-2xl"></div>
+<div class="col-span-2 row-span-1 bg-surface-container rounded-2xl"></div>
+</div>
+</main>
+<!-- Modal Overlay Backdrop -->
+<div class="fixed inset-0 z-[60] modal-blur flex items-center justify-center p-4">
+<!-- Step 1 Modal (The active view) -->
+<div class="bg-white w-full max-w-[640px] rounded-2xl shadow-2xl relative overflow-hidden flex flex-col">
+<!-- Close Button -->
+<button class="absolute top-6 right-6 text-on-background opacity-40 hover:opacity-100">
+<span class="material-symbols-outlined">close</span>
+</button>
+<!-- Modal Content -->
+<div class="p-10 pt-12">
+<h2 class="font-headline text-3xl text-on-background mb-8">Step 1: Upload a health document</h2>
+<!-- Drag and Drop Zone -->
+<div class="custom-dashed w-full h-[320px] rounded-2xl bg-surface-container-low flex flex-col items-center justify-center p-8 text-center cursor-pointer hover:bg-surface transition-colors">
+<div class="w-16 h-16 bg-[#C8DFD0]/30 rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-4xl text-[#36684c]" style="font-variation-settings: 'FILL' 1;">cloud_upload</span>
+</div>
+<p class="text-xl font-medium text-on-background mb-2">Drag your report here or click to browse</p>
+<p class="text-sm text-on-surface-variant mb-8 opacity-70">PDF, JPG, PNG — up to 20MB</p>
+<div class="flex flex-wrap justify-center gap-2">
+<span class="text-xs bg-surface-container-highest px-3 py-1.5 rounded-full text-on-surface-variant font-medium">Blood test</span>
+<span class="text-xs bg-surface-container-highest px-3 py-1.5 rounded-full text-on-surface-variant font-medium">Prescription</span>
+<span class="text-xs bg-surface-container-highest px-3 py-1.5 rounded-full text-on-surface-variant font-medium">Discharge summary</span>
+<span class="text-xs bg-surface-container-highest px-3 py-1.5 rounded-full text-on-surface-variant font-medium">Scan report</span>
+</div>
+</div>
+<p class="mt-8 text-center text-sm text-on-surface-variant italic opacity-60">
+                    Works with: Blood test · Prescription · Discharge summary · Scan report
+                </p>
+</div>
+</div>
+<!-- HIDDEN STEP VARIATIONS (FOR PREVIEW PURPOSES) -->
+<!-- These are commented out but follow the same structure -->
+<!-- Step 2: Extracting -->
+<!--
+        <div class="bg-white w-full max-w-[640px] rounded-2xl shadow-2xl p-10 pt-12">
+            <h2 class="font-headline text-3xl text-on-background mb-8">Step 2: Extracting</h2>
+            <div class="flex gap-10">
+                <div class="w-1/3 aspect-[3/4] bg-surface-container rounded-lg overflow-hidden relative border border-outline-variant/20 shadow-sm">
+                    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=300" data-alt="A close-up of a blurred medical report document showing data points and charts with professional typography" class="w-full h-full object-cover grayscale opacity-50">
+                    <div class="absolute inset-0 bg-primary/5"></div>
+                </div>
+                <div class="w-2/3 space-y-6 pt-4">
+                    <div class="flex items-center gap-4">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        <p class="text-on-background">Document uploaded securely</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        <p class="text-on-background">Reading report format...</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="material-symbols-outlined text-primary animate-spin">progress_activity</span>
+                        <p class="text-on-background font-bold">Extracting health values...</p>
+                    </div>
+                    <div class="flex items-center gap-4 opacity-40">
+                        <span class="material-symbols-outlined">radio_button_unchecked</span>
+                        <p class="text-on-background">Generating explanation...</p>
+                    </div>
+                    <p class="text-sm text-on-surface-variant mt-12 pt-8 border-t border-surface-container">
+                        This takes about 10–15 seconds. We're reading every value carefully.
+                    </p>
+                </div>
+            </div>
+        </div>
+        -->
+<!-- Step 3: Profile Selection -->
+<!--
+        <div class="bg-white w-full max-w-[640px] rounded-2xl shadow-2xl p-10 pt-12">
+            <h2 class="font-headline text-3xl text-on-background mb-8">Step 3: Who is this report for?</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl border-2 border-primary bg-primary/5 flex flex-col items-center gap-3 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" data-alt="Close-up portrait of a smiling Indian man with short hair and glasses in warm light" class="w-20 h-20 rounded-full object-cover">
+                    <div class="text-center">
+                        <p class="font-bold text-on-background">Arjun</p>
+                        <p class="text-xs text-on-surface-variant">Self</p>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl border border-outline-variant hover:border-primary transition-colors flex flex-col items-center gap-3 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" data-alt="Portrait of a young Indian woman with long dark hair smiling softly with a cream background" class="w-20 h-20 rounded-full object-cover">
+                    <div class="text-center">
+                        <p class="font-bold text-on-background">Maya</p>
+                        <p class="text-xs text-on-surface-variant">Spouse</p>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-container-low transition-colors">
+                    <span class="material-symbols-outlined text-outline">add</span>
+                    <p class="text-xs font-bold text-outline">Add new profile</p>
+                </div>
+            </div>
+        </div>
+        -->
+<!-- Step 4: Ready -->
+<!--
+        <div class="bg-white w-full max-w-[640px] rounded-2xl shadow-2xl p-10 pt-12">
+            <div class="flex items-start justify-between mb-8">
+                <div>
+                    <h2 class="font-headline text-3xl text-on-background mb-2">Step 4: Your report is ready</h2>
+                    <p class="text-on-surface-variant">We've identified 12 health markers.</p>
+                </div>
+                <div class="w-12 h-12 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                </div>
+            </div>
+            
+            <div class="bg-surface-container-low rounded-xl p-6 mb-10">
+                <h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-4">Extracted Values</h4>
+                <div class="flex flex-wrap gap-3">
+                    <span class="bg-white border border-outline-variant/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-primary"></span> HbA1c: 5.4%
+                    </span>
+                    <span class="bg-white border border-outline-variant/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-tertiary"></span> Vitamin D: 22 ng/mL
+                    </span>
+                    <span class="bg-white border border-outline-variant/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-primary"></span> LDL: 98 mg/dL
+                    </span>
+                    <span class="bg-white border border-outline-variant/30 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-primary"></span> TSH: 2.1 mIU/L
+                    </span>
+                    <span class="text-sm text-primary font-bold px-2 py-2 cursor-pointer">+8 more</span>
+                </div>
+            </div>
+
+            <button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:shadow-lg transition-shadow">
+                View full explanation
+                <span class="material-symbols-outlined">arrow_right_alt</span>
+            </button>
+        </div>
+        -->
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container/70 backdrop-blur-xl flex justify-around items-center py-4 px-2 z-50">
+<a class="flex flex-col items-center gap-1 text-[#3e6327]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="text-[10px] font-medium">Journal</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-background opacity-60" href="#">
+<span class="material-symbols-outlined">monitor_heart</span>
+<span class="text-[10px] font-medium">Vitals</span>
+</a>
+<div class="relative -top-6">
+<button class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-on-background opacity-60" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[10px] font-medium">Reports</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-background opacity-60" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-[10px] font-medium">Insights</span>
+</a>
+</nav>
+</body></html>

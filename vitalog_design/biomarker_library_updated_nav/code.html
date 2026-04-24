@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Biomarker Library | Vitalog</title>
+<!-- Fonts: Noto Serif for headlines, Manrope for body (substituting DM Sans as per Design System) -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#f0eee7",
+                    "secondary-container": "#b6ecc9",
+                    "on-tertiary-container": "#f7a175",
+                    "inverse-surface": "#30312c",
+                    "on-background": "#1b1c18",
+                    "background": "#fbf9f2",
+                    "outline-variant": "#c3c9b9",
+                    "surface-tint": "#43682b",
+                    "outline": "#73796c",
+                    "inverse-primary": "#a8d38a",
+                    "surface-container-highest": "#e4e2dc",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f6f4ed",
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#36684c",
+                    "on-secondary-fixed-variant": "#1d5036",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dcdad3",
+                    "on-surface": "#1b1c18",
+                    "primary-fixed-dim": "#a8d38a",
+                    "surface": "#fbf9f2",
+                    "on-surface-variant": "#43493d",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "on-primary-container": "#98c27b",
+                    "on-tertiary-fixed": "#341100",
+                    "secondary-fixed": "#b9efcc",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-variant": "#e4e2dc",
+                    "secondary-fixed-dim": "#9dd2b1",
+                    "inverse-on-surface": "#f3f1ea",
+                    "tertiary": "#562100",
+                    "on-secondary-container": "#3b6c51",
+                    "surface-bright": "#fbf9f2",
+                    "on-primary-fixed": "#0a2100",
+                    "error-container": "#ffdad6",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#c4efa3",
+                    "primary-container": "#2d5016",
+                    "tertiary-fixed": "#ffdbcb",
+                    "primary": "#173901",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#733613",
+                    "on-primary-fixed-variant": "#2c4f15",
+                    "on-tertiary-fixed-variant": "#723612",
+                    "surface-container-high": "#eae8e1",
+                    "on-secondary-fixed": "#002111"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .vitality-gradient { background: linear-gradient(135deg, #3e6327 0%, #567c3d 100%); }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- SideNavBar Standardized to match SCREEN_6 -->
+<aside class="flex flex-col h-screen w-64 py-8 px-6 border-r-0 bg-[#fbf9f2] dark:bg-stone-950 sticky top-0 hidden md:flex shrink-0 z-50">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl vitality-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-white">clinical_notes</span>
+</div>
+<span class="text-2xl font-bold text-[#3e6327] dark:text-[#f6f4ed]">Vitalog</span>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm tracking-wide">Dashboard</span>
+</a>
+<!-- My Reports with Badge -->
+<a class="flex items-center justify-between py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm tracking-wide">My Reports</span>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full">12</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined">timeline</span>
+<span class="text-sm tracking-wide">Health Timeline</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined">family_restroom</span>
+<span class="text-sm tracking-wide">Family</span>
+</a>
+<!-- Active Tab: Biomarker Library -->
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-[#3e6327] dark:text-[#567c3d] font-bold border-r-4 border-[#3e6327] hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined">science</span>
+<span class="text-sm tracking-wide">Biomarker Library</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-xl transition-all scale-95 duration-200 ease-in-out text-stone-500 dark:text-stone-400 font-medium hover:bg-[#e4e2dc] dark:hover:bg-stone-800" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm tracking-wide">Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<div class="bg-surface-container-high p-4 rounded-2xl mb-6">
+<p class="text-xs font-bold text-primary mb-1">Upgrade to Premium</p>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">Deep AI insights and unlimited report storage.</p>
+</div>
+<div class="flex items-center gap-3 px-2">
+<img alt="Arjun's profile picture" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlBFyXrQL4eaXGWoIlOlIzve1Yup39kTS4NCzVV08msWc4N0r8ycrdiP-6zqam11aWf5dhezk-DCSYQJWdL4KG84DB9UPr5Jch8iIfqW7ZMnFZEuXIc8el-zWg1bY28YE123R9YWOsI_N4gpL2GEIe79upvMSmmabFHAHPkwOKS2pzQwWigkNq2-onqYKi2Olq4A0tMpnno6tLQYpyDKRkN6AOSFQAAXtl4QZHsKRjp03UejwFLEQqP2C2fsMrn2aNIMlIyYdZwks"/>
+<div class="flex flex-col overflow-hidden">
+<span class="text-sm font-bold truncate">Arjun</span>
+<span class="text-[10px] text-stone-500 uppercase tracking-widest truncate">The Mindful Curator</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col min-w-0 max-w-[1440px] mx-auto">
+<!-- TopNavBar (Horizontal on mobile, simplified on desktop) -->
+<header class="flex justify-between items-center px-6 md:px-10 h-16 w-full bg-[#fbf9f2]/70 dark:bg-stone-950/70 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="hidden md:block relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-stone-400">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search for markers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="vitality-gradient text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all active:scale-95 hover:shadow-lg hover:shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">upload_file</span>
+                    Upload report
+                </button>
+<div class="flex items-center gap-4 text-stone-600 dark:text-stone-400">
+<span class="material-symbols-outlined cursor-pointer hover:opacity-80">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:opacity-80">account_circle</span>
+</div>
+</div>
+</header>
+<div class="p-6 md:p-10 space-y-10">
+<!-- 1. Page Header -->
+<section class="max-w-4xl">
+<h2 class="text-4xl font-bold text-primary mb-2">Biomarker Library</h2>
+<p class="text-lg text-secondary opacity-80 body">Understand your health markers in plain English.</p>
+</section>
+<!-- 2. Search and Filter -->
+<section class="space-y-6">
+<div class="relative max-w-2xl group">
+<input class="w-full pl-14 pr-6 py-5 bg-white border-2 border-on-tertiary-container/20 rounded-2xl shadow-sm focus:border-on-tertiary-container focus:ring-0 transition-all text-lg placeholder:text-stone-400" placeholder="Search for a specific biomarker (e.g. Vitamin D, Cholesterol)..." type="text"/>
+<span class="absolute left-5 top-1/2 -translate-y-1/2 text-on-tertiary-container">
+<span class="material-symbols-outlined text-3xl">search</span>
+</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-5 py-2 bg-secondary text-white rounded-full text-sm font-semibold transition-all">All</button>
+<button class="px-5 py-2 bg-surface-container-high text-on-surface-variant hover:bg-secondary-container/50 rounded-full text-sm font-semibold transition-all">Blood Count</button>
+<button class="px-5 py-2 bg-surface-container-high text-on-surface-variant hover:bg-secondary-container/50 rounded-full text-sm font-semibold transition-all">Liver</button>
+<button class="px-5 py-2 bg-surface-container-high text-on-surface-variant hover:bg-secondary-container/50 rounded-full text-sm font-semibold transition-all">Kidney</button>
+<button class="px-5 py-2 bg-surface-container-high text-on-surface-variant hover:bg-secondary-container/50 rounded-full text-sm font-semibold transition-all">Vitamins</button>
+<button class="px-5 py-2 bg-surface-container-high text-on-surface-variant hover:bg-secondary-container/50 rounded-full text-sm font-semibold transition-all">Thyroid</button>
+</div>
+</section>
+<!-- 3. Featured Marker -->
+<section>
+<div class="bg-gradient-to-br from-white to-secondary-container/20 border border-secondary-container/30 rounded-3xl p-8 md:p-10 flex flex-col md:flex-row gap-10 items-center overflow-hidden relative">
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-secondary-container/10 rounded-full blur-3xl"></div>
+<div class="flex-1 space-y-6 relative z-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-xs font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            Marker of the Day
+                        </div>
+<h3 class="text-4xl font-bold text-secondary">Ferritin</h3>
+<p class="text-lg leading-relaxed text-on-surface-variant font-medium">
+                            Think of Ferritin as your body's "iron savings account." It's a protein that stores iron, releasing it when your body needs more.
+                        </p>
+<div class="space-y-2">
+<h4 class="text-xl font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">help_outline</span>
+                                Why it matters
+                            </h4>
+<p class="text-stone-600">Low levels often mean you're running low on iron (anemia), while very high levels can indicate inflammation or excess iron storage.</p>
+</div>
+<button class="text-secondary font-bold flex items-center gap-2 hover:gap-3 transition-all">
+                            Read Full Deep Dive <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="w-full md:w-80 bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/50 shadow-xl relative z-10">
+<p class="text-sm font-bold text-stone-500 mb-4 flex justify-between">
+                            Your Trend <span>Last 6 Months</span>
+</p>
+<!-- Sparkline Visualization -->
+<div class="h-32 flex items-end gap-1 mb-4">
+<div class="flex-1 bg-secondary-container rounded-t-md h-[40%]" title="Aug: 45 ng/mL"></div>
+<div class="flex-1 bg-secondary-container rounded-t-md h-[35%]" title="Sep: 38 ng/mL"></div>
+<div class="flex-1 bg-secondary-container rounded-t-md h-[55%]" title="Oct: 62 ng/mL"></div>
+<div class="flex-1 bg-secondary-container rounded-t-md h-[48%]" title="Nov: 54 ng/mL"></div>
+<div class="flex-1 bg-primary rounded-t-md h-[65%]" title="Dec: 74 ng/mL"></div>
+</div>
+<div class="flex items-center justify-between border-t border-stone-100 pt-4">
+<div>
+<p class="text-xs text-stone-500 font-bold">LATEST VALUE</p>
+<p class="text-2xl font-bold text-primary">74 <span class="text-sm font-normal text-stone-400">ng/mL</span></p>
+</div>
+<div class="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">Optimal</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Library Grid -->
+<section class="space-y-8 pb-20">
+<div class="flex items-center justify-between">
+<h3 class="text-2xl font-bold text-secondary">Common Biomarkers</h3>
+<div class="flex gap-2">
+<button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50"><span class="material-symbols-outlined">grid_view</span></button>
+<button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50"><span class="material-symbols-outlined">list</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1: HbA1c -->
+<div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-xl font-bold text-secondary">HbA1c</h4>
+<span class="px-2 py-1 bg-secondary-container/40 text-on-secondary-container text-xs font-bold rounded">Your last: 5.4%</span>
+</div>
+<p class="text-stone-600 text-sm mb-6 flex-1">A measure of your average blood sugar levels over the past 2-3 months.</p>
+<div class="flex items-center justify-between mt-auto">
+<a class="text-secondary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                                View Details
+                                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<span class="material-symbols-outlined text-stone-200">glucose</span>
+</div>
+</div>
+<!-- Card 2: TSH -->
+<div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-xl font-bold text-secondary">TSH</h4>
+<span class="px-2 py-1 bg-secondary-container/40 text-on-secondary-container text-xs font-bold rounded">Your last: 1.8 mIU/L</span>
+</div>
+<p class="text-stone-600 text-sm mb-6 flex-1">Thyroid-stimulating hormone determines how hard your thyroid gland is working to control your metabolism.</p>
+<div class="flex items-center justify-between mt-auto">
+<a class="text-secondary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                                View Details
+                                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<span class="material-symbols-outlined text-stone-200">endocrinology</span>
+</div>
+</div>
+<!-- Card 3: HDL Cholesterol -->
+<div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-xl font-bold text-secondary">HDL Cholesterol</h4>
+<span class="px-2 py-1 bg-secondary-container/40 text-on-secondary-container text-xs font-bold rounded">Your last: 62 mg/dL</span>
+</div>
+<p class="text-stone-600 text-sm mb-6 flex-1">The "good" cholesterol that helps remove other forms of cholesterol from your bloodstream.</p>
+<div class="flex items-center justify-between mt-auto">
+<a class="text-secondary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                                View Details
+                                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<span class="material-symbols-outlined text-stone-200">cardiology</span>
+</div>
+</div>
+<!-- Card 4: Vitamin D -->
+<div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-xl font-bold text-secondary">Vitamin D</h4>
+<span class="px-2 py-1 bg-error-container text-on-error-container text-xs font-bold rounded">Your last: 24 ng/mL</span>
+</div>
+<p class="text-stone-600 text-sm mb-6 flex-1">A vital nutrient for bone health and immune function, often absorbed through sunlight.</p>
+<div class="flex items-center justify-between mt-auto">
+<a class="text-secondary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                                View Details
+                                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<span class="material-symbols-outlined text-stone-200">sunny</span>
+</div>
+</div>
+<!-- Card 5: ALT (Liver Enzyme) -->
+<div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-xl font-bold text-secondary">ALT</h4>
+<span class="px-2 py-1 bg-secondary-container/40 text-on-secondary-container text-xs font-bold rounded">Your last: 22 U/L</span>
+</div>
+<p class="text-stone-600 text-sm mb-6 flex-1">An enzyme found primarily in the liver; high levels can suggest liver cell damage or irritation.</p>
+<div class="flex items-center justify-between mt-auto">
+<a class="text-secondary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                                View Details
+                                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<span class="material-symbols-outlined text-stone-200">monitor_heart</span>
+</div>
+</div>
+<!-- Card 6: Creatinine -->
+<div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-xl font-bold text-secondary">Creatinine</h4>
+<span class="px-2 py-1 bg-secondary-container/40 text-on-secondary-container text-xs font-bold rounded">Your last: 0.9 mg/dL</span>
+</div>
+<p class="text-stone-600 text-sm mb-6 flex-1">A waste product from muscle breakdown that kidneys filter out; it helps assess kidney function.</p>
+<div class="flex items-center justify-between mt-auto">
+<a class="text-secondary font-bold text-sm flex items-center gap-1 hover:underline" href="#">
+                                View Details
+                                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<span class="material-symbols-outlined text-stone-200">water_drop</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-stone-50 border-t border-stone-200 flex justify-around items-center h-16 px-2 z-20">
+<a class="flex flex-col items-center gap-1 text-stone-500" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-stone-500" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[10px] font-bold">Reports</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">science</span>
+<span class="text-[10px] font-bold">Library</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-stone-500" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Settings</span>
+</a>
+</nav>
+</body></html>
