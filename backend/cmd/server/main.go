@@ -19,6 +19,7 @@ import (
 	"github.com/vitalog/backend/internal/handler"
 	"github.com/vitalog/backend/internal/middleware"
 	"github.com/vitalog/backend/internal/migrate"
+	"github.com/vitalog/backend/internal/observability"
 	"github.com/vitalog/backend/internal/repository"
 	"github.com/vitalog/backend/internal/service"
 	"github.com/vitalog/backend/internal/storage"
@@ -36,6 +37,8 @@ func main() {
 		Level: logLevel,
 	}))
 	slog.SetDefault(logger)
+	logHub := observability.NewLogHub(500)
+	observability.SetDefaultHub(logHub)
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -95,6 +98,7 @@ func main() {
 	razorpayHandler := handler.NewRazorpayHandler(profileRepo, paymentEventRepo, cfg.RazorpayWebhookSecret)
 	subscriptionHandler := handler.NewSubscriptionHandler(paymentEventRepo, profileRepo, cfg.RazorpayKeyID, cfg.RazorpayKeySecret)
 	healthHandler := handler.NewHealthHandler(pool)
+	devLogsHandler := handler.NewDevLogsHandler(logHub, cfg.IsDevelopment())
 
 	// H2: rate limiter for document uploads (10 uploads per user per hour).
 	uploadLimiter := middleware.NewRateLimiter(10)
@@ -105,9 +109,9 @@ func main() {
 
 	r.Use(chimw.RequestID)
 	r.Use(chimw.RealIP)
-	r.Use(chimw.Logger)
+	r.Use(middleware.RequestLogger(logHub))
 	r.Use(chimw.Recoverer)
-	r.Use(middleware.CORS)          // C2: allowlist-based
+	r.Use(middleware.CORS)            // C2: allowlist-based
 	r.Use(middleware.SecurityHeaders) // M7: CSP + X-Frame-Options etc.
 	r.Use(chimw.Timeout(60 * time.Second))
 
@@ -115,6 +119,7 @@ func main() {
 
 	r.Route("/api", func(r chi.Router) {
 		r.Use(middleware.Auth(keyfunc))
+		r.Get("/dev/logs/stream", devLogsHandler.Stream)
 
 		r.Route("/documents", func(r chi.Router) {
 			r.Get("/", docHandler.List)
@@ -128,8 +133,8 @@ func main() {
 			r.Get("/{id}/file", docHandler.DownloadFile)
 			r.Delete("/{id}", docHandler.Delete)
 			r.With(uploadLimiter.Middleware(func(r *http.Request) string {
-			return middleware.GetUserID(r.Context())
-		})).Post("/{id}/extract", extractionHandler.Extract)
+				return middleware.GetUserID(r.Context())
+			})).Post("/{id}/extract", extractionHandler.Extract)
 		})
 
 		r.Get("/dashboard/stats", dashboardHandler.Stats)

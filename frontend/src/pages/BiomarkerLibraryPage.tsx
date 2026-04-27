@@ -25,6 +25,7 @@ import type { BiomarkerEntry } from '../types/biomarkers'
 interface Layer2FindingDefinition {
   canonical_name: string
   plain_explanation?: string
+  reference_range?: string | null
 }
 
 export function parseLayer2Findings(raw: string | null): Layer2FindingDefinition[] {
@@ -235,14 +236,31 @@ export function BiomarkerLibraryPage() {
     return map
   }, [completeDocs])
 
+  const referenceRangeMap = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const doc of completeDocs) {
+      for (const f of parseLayer2Findings(doc.explanation_text)) {
+        const referenceRange = f.reference_range?.trim()
+        if (f.canonical_name && referenceRange && !map.has(f.canonical_name)) {
+          map.set(f.canonical_name, referenceRange)
+        }
+      }
+    }
+    return map
+  }, [completeDocs])
+
   const userRows = useMemo(() => {
     const rows: BiomarkerEntry[] = []
     for (const hv of latestMap.values()) {
-      rows.push(biomarkerRowFromLatest(hv, plainExplanationMap.get(hv.canonical_name)))
+      rows.push(biomarkerRowFromLatest(
+        hv,
+        plainExplanationMap.get(hv.canonical_name),
+        referenceRangeMap.get(hv.canonical_name),
+      ))
     }
     rows.sort((a, b) => a.display_name.localeCompare(b.display_name))
     return rows
-  }, [latestMap, plainExplanationMap])
+  }, [latestMap, plainExplanationMap, referenceRangeMap])
 
   const categoryChips = useMemo(() => {
     const present = new Set(userRows.map((r) => r.category))
@@ -261,8 +279,8 @@ export function BiomarkerLibraryPage() {
     const canonical = userCanonicalsSorted[idx]!
     const latest = latestMap.get(canonical)
     if (!latest) return null
-    return biomarkerRowFromLatest(latest, plainExplanationMap.get(canonical))
-  }, [user?.id, userCanonicalsSorted, latestMap, plainExplanationMap])
+    return biomarkerRowFromLatest(latest, plainExplanationMap.get(canonical), referenceRangeMap.get(canonical))
+  }, [user?.id, userCanonicalsSorted, latestMap, plainExplanationMap, referenceRangeMap])
 
   const unknownFromData = useMemo(
     () => unknownCanonicalHealthValues(healthValues, allCatalogCanonicals),

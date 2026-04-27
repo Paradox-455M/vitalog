@@ -8,7 +8,7 @@ import { UploadModal } from '../components/UploadModal'
 import { useDocuments } from '../hooks/useDocuments'
 import { useHealthValues } from '../hooks/useHealthValues'
 import { useFamilyMember } from '../contexts/FamilyMemberContext'
-import { api } from '../lib/api'
+import { api, type PaginatedDocuments } from '../lib/api'
 import { pollWithBackoff } from '../lib/poll'
 
 type DateRange = 'all' | '30days' | '3months' | '6months' | '1year'
@@ -131,20 +131,37 @@ export function ReportsPage() {
 
     const controller = new AbortController()
     abortRef.current = controller
+    const listParams = familyFilterId ? { family_member_id: familyFilterId } : undefined
 
     void pollWithBackoff(
       async () => {
-        await queryClient.invalidateQueries({ queryKey: ['documents'] })
-        await queryClient.invalidateQueries({ queryKey: ['health-values'] })
-        const latest = queryClient.getQueryData<typeof documents>(['documents', undefined, undefined, undefined]) ?? []
-        return !latest.some((r) => r.extraction_status === 'pending' || r.extraction_status === 'processing')
+        const latest = await api.documents.list(listParams)
+        const latestById = new Map(latest.items.map((doc) => [doc.id, doc]))
+        queryClient.setQueriesData<PaginatedDocuments>({ queryKey: ['documents'] }, (current) => {
+          if (!current) return current
+          return {
+            ...current,
+            items: current.items.map((doc) => latestById.get(doc.id) ?? doc),
+          }
+        })
+
+        const complete = !latest.items.some(
+          (r) => r.extraction_status === 'pending' || r.extraction_status === 'processing'
+        )
+        if (complete) {
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['health-values'] }),
+            queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+          ])
+        }
+        return complete
       },
       controller.signal,
       { initial: 2000, max: 30_000, factor: 1.5 },
     )
 
     return () => controller.abort()
-  }, [reports, queryClient])
+  }, [familyFilterId, reports, queryClient])
 
   const uniqueLabs = useMemo(() => {
     const labs = new Set(reports.map((r) => r.lab_name).filter(Boolean) as string[])

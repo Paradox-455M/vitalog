@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -9,11 +10,11 @@ import (
 
 	"github.com/vitalog/backend/internal/middleware"
 	"github.com/vitalog/backend/internal/model"
+	"github.com/vitalog/backend/internal/observability"
 	"github.com/vitalog/backend/internal/repository"
 	"github.com/vitalog/backend/internal/service"
 	"github.com/vitalog/backend/internal/storage"
 )
-
 
 type ExtractionHandler struct {
 	docRepo *repository.DocumentRepository
@@ -66,6 +67,11 @@ func (h *ExtractionHandler) Extract(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if doc.ExtractionStatus == model.ExtractionStatusProcessing {
+		slog.Info("extraction already processing", "doc_id", docID, "user_id", userUUID)
+		observability.Publish("info", "extraction_already_processing", map[string]any{
+			"doc_id":  docID.String(),
+			"user_id": userUUID.String(),
+		})
 		respondJSON(w, http.StatusAccepted, map[string]string{
 			"status":      "processing",
 			"document_id": docID.String(),
@@ -73,6 +79,11 @@ func (h *ExtractionHandler) Extract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	slog.Info("extraction queued", "doc_id", docID, "user_id", userUUID)
+	observability.Publish("info", "extraction_queued", map[string]any{
+		"doc_id":  docID.String(),
+		"user_id": userUUID.String(),
+	})
 	go h.docH.runExtraction(doc)
 
 	respondJSON(w, http.StatusAccepted, map[string]string{

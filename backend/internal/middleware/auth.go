@@ -55,6 +55,7 @@ func Auth(keyfunc jwt.Keyfunc) func(http.Handler) http.Handler {
 				return
 			}
 
+			SetLogUserID(r.Context(), userID)
 			ctx := context.WithValue(r.Context(), UserIDKey, userID)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

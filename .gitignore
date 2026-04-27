@@ -43,6 +43,9 @@ Thumbs.db
 
 # Local agent / harness artifacts
 .hackcode/
+.cursor/agents/
+backend/.claude/
+backend/graphify-out/
 
 # Supabase local (if present)
 **/supabase/.branches/
@@ -51,3 +54,4 @@ Thumbs.db
 # Misc
 .cache/
 coverage/
+/package-lock.json

@@ -12,6 +12,7 @@ describe('parseLayer2Findings', () => {
         {
           canonical_name: 'vitamin_b12_cyanocobalamin_eclia',
           plain_explanation: 'This test measures Vitamin B12, which is vital for nerve function and making red blood cells.',
+          reference_range: '211.00 - 946.00 pg/mL',
         },
       ],
     }))
@@ -20,6 +21,7 @@ describe('parseLayer2Findings', () => {
       {
         canonical_name: 'vitamin_b12_cyanocobalamin_eclia',
         plain_explanation: 'This test measures Vitamin B12, which is vital for nerve function and making red blood cells.',
+        reference_range: '211.00 - 946.00 pg/mL',
       },
     ])
   })
@@ -36,6 +38,7 @@ describe('parseLayer2Findings', () => {
           {
             canonical_name: 'hemoglobin',
             plain_explanation: 'Hemoglobin is the protein in your blood that carries oxygen.',
+            reference_range: '12.00 - 15.00 g/dL',
           },
         ],
       },
@@ -45,6 +48,7 @@ describe('parseLayer2Findings', () => {
       {
         canonical_name: 'hemoglobin',
         plain_explanation: 'Hemoglobin is the protein in your blood that carries oxygen.',
+        reference_range: '12.00 - 15.00 g/dL',
       },
     ])
   })

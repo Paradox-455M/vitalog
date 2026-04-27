@@ -19,6 +19,7 @@ import (
 
 	"github.com/vitalog/backend/internal/middleware"
 	"github.com/vitalog/backend/internal/model"
+	"github.com/vitalog/backend/internal/observability"
 	"github.com/vitalog/backend/internal/repository"
 	"github.com/vitalog/backend/internal/service"
 	"github.com/vitalog/backend/internal/storage"
@@ -35,14 +36,14 @@ const errCodeFreeUploadLimit = "free_upload_limit"
 var unsafeFilenameChars = regexp.MustCompile(`[^a-zA-Z0-9._\- ]`)
 
 type DocumentHandler struct {
-	docRepo       *repository.DocumentRepository
-	hvRepo        *repository.HealthValueRepository
-	profileRepo   *repository.ProfileRepository
-	familyRepo    *repository.FamilyRepository
-	notifRepo     *repository.NotificationRepository
-	storage       *storage.SupabaseStorage
-	analyserSvc   *service.AnalyserService
-	cryptoSvc     interface {
+	docRepo     *repository.DocumentRepository
+	hvRepo      *repository.HealthValueRepository
+	profileRepo *repository.ProfileRepository
+	familyRepo  *repository.FamilyRepository
+	notifRepo   *repository.NotificationRepository
+	storage     *storage.SupabaseStorage
+	analyserSvc *service.AnalyserService
+	cryptoSvc   interface {
 		Encrypt(ctx context.Context, userID uuid.UUID, plaintext []byte) ([]byte, error)
 		Decrypt(ctx context.Context, userID uuid.UUID, ciphertext []byte) ([]byte, error)
 	}
@@ -186,8 +187,19 @@ func (h *DocumentHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		respondError(w, http.StatusInternalServerError, "failed to create document")
 		return
 	}
+	slog.Info("upload accepted", "doc_id", doc.ID, "user_id", userUUID, "content_type", contentType, "bytes", len(fileData))
+	observability.Publish("info", "upload_accepted", map[string]any{
+		"doc_id":       doc.ID.String(),
+		"user_id":      userUUID.String(),
+		"content_type": contentType,
+		"bytes":        len(fileData),
+	})
 
 	// Single extraction trigger for this document (clients should not also POST /extract unless retrying).
+	slog.Info("extraction queued", "doc_id", doc.ID)
+	observability.Publish("info", "extraction_queued", map[string]any{
+		"doc_id": doc.ID.String(),
+	})
 	go h.runExtraction(doc)
 
 	respondJSON(w, http.StatusCreated, doc)
@@ -536,6 +548,9 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 
 	log := slog.With("doc_id", doc.ID)
 	log.Info("extraction: starting")
+	observability.Publish("info", "extraction_started", map[string]any{
+		"doc_id": doc.ID.String(),
+	})
 
 	mimeType := ""
 	if doc.FileType != nil {
@@ -566,13 +581,24 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 		log.Error("extraction: failed to set processing status", "error", err)
 	}
 
+	log.Info("extraction: analyser call starting")
+	observability.Publish("info", "analyser_call_started", map[string]any{
+		"doc_id": doc.ID.String(),
+	})
 	result, err := h.analyserSvc.AnalyzeFile(ctx, doc.FileName, fileBytes)
 	if err != nil {
 		log.Error("extraction: analyser failed", "error", err)
+		observability.Publish("error", "analyser_call_failed", map[string]any{
+			"doc_id": doc.ID.String(),
+		})
 		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
 		return
 	}
 	log.Info("extraction: analyser returned", "findings", len(result.Layer2.Findings))
+	observability.Publish("info", "analyser_call_completed", map[string]any{
+		"doc_id":   doc.ID.String(),
+		"findings": len(result.Layer2.Findings),
+	})
 
 	reportDate := time.Now()
 	if result.Layer1.PatientInfo.ReportDate != nil {
@@ -638,10 +664,23 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
 		return
 	}
+	observability.Publish("info", "document_extraction_updated", map[string]any{
+		"doc_id":        doc.ID.String(),
+		"status":        string(model.ExtractionStatusComplete),
+		"health_values": len(healthValues),
+	})
 
 	h.emitExtractionNotifications(ctx, doc, healthValues, result.Layer1.PatientInfo.LabName)
+	log.Info("extraction: notification emitted")
+	observability.Publish("info", "extraction_notification_emitted", map[string]any{
+		"doc_id": doc.ID.String(),
+	})
 
 	log.Info("extraction: complete", "health_values", len(healthValues))
+	observability.Publish("info", "extraction_completed", map[string]any{
+		"doc_id":        doc.ID.String(),
+		"health_values": len(healthValues),
+	})
 }
 
 // emitExtractionNotifications creates in-app rows according to user notification preferences.

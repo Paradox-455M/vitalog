@@ -1,11 +1,11 @@
 package service
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"mime"
 	"mime/multipart"
 	"net/http"
@@ -48,12 +48,6 @@ type PipelineResult struct {
 		HasPendingTests    bool              `json:"has_pending_tests"`
 		PendingNote        *string           `json:"pending_note"`
 	} `json:"layer2"`
-}
-
-type analyserEvent struct {
-	Type    string          `json:"type"`
-	Message string          `json:"message"`
-	Raw     json.RawMessage `json:"-"`
 }
 
 type AnalyserService struct {
@@ -123,7 +117,7 @@ func (s *AnalyserService) AnalyzeFile(ctx context.Context, fileName string, file
 			}
 		}
 
-		req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.baseURL+"/api/pipeline-file-stream", bytes.NewReader(bodyBytes))
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.baseURL+"/api/pipeline-file", bytes.NewReader(bodyBytes))
 		if err != nil {
 			return nil, fmt.Errorf("create analyser request: %w", err)
 		}
@@ -146,59 +140,18 @@ func (s *AnalyserService) doRequest(req *http.Request) (*PipelineResult, error) 
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
-		return nil, fmt.Errorf("analyser returned status %d", resp.StatusCode)
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		message := strings.TrimSpace(string(body))
+		if message == "" {
+			return nil, fmt.Errorf("analyser returned status %d", resp.StatusCode)
+		}
+		return nil, fmt.Errorf("analyser returned status %d: %s", resp.StatusCode, message)
 	}
 
-	scanner := bufio.NewScanner(resp.Body)
-	scanner.Buffer(make([]byte, 0, 64*1024), 10*1024*1024)
-
-	var result *PipelineResult
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if !strings.HasPrefix(line, "data: ") {
-			continue
-		}
-		payload := strings.TrimPrefix(line, "data: ")
-		if payload == "" {
-			continue
-		}
-
-		var generic map[string]json.RawMessage
-		if err := json.Unmarshal([]byte(payload), &generic); err != nil {
-			continue
-		}
-
-		var eventType string
-		if rawType, ok := generic["type"]; ok {
-			_ = json.Unmarshal(rawType, &eventType)
-		}
-
-		if eventType == "error" {
-			var message string
-			if rawMsg, ok := generic["message"]; ok {
-				_ = json.Unmarshal(rawMsg, &message)
-			}
-			if message == "" {
-				message = "analyser pipeline error"
-			}
-			return nil, fmt.Errorf("%s", message)
-		}
-
-		if eventType == "result" {
-			var parsed PipelineResult
-			if err := json.Unmarshal([]byte(payload), &parsed); err != nil {
-				return nil, fmt.Errorf("parse analyser result: %w", err)
-			}
-			result = &parsed
-		}
+	var result PipelineResult
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("parse analyser result: %w", err)
 	}
 
-	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("read analyser stream: %w", err)
-	}
-	if result == nil {
-		return nil, fmt.Errorf("no analyser result received")
-	}
-
-	return result, nil
+	return &result, nil
 }

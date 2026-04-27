@@ -1,5 +1,6 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/authContext'
 import { ReportCard, type ReportRow, type FlaggedValue } from '../components/ReportCard'
 import { UploadModal } from '../components/UploadModal'
@@ -10,7 +11,8 @@ import { useProfile } from '../hooks/useProfile'
 import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { greetingFirstName } from '../lib/accountDisplay'
 import { api } from '../lib/api'
-import type { HealthValue, DashboardStats } from '../lib/api'
+import type { HealthValue, DashboardStats, PaginatedDocuments } from '../lib/api'
+import { pollWithBackoff } from '../lib/poll'
 
 type FlaggedValueRow = Pick<
   HealthValue,
@@ -37,6 +39,7 @@ function SkeletonStat() {
 
 export function DashboardPage() {
   const { user } = useAuth()
+  const queryClient = useQueryClient()
   const { profile, loading: profileLoading } = useProfile()
   const { activeMemberId } = useFamilyMember()
   const familyOpt = activeMemberId ? { familyMemberId: activeMemberId } : undefined
@@ -46,13 +49,21 @@ export function DashboardPage() {
   const [apiStats, setApiStats] = useState<DashboardStats | null>(null)
   const [statsLoading, setStatsLoading] = useState(true)
 
-  useEffect(() => {
+  const loadStats = useCallback(async () => {
     setStatsLoading(true)
-    api.dashboard.stats(activeMemberId ? { family_member_id: activeMemberId } : undefined)
-      .then(s => setApiStats(s))
-      .catch(() => setApiStats(null))
-      .finally(() => setStatsLoading(false))
+    try {
+      const stats = await api.dashboard.stats(activeMemberId ? { family_member_id: activeMemberId } : undefined)
+      setApiStats(stats)
+    } catch {
+      setApiStats(null)
+    } finally {
+      setStatsLoading(false)
+    }
   }, [activeMemberId])
+
+  useEffect(() => {
+    void loadStats()
+  }, [loadStats])
 
   const loading = docsLoading || hvLoading
 
@@ -62,6 +73,50 @@ export function DashboardPage() {
   )
 
   const recentReports = useMemo(() => sortedDocuments.slice(0, 3) as unknown as ReportRow[], [sortedDocuments])
+
+  const hasActiveExtraction = useMemo(
+    () => documents.some((doc) => doc.extraction_status === 'pending' || doc.extraction_status === 'processing'),
+    [documents],
+  )
+
+  const pollAbortRef = useRef<AbortController | null>(null)
+  useEffect(() => {
+    if (!hasActiveExtraction) return
+
+    const controller = new AbortController()
+    pollAbortRef.current = controller
+    const listParams = activeMemberId ? { family_member_id: activeMemberId } : undefined
+
+    void pollWithBackoff(
+      async () => {
+        const latest = await api.documents.list(listParams)
+        const latestById = new Map(latest.items.map((doc) => [doc.id, doc]))
+        queryClient.setQueriesData<PaginatedDocuments>({ queryKey: ['documents'] }, (current) => {
+          if (!current) return current
+          return {
+            ...current,
+            items: current.items.map((doc) => latestById.get(doc.id) ?? doc),
+          }
+        })
+
+        const complete = !latest.items.some(
+          (doc) => doc.extraction_status === 'pending' || doc.extraction_status === 'processing'
+        )
+        if (complete) {
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['health-values'] }),
+            queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+            loadStats(),
+          ])
+        }
+        return complete
+      },
+      controller.signal,
+      { initial: 2000, max: 30_000, factor: 1.5 },
+    )
+
+    return () => controller.abort()
+  }, [activeMemberId, hasActiveExtraction, loadStats, queryClient])
 
   const recentFlaggedMap = useMemo(() => {
     const map = new Map<string, FlaggedValue[]>()

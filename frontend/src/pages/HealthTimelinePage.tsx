@@ -52,6 +52,14 @@ function pctChange(series: HealthValue[]): number | undefined {
   return Math.round(((latest - prev) / prev) * 100)
 }
 
+function formatReferenceRange(refLow: number | null, refHigh: number | null, unit: string): string | null {
+  const suffix = unit ? ` ${unit}` : ''
+  if (refLow != null && refHigh != null) return `${refLow}–${refHigh}${suffix}`
+  if (refHigh != null) return `<${refHigh}${suffix}`
+  if (refLow != null) return `>${refLow}${suffix}`
+  return null
+}
+
 function StatCard({
   label,
   value,
@@ -80,6 +88,7 @@ function TrendChartCard({ series, isSpotlight = false }: { series: HealthValue[]
   const unit = latest.unit ?? ''
   const refLow = latest.reference_low
   const refHigh = latest.reference_high
+  const referenceLabel = formatReferenceRange(refLow, refHigh, unit)
   const latestFlagged = latest.is_flagged
 
   const chartData = series.map((hv) => ({
@@ -93,17 +102,11 @@ function TrendChartCard({ series, isSpotlight = false }: { series: HealthValue[]
   const maxVal = Math.max(...values)
   let yMin = minVal
   let yMax = maxVal
-  if (refLow != null && refHigh != null) {
-    yMin = Math.min(minVal, refLow)
-    yMax = Math.max(maxVal, refHigh)
-    const pad = (yMax - yMin) * 0.08 || 1
-    yMin -= pad
-    yMax += pad
-  } else {
-    const pad = (yMax - yMin) * 0.08 || 1
-    yMin -= pad
-    yMax += pad
-  }
+  if (refLow != null) yMin = Math.min(yMin, refLow)
+  if (refHigh != null) yMax = Math.max(yMax, refHigh)
+  const pad = (yMax - yMin) * 0.08 || 1
+  yMin -= pad
+  yMax += pad
   if (Math.abs(yMax - yMin) < 1e-9) {
     yMin -= 1
     yMax += 1
@@ -233,6 +236,24 @@ function TrendChartCard({ series, isSpotlight = false }: { series: HealthValue[]
                 />
               </>
             )}
+            {refLow == null && refHigh != null && (
+              <ReferenceLine
+                y={refHigh}
+                stroke="#36684c"
+                strokeDasharray="3 3"
+                opacity={0.6}
+                label={{ value: 'Upper reference', fontSize: 10, fill: '#414943' }}
+              />
+            )}
+            {refLow != null && refHigh == null && (
+              <ReferenceLine
+                y={refLow}
+                stroke="#36684c"
+                strokeDasharray="3 3"
+                opacity={0.6}
+                label={{ value: 'Lower reference', fontSize: 10, fill: '#414943' }}
+              />
+            )}
             <Line
               type="monotone"
               dataKey="value"
@@ -246,13 +267,10 @@ function TrendChartCard({ series, isSpotlight = false }: { series: HealthValue[]
       </div>
 
       <div className="flex flex-wrap items-center gap-6 mt-4 text-sm text-on-surface-variant border-t border-outline-variant/20 pt-4">
-        {refLow != null && refHigh != null ? (
+        {referenceLabel ? (
           <div className="flex items-center gap-2">
             <span className="w-4 h-4 rounded bg-secondary-container/50" />
-            <span>
-              Reference range ({refLow}–{refHigh}
-              {unit ? ` ${unit}` : ''})
-            </span>
+            <span>Reference range ({referenceLabel})</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">

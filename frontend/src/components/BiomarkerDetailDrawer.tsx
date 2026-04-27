@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import type { BiomarkerEntry } from '../types/biomarkers'
 import type { HealthValue } from '../lib/api'
+import { formatReferenceRange } from '../lib/biomarkerRows'
 
 interface BiomarkerDetailDrawerProps {
   biomarker: BiomarkerEntry | null
@@ -73,6 +74,19 @@ export function BiomarkerDetailDrawer({
 
   if (!biomarker) return null
 
+  const biomarkerReferenceRange =
+    biomarker.normal_range_male === biomarker.normal_range_female
+      ? biomarker.normal_range_male
+      : [biomarker.normal_range_male, biomarker.normal_range_female]
+          .filter((range, index, ranges) => range && ranges.indexOf(range) === index)
+          .join(' / ')
+
+  const latestReferenceRange = latestValue
+    ? biomarkerReferenceRange !== 'See your lab report'
+      ? biomarkerReferenceRange
+      : formatReferenceRange(latestValue)
+    : null
+
   return (
     <>
       {/* Backdrop */}
@@ -140,10 +154,9 @@ export function BiomarkerDetailDrawer({
                 <p className="text-sm text-on-surface-variant mt-1">
                   Report date: {formatReportDate(latestValue.report_date)}
                 </p>
-                {latestValue.reference_low != null && latestValue.reference_high != null && (
+                {latestReferenceRange && latestReferenceRange !== 'See your lab report' && (
                   <p className="text-sm text-on-surface-variant mt-2">
-                    Reference on report: {latestValue.reference_low} – {latestValue.reference_high}
-                    {latestValue.unit ? ` ${latestValue.unit}` : ''}
+                    Reference range: {latestReferenceRange}
                   </p>
                 )}
               </section>
@@ -164,15 +177,8 @@ export function BiomarkerDetailDrawer({
                 <span className="material-symbols-outlined text-secondary">straighten</span>
                 Reference ranges
               </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-surface rounded-lg p-4 border border-outline-variant/20">
-                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Male</p>
-                  <p className="text-lg font-bold text-on-surface">{biomarker.normal_range_male}</p>
-                </div>
-                <div className="bg-surface rounded-lg p-4 border border-outline-variant/20">
-                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Female</p>
-                  <p className="text-lg font-bold text-on-surface">{biomarker.normal_range_female}</p>
-                </div>
+              <div className="bg-surface rounded-lg p-4 border border-outline-variant/20">
+                <p className="text-lg font-bold text-on-surface">{biomarkerReferenceRange}</p>
               </div>
             </section>
 

@@ -451,6 +451,16 @@ show_status() {
   echo ""
 }
 
+show_logs() {
+  section "Live logs"
+  info "Tailing:"
+  echo "     $GO_SERVER_LOG"
+  echo "     $ANALYSER_LOG"
+  echo ""
+  touch "$GO_SERVER_LOG" "$ANALYSER_LOG"
+  tail -F "$GO_SERVER_LOG" "$ANALYSER_LOG"
+}
+
 # ── Help ──────────────────────────────────────────────────────────────────────
 
 show_help() {
@@ -463,9 +473,10 @@ show_help() {
   echo "    (none) / dev    Auto-detect mode from .env, start services"
   echo "    local           Force local Supabase stack (needs Docker)"
   echo "    deploy          Push schema + deploy edge function to remote Supabase"
-  echo "    stop            Stop services gracefully (uses PID files)
-    kill            Force-kill ports 8080, 3000, 5173 immediately"
+  echo "    stop            Stop services gracefully (uses PID files)"
+  echo "    kill            Force-kill ports 8080, 3000, 5173 immediately"
   echo "    status          Show status of all services"
+  echo "    logs            Tail backend and analyser logs live"
   echo "    analyser        Start only the analyser server"
   echo "    help            Show this help"
   echo ""
@@ -524,6 +535,9 @@ case "$CMD" in
     ;;
   status)
     show_status
+    ;;
+  logs)
+    show_logs
     ;;
   analyser)
     analyser_start
