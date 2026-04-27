@@ -65,6 +65,7 @@ func (h *PrivacyHandler) PostAccessEvent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	r.Body = http.MaxBytesReader(w, r.Body, 4*1024) // 4KB limit
 	var body postAccessEventRequest
 	_ = json.NewDecoder(r.Body).Decode(&body)
 
@@ -215,6 +216,7 @@ func (h *PrivacyHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	r.Body = http.MaxBytesReader(w, r.Body, 4*1024) // 4KB limit
 	var req deleteAccountRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respondError(w, http.StatusBadRequest, "invalid request body")

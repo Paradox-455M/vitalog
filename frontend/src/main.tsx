@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/react'
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
 })
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'

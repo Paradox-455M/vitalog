@@ -27,8 +27,12 @@ import (
 func main() {
 	_ = godotenv.Load()
 
+	logLevel := slog.LevelInfo
+	if env := os.Getenv("ENV"); env == "" || env == "development" {
+		logLevel = slog.LevelDebug
+	}
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelDebug,
+		Level: logLevel,
 	}))
 	slog.SetDefault(logger)
 
@@ -74,7 +78,7 @@ func main() {
 
 	docHandler := handler.NewDocumentHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc)
 	extractionHandler := handler.NewExtractionHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc)
-	dashboardHandler := handler.NewDashboardHandler(docRepo)
+	dashboardHandler := handler.NewDashboardHandler(docRepo, familyRepo)
 	familyHandler := handler.NewFamilyHandler(familyRepo, profileRepo, cfg.FamilyLimitFree, cfg.FamilyLimitPro)
 	profileHandler := handler.NewProfileHandler(profileRepo)
 	notifHandler := handler.NewNotificationHandler(profileRepo, notifRepo)
@@ -84,6 +88,8 @@ func main() {
 
 	// H2: rate limiter for document uploads (10 uploads per user per hour).
 	uploadLimiter := middleware.NewRateLimiter(10)
+	// Stricter rate limiter for sensitive endpoints (3 per user per hour).
+	sensitiveLimiter := middleware.NewRateLimiter(3)
 
 	r := chi.NewRouter()
 
@@ -111,7 +117,9 @@ func main() {
 			r.Get("/{id}", docHandler.Get)
 			r.Get("/{id}/signed-url", docHandler.SignedURL)
 			r.Delete("/{id}", docHandler.Delete)
-			r.Post("/{id}/extract", extractionHandler.Extract)
+			r.With(uploadLimiter.Middleware(func(r *http.Request) string {
+			return middleware.GetUserID(r.Context())
+		})).Post("/{id}/extract", extractionHandler.Extract)
 		})
 
 		r.Get("/dashboard/stats", dashboardHandler.Stats)
@@ -140,22 +148,25 @@ func main() {
 			r.Patch("/{id}", notifHandler.Patch)
 		})
 
+		sensitiveMw := sensitiveLimiter.Middleware(func(r *http.Request) string {
+			return middleware.GetUserID(r.Context())
+		})
 		r.Route("/privacy", func(r chi.Router) {
 			r.Post("/access-events", privacyHandler.PostAccessEvent)
 			r.Get("/access-events", privacyHandler.ListAccessEvents)
-			r.Get("/data-export", privacyHandler.DataExport)
-			r.Post("/delete-account", privacyHandler.DeleteAccount)
+			r.With(sensitiveMw).Get("/data-export", privacyHandler.DataExport)
+			r.With(sensitiveMw).Post("/delete-account", privacyHandler.DeleteAccount)
 		})
 
 		r.Route("/subscription", func(r chi.Router) {
 			r.Get("/payments", subscriptionHandler.ListPayments)
-			r.Post("/create-order", subscriptionHandler.CreateOrder)
+			r.With(sensitiveMw).Post("/create-order", subscriptionHandler.CreateOrder)
 		})
 	})
 
 	r.Post("/api/webhooks/razorpay", razorpayHandler.Handle)
 
-	r.NotFound(jsonNotFound)
+	r.NotFound(jsonNotFound(cfg))
 
 	srv := &http.Server{
 		Addr:           ":" + cfg.Port,
@@ -191,13 +202,22 @@ func main() {
 }
 
 // jsonNotFound replaces the default plain-text 404 and helps confirm requests hit *this* API.
-func jsonNotFound(w http.ResponseWriter, r *http.Request) {
-	slog.Debug("not found", "method", r.Method, "path", r.URL.Path)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusNotFound)
-	_ = json.NewEncoder(w).Encode(map[string]string{
-		"error": "not found",
-		"path":  r.URL.Path,
-		"hint":  "Vitalog API: GET /health must return 200. If you see 404 for /api/... paths, a different app may be bound to this port, or the server is an old build — rebuild and run cmd/server; auth routes return 401 without Authorization.",
-	})
+// In production, only return the error; in development, include path and hint for debugging.
+func jsonNotFound(cfg *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		slog.Debug("not found", "method", r.Method, "path", r.URL.Path)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		if cfg.IsDevelopment() {
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"error": "not found",
+				"path":  r.URL.Path,
+				"hint":  "Vitalog API: GET /health must return 200. If you see 404 for /api/... paths, a different app may be bound to this port, or the server is an old build — rebuild and run cmd/server; auth routes return 401 without Authorization.",
+			})
+		} else {
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"error": "not found",
+			})
+		}
+	}
 }

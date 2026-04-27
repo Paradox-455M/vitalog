@@ -40,7 +40,7 @@ func (r *FamilyRepository) GetByID(ctx context.Context, userID, memberID uuid.UU
 	query := `
 		SELECT id, owner_id, name, relationship, date_of_birth, created_at
 		FROM family_members
-		WHERE id = $1 AND owner_id = $2
+		WHERE id = $1 AND owner_id = $2 AND deleted_at IS NULL
 	`
 	var member model.FamilyMember
 	err := r.pool.QueryRow(ctx, query, memberID, userID).Scan(
@@ -61,7 +61,7 @@ func (r *FamilyRepository) List(ctx context.Context, userID uuid.UUID) ([]model.
 	query := `
 		SELECT id, owner_id, name, relationship, date_of_birth, created_at
 		FROM family_members
-		WHERE owner_id = $1
+		WHERE owner_id = $1 AND deleted_at IS NULL
 		ORDER BY created_at ASC
 	`
 
@@ -97,7 +97,7 @@ func (r *FamilyRepository) Update(ctx context.Context, userID, memberID uuid.UUI
 		SET name = COALESCE($1, name),
 		    relationship = COALESCE($2, relationship),
 		    date_of_birth = COALESCE($3, date_of_birth)
-		WHERE id = $4 AND owner_id = $5
+		WHERE id = $4 AND owner_id = $5 AND deleted_at IS NULL
 	`
 	result, err := r.pool.Exec(ctx, query, name, relationship, dob, memberID, userID)
 	if err != nil {
@@ -111,8 +111,9 @@ func (r *FamilyRepository) Update(ctx context.Context, userID, memberID uuid.UUI
 
 func (r *FamilyRepository) Delete(ctx context.Context, userID, memberID uuid.UUID) error {
 	query := `
-		DELETE FROM family_members
-		WHERE id = $1 AND owner_id = $2
+		UPDATE family_members
+		SET deleted_at = now()
+		WHERE id = $1 AND owner_id = $2 AND deleted_at IS NULL
 	`
 	result, err := r.pool.Exec(ctx, query, memberID, userID)
 	if err != nil {
@@ -125,7 +126,7 @@ func (r *FamilyRepository) Delete(ctx context.Context, userID, memberID uuid.UUI
 }
 
 func (r *FamilyRepository) Count(ctx context.Context, userID uuid.UUID) (int, error) {
-	query := `SELECT COUNT(*) FROM family_members WHERE owner_id = $1`
+	query := `SELECT COUNT(*) FROM family_members WHERE owner_id = $1 AND deleted_at IS NULL`
 	var count int
 	err := r.pool.QueryRow(ctx, query, userID).Scan(&count)
 	return count, err

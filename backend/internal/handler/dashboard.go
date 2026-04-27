@@ -10,11 +10,12 @@ import (
 )
 
 type DashboardHandler struct {
-	docRepo *repository.DocumentRepository
+	docRepo    *repository.DocumentRepository
+	familyRepo *repository.FamilyRepository
 }
 
-func NewDashboardHandler(docRepo *repository.DocumentRepository) *DashboardHandler {
-	return &DashboardHandler{docRepo: docRepo}
+func NewDashboardHandler(docRepo *repository.DocumentRepository, familyRepo *repository.FamilyRepository) *DashboardHandler {
+	return &DashboardHandler{docRepo: docRepo, familyRepo: familyRepo}
 }
 
 func (h *DashboardHandler) Stats(w http.ResponseWriter, r *http.Request) {
@@ -35,6 +36,10 @@ func (h *DashboardHandler) Stats(w http.ResponseWriter, r *http.Request) {
 		parsed, err := uuid.Parse(fmid)
 		if err != nil {
 			respondError(w, http.StatusBadRequest, "invalid family_member_id")
+			return
+		}
+		if _, err := h.familyRepo.GetByID(r.Context(), userUUID, parsed); err != nil {
+			respondError(w, http.StatusForbidden, "family member not found or not owned by you")
 			return
 		}
 		familyMemberID = &parsed

@@ -13,9 +13,10 @@ func SecurityHeaders(next http.Handler) http.Handler {
 		h.Set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 		h.Set("Content-Security-Policy",
 			"default-src 'self'; "+
-				"script-src 'self'; "+
+				"script-src 'self' https://checkout.razorpay.com; "+
 				"connect-src 'self' https://*.supabase.co; "+
 				"img-src 'self' data:; "+
+				"frame-src 'self' https://api.razorpay.com; "+
 				"frame-ancestors 'none'",
 		)
 		next.ServeHTTP(w, r)

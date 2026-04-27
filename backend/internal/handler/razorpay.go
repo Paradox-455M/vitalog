@@ -50,6 +50,7 @@ type RazorpayWebhookEvent struct {
 }
 
 func (h *RazorpayHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, 64*1024) // 64KB limit for unauthenticated webhook
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		respondError(w, http.StatusBadRequest, "failed to read request body")
@@ -84,6 +85,14 @@ func (h *RazorpayHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	if event.Event != "payment.captured" {
 		respondJSON(w, http.StatusOK, map[string]string{"status": "ignored"})
+		return
+	}
+
+	// Validate that payment amount matches expected Pro plan price (29900 paise = ₹299).
+	const expectedAmountPaise = 29900
+	if event.Payload.Payment.Entity.Amount != expectedAmountPaise {
+		slog.Warn("razorpay webhook: unexpected payment amount", "amount", event.Payload.Payment.Entity.Amount, "expected", expectedAmountPaise)
+		respondError(w, http.StatusBadRequest, "unexpected payment amount")
 		return
 	}
 

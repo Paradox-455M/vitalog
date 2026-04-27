@@ -18,8 +18,12 @@ create table if not exists public.family_members (
   name text not null,
   relationship text,
   date_of_birth date,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  deleted_at timestamptz -- soft delete
 );
+
+-- Backfill: add deleted_at column if table already exists without it
+alter table public.family_members add column if not exists deleted_at timestamptz;
 
 create table if not exists public.documents (
   id uuid primary key default gen_random_uuid(),
