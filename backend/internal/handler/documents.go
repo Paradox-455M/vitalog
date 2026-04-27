@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"math"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -542,6 +543,19 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 			IsFlagged:      isFlagged,
 			ReportDate:     reportDate,
 		})
+	}
+
+	// Flag values where the delta vs the previous report exceeds 15% (CLAUDE.md rule #3).
+	for i, hv := range healthValues {
+		if hv.IsFlagged {
+			continue // already flagged by reference range
+		}
+		prev, ok, err := h.hvRepo.GetPreviousValue(ctx, doc.OwnerID, hv.CanonicalName, hv.FamilyMemberID, reportDate)
+		if err == nil && ok && prev != 0 {
+			if math.Abs((hv.Value-prev)/prev)*100 > 15 {
+				healthValues[i].IsFlagged = true
+			}
+		}
 	}
 
 	if err := h.hvRepo.CreateBatch(ctx, healthValues); err != nil {

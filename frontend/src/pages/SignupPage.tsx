@@ -50,13 +50,13 @@ export function SignupPage() {
       <div className="flex gap-8 mb-10 w-full justify-center">
         <button
           type="button"
-          className="pb-2 text-[#3e6327] font-bold border-b-2 border-[#3e6327] transition-all"
+          className="pb-2 text-primary font-bold border-b-2 border-primary transition-all"
         >
           Sign up
         </button>
         <button
           type="button"
-          className="pb-2 text-[#44483d] hover:text-[#3e6327] transition-all"
+          className="pb-2 text-on-surface-variant hover:text-primary transition-all"
           onClick={() => navigate('/login')}
         >
           Log in
@@ -137,7 +137,7 @@ export function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 bg-[#4A7C5F] text-white font-semibold rounded-full hover:shadow-lg hover:opacity-90 active:scale-[0.98] transition-all duration-300 mt-2 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full py-4 bg-primary text-on-primary font-semibold rounded-full hover:shadow-lg hover:opacity-90 active:scale-[0.98] transition-all duration-300 mt-2 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

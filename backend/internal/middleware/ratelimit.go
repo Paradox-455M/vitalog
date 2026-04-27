@@ -10,6 +10,7 @@ type bucket struct {
 	mu       sync.Mutex
 	tokens   float64
 	lastFill time.Time
+	lastSeen time.Time
 }
 
 // RateLimiter is a simple per-key token-bucket limiter (in-process).
@@ -21,11 +22,33 @@ type RateLimiter struct {
 }
 
 // NewRateLimiter returns a limiter allowing requestsPerHour per key.
+// A background goroutine evicts idle buckets every 10 minutes to prevent unbounded map growth.
 func NewRateLimiter(requestsPerHour int) *RateLimiter {
-	return &RateLimiter{
+	rl := &RateLimiter{
 		buckets:  make(map[string]*bucket),
 		rate:     float64(requestsPerHour) / 3600.0,
 		capacity: float64(requestsPerHour),
+	}
+	go rl.evictLoop()
+	return rl
+}
+
+// evictLoop removes buckets that have been idle for more than 20 minutes.
+func (rl *RateLimiter) evictLoop() {
+	ticker := time.NewTicker(10 * time.Minute)
+	defer ticker.Stop()
+	for range ticker.C {
+		cutoff := time.Now().Add(-20 * time.Minute)
+		rl.mu.Lock()
+		for key, b := range rl.buckets {
+			b.mu.Lock()
+			idle := b.lastSeen.Before(cutoff)
+			b.mu.Unlock()
+			if idle {
+				delete(rl.buckets, key)
+			}
+		}
+		rl.mu.Unlock()
 	}
 }
 
@@ -33,7 +56,8 @@ func (rl *RateLimiter) allow(key string) bool {
 	rl.mu.Lock()
 	b, ok := rl.buckets[key]
 	if !ok {
-		b = &bucket{tokens: rl.capacity, lastFill: time.Now()}
+		now := time.Now()
+		b = &bucket{tokens: rl.capacity, lastFill: now, lastSeen: now}
 		rl.buckets[key] = b
 	}
 	rl.mu.Unlock()
@@ -45,6 +69,7 @@ func (rl *RateLimiter) allow(key string) bool {
 	elapsed := now.Sub(b.lastFill).Seconds()
 	b.tokens = min(rl.capacity, b.tokens+elapsed*rl.rate)
 	b.lastFill = now
+	b.lastSeen = now
 
 	if b.tokens < 1 {
 		return false

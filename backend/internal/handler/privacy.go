@@ -115,12 +115,14 @@ func (h *PrivacyHandler) ListAccessEvents(w http.ResponseWriter, r *http.Request
 }
 
 type dataExportPayload struct {
-	ExportedAt                time.Time           `json:"exported_at"`
-	Profile                   *model.Profile      `json:"profile"`
-	NotificationPreferences   json.RawMessage     `json:"notification_preferences"`
-	FamilyMembers             []model.FamilyMember `json:"family_members"`
-	Documents                 []model.Document    `json:"documents"`
-	HealthValues              []model.HealthValue `json:"health_values"`
+	ExportedAt              time.Time            `json:"exported_at"`
+	Profile                 *model.Profile       `json:"profile"`
+	NotificationPreferences json.RawMessage      `json:"notification_preferences"`
+	FamilyMembers           []model.FamilyMember `json:"family_members"`
+	Documents               []model.Document     `json:"documents"`
+	HealthValues            []model.HealthValue  `json:"health_values"`
+	HealthValuesTruncated   bool                 `json:"health_values_truncated,omitempty"`
+	Note                    string               `json:"note,omitempty"`
 }
 
 func (h *PrivacyHandler) DataExport(w http.ResponseWriter, r *http.Request) {
@@ -160,11 +162,16 @@ func (h *PrivacyHandler) DataExport(w http.ResponseWriter, r *http.Request) {
 	for i, item := range docItems {
 		docs[i] = item.Document
 	}
-	hvs, err := h.hvRepo.ListByUser(r.Context(), uid, nil)
+	// Fetch one extra to detect truncation without a separate COUNT query.
+	hvs, err := h.hvRepo.ListByUser(r.Context(), uid, &model.HealthValuesFilter{Limit: 1001})
 	if err != nil {
 		slog.Error("data export health values", "error", err)
 		respondError(w, http.StatusInternalServerError, "export failed")
 		return
+	}
+	truncated := len(hvs) > 1000
+	if truncated {
+		hvs = hvs[:1000]
 	}
 
 	payload := dataExportPayload{
@@ -174,6 +181,10 @@ func (h *PrivacyHandler) DataExport(w http.ResponseWriter, r *http.Request) {
 		FamilyMembers:           family,
 		Documents:               docs,
 		HealthValues:            hvs,
+		HealthValuesTruncated:   truncated,
+	}
+	if truncated {
+		payload.Note = "health_values capped at 1000; contact support for a full export"
 	}
 
 	raw, err := json.MarshalIndent(payload, "", "  ")

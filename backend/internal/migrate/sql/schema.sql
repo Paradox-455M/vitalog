@@ -59,6 +59,8 @@ create index if not exists health_values_canonical_date_idx on public.health_val
 -- M5: Family-member-scoped queries are common; prevent full table scans.
 create index if not exists documents_family_member_idx on public.documents (family_member_id);
 create index if not exists health_values_family_member_idx on public.health_values (family_member_id);
+create index if not exists health_values_document_id_idx on public.health_values (document_id);
+create index if not exists documents_extraction_status_idx on public.documents (extraction_status);
 
 -- Notification preferences (per-user) + in-app inbox
 alter table public.profiles

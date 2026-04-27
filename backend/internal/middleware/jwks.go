@@ -6,9 +6,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"math/big"
 	"net/http"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -25,10 +28,52 @@ type jwkKey struct {
 	Y   string `json:"y"`
 }
 
+// jwksCache holds a cached EC public key with a TTL. The key is refreshed
+// lazily on expiry; if the refresh fails, the stale key is used for an extra
+// 5 minutes so a transient Supabase outage doesn't break authentication.
+type jwksCache struct {
+	mu        sync.RWMutex
+	key       *ecdsa.PublicKey
+	expiresAt time.Time
+	supaURL   string
+}
+
+func (c *jwksCache) get() (*ecdsa.PublicKey, error) {
+	c.mu.RLock()
+	if time.Now().Before(c.expiresAt) {
+		key := c.key
+		c.mu.RUnlock()
+		return key, nil
+	}
+	c.mu.RUnlock()
+
+	// Cache expired — refresh under write lock.
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	// Double-checked locking: another goroutine may have refreshed while we waited.
+	if time.Now().Before(c.expiresAt) {
+		return c.key, nil
+	}
+	newKey, err := fetchECPublicKey(c.supaURL)
+	if err != nil {
+		if c.key != nil {
+			slog.Warn("JWKS re-fetch failed, using cached key", "error", err)
+			// Extend expiry briefly to avoid hammering the endpoint on every request.
+			c.expiresAt = time.Now().Add(5 * time.Minute)
+			return c.key, nil
+		}
+		return nil, err
+	}
+	c.key = newKey
+	c.expiresAt = time.Now().Add(24 * time.Hour)
+	return c.key, nil
+}
+
 // NewKeyfunc builds a jwt.Keyfunc with no silent algorithm fallback.
 //
 // Local Supabase (localhost/127.0.0.1 URL): uses HS256 HMAC directly.
-// Remote Supabase: fetches JWKS on startup and uses ES256 exclusively.
+// Remote Supabase: fetches JWKS on startup, caches for 24 hours, and refreshes
+// lazily (stale-while-revalidate with a 5-minute grace period on failure).
 // Fails hard if JWKS cannot be fetched for a remote project — fail closed,
 // never fall back to HMAC in production.
 func NewKeyfunc(supabaseURL, jwtSecret string) jwt.Keyfunc {
@@ -50,11 +95,17 @@ func NewKeyfunc(supabaseURL, jwtSecret string) jwt.Keyfunc {
 		panic(fmt.Sprintf("failed to fetch JWKS from remote Supabase (%s): %v — set SUPABASE_URL to a reachable project or use localhost for local dev", supabaseURL, err))
 	}
 
+	cache := &jwksCache{
+		key:       ecKey,
+		expiresAt: time.Now().Add(24 * time.Hour),
+		supaURL:   supabaseURL,
+	}
+
 	return func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return ecKey, nil
+		return cache.get()
 	}
 }
 

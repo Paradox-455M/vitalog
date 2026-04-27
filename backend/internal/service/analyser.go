@@ -108,12 +108,37 @@ func (s *AnalyserService) AnalyzeFile(ctx context.Context, fileName string, file
 		return nil, fmt.Errorf("close multipart writer: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.baseURL+"/api/pipeline-file-stream", body)
-	if err != nil {
-		return nil, fmt.Errorf("create analyser request: %w", err)
-	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
+	// Snapshot body bytes so we can re-create the reader on each retry attempt.
+	bodyBytes := body.Bytes()
+	contentType := writer.FormDataContentType()
 
+	const maxAttempts = 3
+	var lastErr error
+	for attempt := 0; attempt < maxAttempts; attempt++ {
+		if attempt > 0 {
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			case <-time.After(2 * time.Second):
+			}
+		}
+
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.baseURL+"/api/pipeline-file-stream", bytes.NewReader(bodyBytes))
+		if err != nil {
+			return nil, fmt.Errorf("create analyser request: %w", err)
+		}
+		req.Header.Set("Content-Type", contentType)
+
+		result, err := s.doRequest(req)
+		if err == nil {
+			return result, nil
+		}
+		lastErr = err
+	}
+	return nil, lastErr
+}
+
+func (s *AnalyserService) doRequest(req *http.Request) (*PipelineResult, error) {
 	resp, err := s.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("call analyser: %w", err)

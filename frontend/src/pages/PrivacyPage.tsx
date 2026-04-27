@@ -175,7 +175,7 @@ export function PrivacyPage() {
           </div>
         </div>
 
-        <div className="col-span-12 lg:col-span-4 bg-[#1c2b1c] text-white p-8 rounded-xl flex flex-col justify-between">
+        <div className="col-span-12 lg:col-span-4 bg-surface-inverse text-white p-8 rounded-xl flex flex-col justify-between">
           <div>
             <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">
               Identity Status

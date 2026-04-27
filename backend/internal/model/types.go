@@ -110,6 +110,7 @@ type HealthValuesFilter struct {
 	CanonicalName  *string    `json:"canonical_name"`
 	FromDate       *time.Time `json:"from_date"`
 	ToDate         *time.Time `json:"to_date"`
+	Limit          int        `json:"limit"`
 }
 
 type DocumentsFilter struct {

@@ -28,6 +28,6 @@ export async function pollWithBackoff(
     }
 
     if (done) break
-    delay = Math.min(delay * factor, max)
+    delay = Math.min(delay * factor * (0.9 + Math.random() * 0.2), max)
   }
 }
