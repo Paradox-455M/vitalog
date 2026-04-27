@@ -18,7 +18,7 @@ function syntheticDescription(displayName: string): string {
 export function biomarkerRowFromLatest(latest: HealthValue, plainExplanation?: string): BiomarkerEntry {
   const cat = getCatalogEntry(latest.canonical_name)
   if (cat) {
-    return { ...cat }
+    return { ...cat, description: plainExplanation ?? cat.description }
   }
   return {
     id: `user-${latest.canonical_name}`,

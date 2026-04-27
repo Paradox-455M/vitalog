@@ -22,6 +22,24 @@ import type { HealthValue } from '../lib/api'
 import { latestByCanonical, unknownCanonicalHealthValues } from '../lib/healthValues'
 import type { BiomarkerEntry } from '../types/biomarkers'
 
+interface Layer2FindingDefinition {
+  canonical_name: string
+  plain_explanation?: string
+}
+
+export function parseLayer2Findings(raw: string | null): Layer2FindingDefinition[] {
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw) as {
+      findings?: Layer2FindingDefinition[]
+      layer2?: { findings?: Layer2FindingDefinition[] }
+    }
+    return parsed.findings ?? parsed.layer2?.findings ?? []
+  } catch {
+    return []
+  }
+}
+
 function motdIndexForUser(userId: string | undefined, len: number): number {
   const start = new Date(new Date().getFullYear(), 0, 0)
   const day = Math.floor((Date.now() - start.getTime()) / 86400000)
@@ -208,17 +226,11 @@ export function BiomarkerLibraryPage() {
   const plainExplanationMap = useMemo(() => {
     const map = new Map<string, string>()
     for (const doc of completeDocs) {
-      if (!doc.explanation_text) continue
-      try {
-        const parsed = JSON.parse(doc.explanation_text) as {
-          layer2?: { findings?: Array<{ canonical_name: string; plain_explanation?: string }> }
+      for (const f of parseLayer2Findings(doc.explanation_text)) {
+        if (f.canonical_name && f.plain_explanation && !map.has(f.canonical_name)) {
+          map.set(f.canonical_name, f.plain_explanation)
         }
-        for (const f of parsed.layer2?.findings ?? []) {
-          if (f.canonical_name && f.plain_explanation && !map.has(f.canonical_name)) {
-            map.set(f.canonical_name, f.plain_explanation)
-          }
-        }
-      } catch { /* ignore malformed explanation_text */ }
+      }
     }
     return map
   }, [completeDocs])
