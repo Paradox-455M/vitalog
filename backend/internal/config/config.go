@@ -67,6 +67,12 @@ func (c *Config) validate() error {
 	if c.IsProduction() && c.RazorpayWebhookSecret == "" {
 		return errors.New("RAZORPAY_WEBHOOK_SECRET is required in production")
 	}
+	if c.IsProduction() && c.RazorpayKeyID == "" {
+		return errors.New("RAZORPAY_KEY_ID is required in production")
+	}
+	if c.IsProduction() && c.RazorpayKeySecret == "" {
+		return errors.New("RAZORPAY_KEY_SECRET is required in production")
+	}
 	return nil
 }
 

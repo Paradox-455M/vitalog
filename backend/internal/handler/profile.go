@@ -89,8 +89,8 @@ func (h *ProfileHandler) Update(w http.ResponseWriter, r *http.Request) {
 			respondError(w, http.StatusBadRequest, "avatar_url must be 2048 characters or fewer")
 			return
 		}
-		if u != "" && !strings.HasPrefix(u, "https://") && !strings.HasPrefix(u, "http://") {
-			respondError(w, http.StatusBadRequest, "avatar_url must be an http or https URL")
+		if u != "" && !strings.HasPrefix(u, "https://") {
+			respondError(w, http.StatusBadRequest, "avatar_url must be an https URL")
 			return
 		}
 	}

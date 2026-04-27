@@ -152,7 +152,7 @@ func (h *SubscriptionHandler) CreateOrder(w http.ResponseWriter, r *http.Request
 
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		slog.Error("razorpay order creation failed", "status", resp.StatusCode, "body", string(body))
+		slog.Error("razorpay order creation failed", "status", resp.StatusCode)
 		respondError(w, http.StatusBadGateway, fmt.Sprintf("Razorpay error: %d", resp.StatusCode))
 		return
 	}

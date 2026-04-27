@@ -147,9 +147,15 @@ func (h *DocumentHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	var familyMemberID *uuid.UUID
 	if fmID := r.FormValue("family_member_id"); fmID != "" {
 		parsed, err := uuid.Parse(fmID)
-		if err == nil {
-			familyMemberID = &parsed
+		if err != nil {
+			respondError(w, http.StatusBadRequest, "invalid family_member_id")
+			return
 		}
+		if _, err := h.familyRepo.GetByID(r.Context(), userUUID, parsed); err != nil {
+			respondError(w, http.StatusForbidden, "family member not found or not owned by you")
+			return
+		}
+		familyMemberID = &parsed
 	}
 
 	doc := &model.Document{
@@ -189,9 +195,16 @@ func (h *DocumentHandler) List(w http.ResponseWriter, r *http.Request) {
 	filter := &model.DocumentsFilter{}
 
 	if fmID := q.Get("family_member_id"); fmID != "" {
-		if parsed, err := uuid.Parse(fmID); err == nil {
-			filter.FamilyMemberID = &parsed
+		parsed, err := uuid.Parse(fmID)
+		if err != nil {
+			respondError(w, http.StatusBadRequest, "invalid family_member_id")
+			return
 		}
+		if _, err := h.familyRepo.GetByID(r.Context(), userUUID, parsed); err != nil {
+			respondError(w, http.StatusForbidden, "family member not found or not owned by you")
+			return
+		}
+		filter.FamilyMemberID = &parsed
 	}
 	if docType := q.Get("document_type"); docType != "" {
 		filter.DocumentType = &docType
@@ -291,7 +304,7 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	healthValues, err := h.hvRepo.GetByDocumentID(r.Context(), docID)
+	healthValues, err := h.hvRepo.GetByDocumentID(r.Context(), userUUID, docID)
 	if err != nil {
 		healthValues = []model.HealthValue{}
 	}
@@ -336,7 +349,7 @@ func (h *DocumentHandler) SignedURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	objectPath := strings.TrimPrefix(doc.StoragePath, "documents/")
-	signedURL, err := h.storage.CreateSignedURL("documents", objectPath, 3600)
+	signedURL, err := h.storage.CreateSignedURL("documents", objectPath, 600) // 10-minute expiry
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, "failed to create signed URL")
 		return
@@ -389,9 +402,15 @@ func (h *DocumentHandler) ListHealthValues(w http.ResponseWriter, r *http.Reques
 
 	if fmID := r.URL.Query().Get("family_member_id"); fmID != "" {
 		parsed, err := uuid.Parse(fmID)
-		if err == nil {
-			filter.FamilyMemberID = &parsed
+		if err != nil {
+			respondError(w, http.StatusBadRequest, "invalid family_member_id")
+			return
 		}
+		if _, err := h.familyRepo.GetByID(r.Context(), userUUID, parsed); err != nil {
+			respondError(w, http.StatusForbidden, "family member not found or not owned by you")
+			return
+		}
+		filter.FamilyMemberID = &parsed
 	}
 
 	if canonical := r.URL.Query().Get("canonical_name"); canonical != "" {
@@ -437,17 +456,23 @@ func (h *DocumentHandler) Timeline(w http.ResponseWriter, r *http.Request) {
 	}
 
 	canonicalName := chi.URLParam(r, "canonical_name")
-	if canonicalName == "" {
-		respondError(w, http.StatusBadRequest, "missing canonical_name")
+	if canonicalName == "" || len(canonicalName) > 100 {
+		respondError(w, http.StatusBadRequest, "invalid or missing canonical_name")
 		return
 	}
 
 	var familyMemberID *uuid.UUID
 	if fmID := r.URL.Query().Get("family_member_id"); fmID != "" {
 		parsed, err := uuid.Parse(fmID)
-		if err == nil {
-			familyMemberID = &parsed
+		if err != nil {
+			respondError(w, http.StatusBadRequest, "invalid family_member_id")
+			return
 		}
+		if _, err := h.familyRepo.GetByID(r.Context(), userUUID, parsed); err != nil {
+			respondError(w, http.StatusForbidden, "family member not found or not owned by you")
+			return
+		}
+		familyMemberID = &parsed
 	}
 
 	timeline, err := h.hvRepo.GetTimeline(r.Context(), userUUID, canonicalName, familyMemberID)
@@ -753,9 +778,20 @@ func sanitizeFilename(name string) string {
 	return safe
 }
 
+// allowedExtensions is the allowlist of accepted file extensions.
+var allowedExtensions = map[string]bool{
+	".pdf": true, ".png": true, ".jpg": true, ".jpeg": true, ".webp": true,
+}
+
 func getExtension(filename, contentType string) string {
 	if idx := strings.LastIndex(filename, "."); idx >= 0 {
-		return filename[idx:]
+		ext := strings.ToLower(filename[idx:])
+		// Strip path separators to prevent path traversal in extension.
+		ext = strings.ReplaceAll(ext, "/", "")
+		ext = strings.ReplaceAll(ext, "\\", "")
+		if allowedExtensions[ext] {
+			return ext
+		}
 	}
 
 	switch contentType {

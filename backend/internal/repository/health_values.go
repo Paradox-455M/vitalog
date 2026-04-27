@@ -94,18 +94,18 @@ func (r *HealthValueRepository) GetPreviousValue(ctx context.Context, ownerID uu
 	return value, true, nil
 }
 
-// GetByDocumentID returns health values only for non-deleted documents (H4).
-func (r *HealthValueRepository) GetByDocumentID(ctx context.Context, docID uuid.UUID) ([]model.HealthValue, error) {
+// GetByDocumentID returns health values only for non-deleted documents owned by ownerID (H4).
+func (r *HealthValueRepository) GetByDocumentID(ctx context.Context, ownerID, docID uuid.UUID) ([]model.HealthValue, error) {
 	query := `
 		SELECT hv.id, hv.document_id, hv.family_member_id, hv.canonical_name, hv.display_name,
 		       hv.value, hv.unit, hv.reference_low, hv.reference_high, hv.is_flagged, hv.report_date, hv.created_at
 		FROM health_values hv
 		JOIN documents d ON d.id = hv.document_id
-		WHERE hv.document_id = $1 AND d.deleted_at IS NULL
+		WHERE hv.document_id = $1 AND d.owner_id = $2 AND d.deleted_at IS NULL
 		ORDER BY hv.canonical_name
 	`
 
-	rows, err := r.pool.Query(ctx, query, docID)
+	rows, err := r.pool.Query(ctx, query, docID, ownerID)
 	if err != nil {
 		return nil, err
 	}
