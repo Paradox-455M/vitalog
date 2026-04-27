@@ -18,6 +18,7 @@ type Config struct {
 	RazorpayWebhookSecret  string
 	RazorpayKeyID          string
 	RazorpayKeySecret      string
+	VaultSecretName        string
 	// Plan limits (overridable without redeploy)
 	FamilyLimitFree int
 	FamilyLimitPro  int
@@ -32,10 +33,11 @@ func Load() (*Config, error) {
 		SupabaseServiceRoleKey: os.Getenv("SUPABASE_SERVICE_ROLE_KEY"),
 		SupabaseJWTSecret:      os.Getenv("SUPABASE_JWT_SECRET"),
 		AnthropicAPIKey:        os.Getenv("ANTHROPIC_API_KEY"),
-		AnalyserURL:            getEnv("ANALYSER_URL", "http://localhost:3000"),
+		AnalyserURL:            os.Getenv("ANALYSER_URL"),
 		RazorpayWebhookSecret:  os.Getenv("RAZORPAY_WEBHOOK_SECRET"),
 		RazorpayKeyID:          os.Getenv("RAZORPAY_KEY_ID"),
 		RazorpayKeySecret:      os.Getenv("RAZORPAY_KEY_SECRET"),
+		VaultSecretName:        getEnv("VAULT_SECRET_NAME", "vitalog-kek"),
 		FamilyLimitFree:        getEnvInt("FAMILY_LIMIT_FREE", 1),
 		FamilyLimitPro:         getEnvInt("FAMILY_LIMIT_PRO", 5),
 	}

@@ -3,6 +3,11 @@
 .env.*
 !.env.example
 !**/.env.example
+# Committed Vite mode files (dev proxy + test API base) — not secrets
+!.env.development
+!**/.env.development
+!.env.test
+!**/.env.test
 
 # Dependencies
 node_modules/

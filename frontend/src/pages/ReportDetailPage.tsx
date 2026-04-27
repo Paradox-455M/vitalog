@@ -206,8 +206,17 @@ function ProcessingState({ fileName }: { fileName: string }) {
 
 // ── Failed state ──────────────────────────────────────────────────────────────
 
-function FailedState({ fileName, signedUrl }: { fileName: string; signedUrl: string | null }) {
-
+function FailedState({
+  fileName,
+  signedUrl,
+  onRetry,
+  retrying,
+}: {
+  fileName: string
+  signedUrl: string | null
+  onRetry?: () => void
+  retrying?: boolean
+}) {
   return (
     <div className="px-12 py-16 max-w-7xl mx-auto text-center space-y-6">
       <div className="w-20 h-20 rounded-full bg-error/10 flex items-center justify-center mx-auto">
@@ -223,6 +232,17 @@ function FailedState({ fileName, signedUrl }: { fileName: string; signedUrl: str
         </p>
       </div>
       <div className="flex items-center justify-center gap-4">
+        {onRetry && (
+          <button
+            type="button"
+            disabled={retrying}
+            onClick={onRetry}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-full text-sm font-semibold hover:bg-forest transition-colors disabled:opacity-50"
+          >
+            <span className="material-symbols-outlined text-sm">refresh</span>
+            {retrying ? 'Retrying…' : 'Retry extraction'}
+          </button>
+        )}
         {signedUrl && (
           <a
             href={signedUrl}
@@ -250,16 +270,17 @@ export function ReportDetailPage() {
   const [doc, setDoc] = useState<DocumentRow | null | undefined>(undefined) // undefined = loading
   const [healthValues, setHealthValues] = useState<HealthValueRow[]>([])
   const [signedUrl, setSignedUrl] = useState<string | null>(null)
+  const [retrying, setRetrying] = useState(false)
 
   const fetchData = useCallback(async (docId: string) => {
     try {
-      const [docData, signedUrlData] = await Promise.all([
+      const [docData, fileUrl] = await Promise.all([
         api.documents.get(docId),
-        api.documents.signedUrl(docId),
+        api.documents.downloadFile(docId),
       ])
       setDoc(docData as unknown as DocumentRow)
       setHealthValues((docData.health_values ?? []) as HealthValueRow[])
-      setSignedUrl(signedUrlData.signed_url ?? null)
+      setSignedUrl(fileUrl ?? null)
     } catch {
       setDoc(null)
       setHealthValues([])
@@ -322,7 +343,25 @@ export function ReportDetailPage() {
 
   // ── Failed ─────────────────────────────────────────────────────────────────
   if (doc.extraction_status === 'failed') {
-    return <FailedState fileName={doc.file_name} signedUrl={signedUrl} />
+    return (
+      <FailedState
+        fileName={doc.file_name}
+        signedUrl={signedUrl}
+        retrying={retrying}
+        onRetry={async () => {
+          if (!id) return
+          setRetrying(true)
+          try {
+            await api.documents.extract(id)
+            await fetchData(id)
+          } catch {
+            /* error is visible via status poll */
+          } finally {
+            setRetrying(false)
+          }
+        }}
+      />
+    )
   }
 
   // ── Complete ───────────────────────────────────────────────────────────────

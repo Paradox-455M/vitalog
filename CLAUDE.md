@@ -72,7 +72,7 @@ The **analyser** is a separate HTTP service (default `http://localhost:3000`, se
 *   **Tests:** `cd frontend && npx vitest` (Vitest + Testing Library; no `test` script in root package.json)
 *   **Single test file:** `cd frontend && npx vitest src/components/RequireAuth.test.tsx`
 
-In dev, Vite proxies `/api/*` to `http://127.0.0.1:8080` — do **not** set `VITE_API_URL` for local development. It is only needed for remote/staging environments.
+**Frontend → Go API URLs:** The browser calls the Go API using a **base URL** from `VITE_API_URL` when set, otherwise **same-origin** relative paths (`/api/...`). For local dev, leave `VITE_API_URL` unset and configure **`DEV_API_PROXY_TARGET`** in `frontend/.env.development` (committed default) so Vite can proxy `/api` to the Go process. For production, leave `VITE_API_URL` unset if the SPA and API share a host (reverse proxy); if they are on different hosts, set `VITE_API_URL` at build time to your API origin. **Tests** use `frontend/.env.test` (`VITE_API_URL` for a stable test default). **Backend CORS:** set `ALLOWED_ORIGINS` to comma-separated browser origins; when `ENV=production`, `ALLOWED_ORIGINS` is required (no localhost defaults).
 
 ### 🐹 Go Backend
 ```bash
@@ -87,7 +87,7 @@ The backend auto-runs database migrations on startup (`internal/migrate/sql/sche
 
 Go module path: `github.com/vitalog/backend`. Key deps: `go-chi/chi/v5` (router), `jackc/pgx/v5` (Postgres pool), `golang-jwt/jwt/v5`.
 
-Required `backend/.env` vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `ANALYSER_URL`. Copy from `backend/.env.example`. Optional: `ANTHROPIC_API_KEY` (only needed if calling AI directly; the analyser handles it instead), `RAZORPAY_WEBHOOK_SECRET`.
+Required `backend/.env` vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `ANALYSER_URL`. Copy from `backend/.env.example`. Optional: `ANTHROPIC_API_KEY` (only needed if calling AI directly; the analyser handles it instead), `RAZORPAY_WEBHOOK_SECRET`. In production, also set `ALLOWED_ORIGINS` for browser CORS.
 
 ### 🐘 Supabase Backend (CLI)
 Run Supabase CLI commands from `backend/` (where `supabase/` lives):

@@ -42,6 +42,10 @@ type DocumentHandler struct {
 	notifRepo     *repository.NotificationRepository
 	storage       *storage.SupabaseStorage
 	analyserSvc   *service.AnalyserService
+	cryptoSvc     interface {
+		Encrypt(ctx context.Context, userID uuid.UUID, plaintext []byte) ([]byte, error)
+		Decrypt(ctx context.Context, userID uuid.UUID, ciphertext []byte) ([]byte, error)
+	}
 	extractionSem chan struct{} // bounded goroutine pool for analyser calls
 	serverCtx     context.Context
 }
@@ -55,6 +59,10 @@ func NewDocumentHandler(
 	notifRepo *repository.NotificationRepository,
 	storage *storage.SupabaseStorage,
 	analyserSvc *service.AnalyserService,
+	cryptoSvc interface {
+		Encrypt(ctx context.Context, userID uuid.UUID, plaintext []byte) ([]byte, error)
+		Decrypt(ctx context.Context, userID uuid.UUID, ciphertext []byte) ([]byte, error)
+	},
 ) *DocumentHandler {
 	return &DocumentHandler{
 		docRepo:       docRepo,
@@ -64,6 +72,7 @@ func NewDocumentHandler(
 		notifRepo:     notifRepo,
 		storage:       storage,
 		analyserSvc:   analyserSvc,
+		cryptoSvc:     cryptoSvc,
 		extractionSem: make(chan struct{}, extractionConcurrency),
 		serverCtx:     serverCtx,
 	}
@@ -135,11 +144,17 @@ func (h *DocumentHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		contentType = "application/octet-stream"
 	}
 
+	encryptedData, err := h.cryptoSvc.Encrypt(r.Context(), userUUID, fileData)
+	if err != nil {
+		respondError(w, http.StatusInternalServerError, "failed to encrypt file")
+		return
+	}
+
 	ext := getExtension(header.Filename, contentType)
 	fileID := uuid.New()
 	storagePath := userID + "/" + fileID.String() + ext
 
-	if err := h.storage.Upload("documents", storagePath, fileData, contentType); err != nil {
+	if err := h.storage.Upload("documents", storagePath, encryptedData, "application/octet-stream"); err != nil {
 		respondError(w, http.StatusInternalServerError, "failed to upload file")
 		return
 	}
@@ -239,7 +254,7 @@ func (h *DocumentHandler) List(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	items, total, err := h.docRepo.List(r.Context(), userUUID, filter)
+	items, total, err := h.docRepo.List(r.Context(), userUUID, filter, h.hvRepo)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, "failed to fetch documents")
 		return
@@ -317,7 +332,10 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, result)
 }
 
-func (h *DocumentHandler) SignedURL(w http.ResponseWriter, r *http.Request) {
+// DownloadFile fetches the encrypted file from storage, decrypts it in-flight,
+// and streams the plaintext to the client. Replaces signed-URL approach so that
+// ciphertext blobs are never served directly to browsers.
+func (h *DocumentHandler) DownloadFile(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.GetUserID(r.Context())
 	if userID == "" {
 		respondError(w, http.StatusUnauthorized, "unauthorized")
@@ -342,20 +360,35 @@ func (h *DocumentHandler) SignedURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate that storage_path belongs to this user before using it (path traversal guard).
+	// Path traversal guard: storage path must belong to this user.
 	expectedPrefix := "documents/" + userID + "/"
 	if !strings.HasPrefix(doc.StoragePath, expectedPrefix) {
 		respondError(w, http.StatusForbidden, "invalid storage path")
 		return
 	}
+
 	objectPath := strings.TrimPrefix(doc.StoragePath, "documents/")
-	signedURL, err := h.storage.CreateSignedURL("documents", objectPath, 600) // 10-minute expiry
+	encryptedData, err := h.storage.Download("documents", objectPath)
 	if err != nil {
-		respondError(w, http.StatusInternalServerError, "failed to create signed URL")
+		respondError(w, http.StatusInternalServerError, "failed to fetch file")
 		return
 	}
 
-	respondJSON(w, http.StatusOK, map[string]string{"signed_url": signedURL})
+	plaintext, err := h.cryptoSvc.Decrypt(r.Context(), userUUID, encryptedData)
+	if err != nil {
+		slog.Error("file decrypt failed", "doc_id", docID, "error", err)
+		respondError(w, http.StatusInternalServerError, "failed to decrypt file")
+		return
+	}
+
+	contentType := "application/octet-stream"
+	if doc.FileType != nil && *doc.FileType != "" {
+		contentType = *doc.FileType
+	}
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`inline; filename="%s"`, doc.FileName))
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(plaintext)
 }
 
 func (h *DocumentHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -515,13 +548,19 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 	}
 
 	objectPath := strings.TrimPrefix(doc.StoragePath, "documents/")
-	fileBytes, err := h.storage.Download("documents", objectPath)
+	encryptedBytes, err := h.storage.Download("documents", objectPath)
 	if err != nil {
 		log.Error("extraction: download failed", "error", err)
 		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
 		return
 	}
-	log.Info("extraction: file downloaded", "bytes", len(fileBytes))
+	fileBytes, err := h.cryptoSvc.Decrypt(ctx, doc.OwnerID, encryptedBytes)
+	if err != nil {
+		log.Error("extraction: decrypt failed", "error", err)
+		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
+		return
+	}
+	log.Info("extraction: file downloaded and decrypted", "bytes", len(fileBytes))
 
 	if err := h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusProcessing); err != nil {
 		log.Error("extraction: failed to set processing status", "error", err)
@@ -583,7 +622,7 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 		}
 	}
 
-	if err := h.hvRepo.CreateBatch(ctx, healthValues); err != nil {
+	if err := h.hvRepo.CreateBatch(ctx, doc.OwnerID, healthValues); err != nil {
 		log.Error("extraction: failed to save health values", "error", err)
 		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
 		return

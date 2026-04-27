@@ -2,22 +2,23 @@ package repository
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/vitalog/backend/internal/crypto"
 	"github.com/vitalog/backend/internal/model"
 )
 
 type DocumentRepository struct {
-	pool *pgxpool.Pool
+	pool   *pgxpool.Pool
+	crypto *crypto.Service
 }
 
-func NewDocumentRepository(pool *pgxpool.Pool) *DocumentRepository {
-	return &DocumentRepository{pool: pool}
+func NewDocumentRepository(pool *pgxpool.Pool, cryptoSvc *crypto.Service) *DocumentRepository {
+	return &DocumentRepository{pool: pool, crypto: cryptoSvc}
 }
 
 func (r *DocumentRepository) Create(ctx context.Context, doc *model.Document) error {
@@ -49,6 +50,7 @@ func (r *DocumentRepository) GetByID(ctx context.Context, userID, docID uuid.UUI
 		WHERE id = $1 AND owner_id = $2 AND deleted_at IS NULL
 	`
 	var doc model.Document
+	var explanationEnc []byte
 	err := r.pool.QueryRow(ctx, query, docID, userID).Scan(
 		&doc.ID,
 		&doc.OwnerID,
@@ -60,19 +62,23 @@ func (r *DocumentRepository) GetByID(ctx context.Context, userID, docID uuid.UUI
 		&doc.ReportDate,
 		&doc.LabName,
 		&doc.ExtractionStatus,
-		&doc.ExplanationText,
+		&explanationEnc,
 		&doc.CreatedAt,
 		&doc.DeletedAt,
 	)
 	if err != nil {
 		return nil, err
 	}
+	doc.ExplanationText, err = r.crypto.DecryptToOptString(ctx, userID, explanationEnc)
+	if err != nil {
+		return nil, fmt.Errorf("decrypt explanation_text: %w", err)
+	}
 	return &doc, nil
 }
 
-// List returns a paginated list of documents with pre-computed flagged-value summaries.
-// The second return value is the total matching row count (ignoring LIMIT/OFFSET).
-func (r *DocumentRepository) List(ctx context.Context, userID uuid.UUID, filter *model.DocumentsFilter) ([]model.DocumentListItem, int, error) {
+// List returns a paginated list of documents. FlaggedValues are populated via a
+// separate batch query so that encrypted health values can be decrypted in Go.
+func (r *DocumentRepository) List(ctx context.Context, userID uuid.UUID, filter *model.DocumentsFilter, hvRepo *HealthValueRepository) ([]model.DocumentListItem, int, error) {
 	limit := 20
 	offset := 0
 	if filter != nil {
@@ -87,32 +93,12 @@ func (r *DocumentRepository) List(ctx context.Context, userID uuid.UUID, filter 
 		}
 	}
 
-	// Correlated subqueries compute the flagged summary per document in one pass.
-	// COUNT(*) OVER() captures the total before LIMIT/OFFSET is applied.
 	query := `
 		SELECT
 			d.id, d.owner_id, d.family_member_id, d.storage_path, d.file_name,
 			d.file_type, d.document_type, d.report_date, d.lab_name,
 			d.extraction_status, d.explanation_text, d.created_at, d.deleted_at,
-			(SELECT COUNT(*)::int
-			 FROM health_values
-			 WHERE document_id = d.id AND is_flagged = true)
-				AS flagged_count,
-			(SELECT COALESCE(jsonb_agg(v ORDER BY v->>'canonical_name'), '[]'::jsonb)
-			 FROM (
-			   SELECT jsonb_build_object(
-			       'canonical_name', hv2.canonical_name,
-			       'display_name',   hv2.display_name,
-			       'value',          hv2.value,
-			       'unit',           hv2.unit,
-			       'is_flagged',     hv2.is_flagged
-			   ) AS v
-			   FROM health_values hv2
-			   WHERE hv2.document_id = d.id AND hv2.is_flagged = true
-			   ORDER BY hv2.canonical_name
-			   LIMIT 3
-			 ) top3)
-				AS flagged_values,
+			(SELECT COUNT(*)::int FROM health_values WHERE document_id = d.id AND is_flagged = true) AS flagged_count,
 			COUNT(*) OVER() AS total_count
 		FROM documents d
 		WHERE d.owner_id = $1 AND d.deleted_at IS NULL
@@ -148,7 +134,6 @@ func (r *DocumentRepository) List(ctx context.Context, userID uuid.UUID, filter 
 			argNum++
 		}
 		if filter.Search != nil {
-			// Same parameter referenced in both branches — valid in PostgreSQL.
 			query += fmt.Sprintf(" AND (d.file_name ILIKE $%d OR d.lab_name ILIKE $%d)", argNum, argNum)
 			args = append(args, "%"+*filter.Search+"%")
 			argNum++
@@ -170,10 +155,12 @@ func (r *DocumentRepository) List(ctx context.Context, userID uuid.UUID, filter 
 	defer rows.Close()
 
 	var items []model.DocumentListItem
+	var docIDs []uuid.UUID
 	total := 0
+
 	for rows.Next() {
 		var item model.DocumentListItem
-		var flaggedJSON []byte
+		var explanationEnc []byte
 		var rowTotal int
 		if err := rows.Scan(
 			&item.ID,
@@ -186,23 +173,24 @@ func (r *DocumentRepository) List(ctx context.Context, userID uuid.UUID, filter 
 			&item.ReportDate,
 			&item.LabName,
 			&item.ExtractionStatus,
-			&item.ExplanationText,
+			&explanationEnc,
 			&item.CreatedAt,
 			&item.DeletedAt,
 			&item.FlaggedCount,
-			&flaggedJSON,
 			&rowTotal,
 		); err != nil {
 			return nil, 0, err
 		}
 		total = rowTotal
-		if len(flaggedJSON) > 0 {
-			_ = json.Unmarshal(flaggedJSON, &item.FlaggedValues)
+		item.ExplanationText, err = r.crypto.DecryptToOptString(ctx, userID, explanationEnc)
+		if err != nil {
+			return nil, 0, fmt.Errorf("decrypt explanation_text: %w", err)
 		}
-		if item.FlaggedValues == nil {
-			item.FlaggedValues = []model.FlaggedValueSummary{}
-		}
+		item.FlaggedValues = []model.FlaggedValueSummary{}
 		items = append(items, item)
+		if item.FlaggedCount > 0 {
+			docIDs = append(docIDs, item.ID)
+		}
 	}
 	if err := rows.Err(); err != nil {
 		return nil, 0, err
@@ -210,6 +198,20 @@ func (r *DocumentRepository) List(ctx context.Context, userID uuid.UUID, filter 
 	if items == nil {
 		items = []model.DocumentListItem{}
 	}
+
+	// Populate flagged values via a separate batch query so values can be decrypted in Go.
+	if len(docIDs) > 0 && hvRepo != nil {
+		flaggedMap, err := hvRepo.GetFlaggedBatch(ctx, userID, docIDs)
+		if err != nil {
+			return nil, 0, fmt.Errorf("fetch flagged values: %w", err)
+		}
+		for i := range items {
+			if fv, ok := flaggedMap[items[i].ID]; ok {
+				items[i].FlaggedValues = fv
+			}
+		}
+	}
+
 	return items, total, nil
 }
 
@@ -229,7 +231,6 @@ func (r *DocumentRepository) SoftDelete(ctx context.Context, userID, docID uuid.
 	return nil
 }
 
-// UpdateStatus updates extraction_status scoped to ownerID to prevent cross-user writes.
 func (r *DocumentRepository) UpdateStatus(ctx context.Context, ownerID, docID uuid.UUID, status string) error {
 	_, err := r.pool.Exec(ctx, `
 		UPDATE documents
@@ -239,8 +240,17 @@ func (r *DocumentRepository) UpdateStatus(ctx context.Context, ownerID, docID uu
 	return err
 }
 
-// UpdateExtraction scopes the write to ownerID to prevent cross-user document mutation.
+// UpdateExtraction encrypts explanation_text before persisting.
 func (r *DocumentRepository) UpdateExtraction(ctx context.Context, ownerID, docID uuid.UUID, docType, labName *string, reportDate *time.Time, explanationText string) error {
+	var explanationEnc []byte
+	if explanationText != "" {
+		var err error
+		explanationEnc, err = r.crypto.EncryptString(ctx, ownerID, explanationText)
+		if err != nil {
+			return fmt.Errorf("encrypt explanation_text: %w", err)
+		}
+	}
+
 	_, err := r.pool.Exec(ctx, `
 		UPDATE documents
 		SET extraction_status = $1,
@@ -249,7 +259,7 @@ func (r *DocumentRepository) UpdateExtraction(ctx context.Context, ownerID, docI
 		    report_date = COALESCE($4, report_date),
 		    explanation_text = $5
 		WHERE id = $6 AND owner_id = $7
-	`, model.ExtractionStatusComplete, docType, labName, reportDate, explanationText, docID, ownerID)
+	`, model.ExtractionStatusComplete, docType, labName, reportDate, explanationEnc, docID, ownerID)
 	return err
 }
 
@@ -284,7 +294,6 @@ func (r *DocumentRepository) GetDashboardStats(ctx context.Context, userID uuid.
 	return &s, nil
 }
 
-// GetLabNames returns distinct, non-empty lab names from the user's documents.
 func (r *DocumentRepository) GetLabNames(ctx context.Context, userID uuid.UUID) ([]string, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT DISTINCT lab_name

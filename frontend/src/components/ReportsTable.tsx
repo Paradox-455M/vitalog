@@ -36,11 +36,13 @@ interface ReportsTableProps {
   reports: ReportRow[]
   flaggedMap: Map<string, FlaggedValue[]>
   loading: boolean
+  onDelete?: (id: string) => Promise<void>
 }
 
-export function ReportsTable({ reports, flaggedMap, loading }: ReportsTableProps) {
+export function ReportsTable({ reports, flaggedMap, loading, onDelete }: ReportsTableProps) {
   const navigate = useNavigate()
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export function ReportsTable({ reports, flaggedMap, loading }: ReportsTableProps
   const handleDownload = useCallback(async (e: React.MouseEvent, docId: string) => {
     e.stopPropagation()
     try {
-      const { signed_url: url } = await api.documents.signedUrl(docId)
+      const url = await api.documents.downloadFile(docId)
       if (url) window.open(url, '_blank', 'noopener,noreferrer')
     } catch {
       /* ignore */
@@ -205,6 +207,26 @@ export function ReportsTable({ reports, flaggedMap, loading }: ReportsTableProps
                     >
                       Download
                     </button>
+                    {onDelete && (
+                      <button
+                        type="button"
+                        role="menuitem"
+                        disabled={deletingId === r.id}
+                        className="w-full px-4 py-2 text-left text-sm text-error hover:bg-error-container/20 disabled:opacity-50"
+                        onClick={async () => {
+                          if (!window.confirm('Delete this report? This cannot be undone.')) return
+                          setMenuOpenId(null)
+                          setDeletingId(r.id)
+                          try {
+                            await onDelete(r.id)
+                          } finally {
+                            setDeletingId(null)
+                          }
+                        }}
+                      >
+                        {deletingId === r.id ? 'Deleting…' : 'Delete report'}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

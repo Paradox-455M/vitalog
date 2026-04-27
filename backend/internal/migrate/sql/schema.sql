@@ -355,3 +355,68 @@ create trigger on_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_new_user();
 
+-- 6) Encryption: per-user DEK store
+create table if not exists public.user_keys (
+  user_id       uuid primary key references auth.users(id) on delete cascade,
+  encrypted_dek bytea not null,
+  created_at    timestamptz default now()
+);
+
+alter table public.user_keys enable row level security;
+
+drop policy if exists user_keys_select_own on public.user_keys;
+create policy user_keys_select_own
+on public.user_keys
+for select
+using (user_id = auth.uid());
+
+-- Idempotent column type changes: numeric/text → BYTEA for sensitive health fields.
+-- Existing plaintext data is preserved as raw bytes; run cmd/migrate-encrypt to re-encrypt.
+do $$
+begin
+  -- health_values.value: numeric → bytea
+  -- convert_to() encodes the text representation as UTF-8 bytes, avoiding the hex-only
+  -- restriction on direct ::bytea casts introduced in PostgreSQL 9.0.
+  if (select data_type from information_schema.columns
+      where table_schema = 'public' and table_name = 'health_values' and column_name = 'value')
+     in ('numeric', 'integer', 'real', 'double precision', 'bigint') then
+    alter table public.health_values alter column value drop not null;
+    alter table public.health_values alter column value type bytea using convert_to(value::text, 'UTF8');
+  end if;
+
+  -- health_values.reference_low: numeric → bytea
+  if (select data_type from information_schema.columns
+      where table_schema = 'public' and table_name = 'health_values' and column_name = 'reference_low')
+     in ('numeric', 'integer', 'real', 'double precision', 'bigint') then
+    alter table public.health_values alter column reference_low type bytea using convert_to(reference_low::text, 'UTF8');
+  end if;
+
+  -- health_values.reference_high: numeric → bytea
+  if (select data_type from information_schema.columns
+      where table_schema = 'public' and table_name = 'health_values' and column_name = 'reference_high')
+     in ('numeric', 'integer', 'real', 'double precision', 'bigint') then
+    alter table public.health_values alter column reference_high type bytea using convert_to(reference_high::text, 'UTF8');
+  end if;
+
+  -- documents.explanation_text: text → bytea
+  if (select data_type from information_schema.columns
+      where table_schema = 'public' and table_name = 'documents' and column_name = 'explanation_text')
+     = 'text' then
+    alter table public.documents alter column explanation_text type bytea using convert_to(explanation_text, 'UTF8');
+  end if;
+
+  -- family_members.name: text → bytea
+  if (select data_type from information_schema.columns
+      where table_schema = 'public' and table_name = 'family_members' and column_name = 'name')
+     = 'text' then
+    alter table public.family_members alter column name type bytea using convert_to(name, 'UTF8');
+  end if;
+
+  -- family_members.date_of_birth: date → bytea
+  if (select data_type from information_schema.columns
+      where table_schema = 'public' and table_name = 'family_members' and column_name = 'date_of_birth')
+     = 'date' then
+    alter table public.family_members alter column date_of_birth type bytea using convert_to(date_of_birth::text, 'UTF8');
+  end if;
+end $$;
+

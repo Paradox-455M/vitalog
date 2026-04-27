@@ -15,6 +15,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/vitalog/backend/internal/config"
+	"github.com/vitalog/backend/internal/crypto"
 	"github.com/vitalog/backend/internal/handler"
 	"github.com/vitalog/backend/internal/middleware"
 	"github.com/vitalog/backend/internal/migrate"
@@ -63,12 +64,21 @@ func main() {
 	keyfunc := middleware.NewKeyfunc(cfg.SupabaseURL, cfg.SupabaseJWTSecret)
 	slog.Info("JWT keyfunc ready")
 
+	slog.Info("loading encryption key from vault")
+	kek, err := crypto.LoadKEK(ctx, pool, cfg.VaultSecretName)
+	if err != nil {
+		slog.Error("failed to load KEK from vault", "error", err)
+		os.Exit(1)
+	}
+	cryptoSvc := crypto.NewService(pool, kek)
+	slog.Info("encryption service ready")
+
 	storageClient := storage.NewSupabaseStorage(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey)
 	analyserSvc := service.NewAnalyserService(cfg.AnalyserURL)
 
-	docRepo := repository.NewDocumentRepository(pool)
-	hvRepo := repository.NewHealthValueRepository(pool)
-	familyRepo := repository.NewFamilyRepository(pool)
+	docRepo := repository.NewDocumentRepository(pool, cryptoSvc)
+	hvRepo := repository.NewHealthValueRepository(pool, cryptoSvc)
+	familyRepo := repository.NewFamilyRepository(pool, cryptoSvc)
 	profileRepo := repository.NewProfileRepository(pool)
 	notifRepo := repository.NewNotificationRepository(pool)
 	paymentEventRepo := repository.NewPaymentEventRepository(pool)
@@ -76,8 +86,8 @@ func main() {
 	authAdmin := supabaseauth.NewAdminClient(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey)
 	privacyHandler := handler.NewPrivacyHandler(accessEventRepo, docRepo, profileRepo, familyRepo, hvRepo, storageClient, authAdmin)
 
-	docHandler := handler.NewDocumentHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc)
-	extractionHandler := handler.NewExtractionHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc)
+	docHandler := handler.NewDocumentHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc, cryptoSvc)
+	extractionHandler := handler.NewExtractionHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc, cryptoSvc)
 	dashboardHandler := handler.NewDashboardHandler(docRepo, familyRepo)
 	familyHandler := handler.NewFamilyHandler(familyRepo, profileRepo, cfg.FamilyLimitFree, cfg.FamilyLimitPro)
 	profileHandler := handler.NewProfileHandler(profileRepo)
@@ -115,7 +125,7 @@ func main() {
 				return middleware.GetUserID(r.Context())
 			})).Post("/upload", docHandler.Upload)
 			r.Get("/{id}", docHandler.Get)
-			r.Get("/{id}/signed-url", docHandler.SignedURL)
+			r.Get("/{id}/file", docHandler.DownloadFile)
 			r.Delete("/{id}", docHandler.Delete)
 			r.With(uploadLimiter.Middleware(func(r *http.Request) string {
 			return middleware.GetUserID(r.Context())

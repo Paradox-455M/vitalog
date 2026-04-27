@@ -1,18 +1,12 @@
 import { supabase } from './supabaseClient'
 
-/** Base URL for the Go API. In dev, default is same-origin + Vite proxy (see vite.config) so /api/* reaches :8080. */
+/** Base URL for the Go API. Set `VITE_API_URL` to call a remote API; otherwise uses same-origin (Vite dev proxy in development). */
 function getApiBaseUrl(): string {
   const raw = import.meta.env.VITE_API_URL as string | undefined
   if (raw != null && raw !== '') {
     return raw.replace(/\/$/, '')
   }
-  if (import.meta.env.MODE === 'test') {
-    return 'http://localhost:8080'
-  }
-  if (import.meta.env.DEV) {
-    return ''
-  }
-  return 'http://localhost:8080'
+  return ''
 }
 
 const API_URL = getApiBaseUrl()
@@ -99,8 +93,22 @@ export const api = {
     get: (id: string) =>
       apiClient<DocumentWithHealthValues>(`/api/documents/${id}`),
 
-    signedUrl: (id: string) =>
-      apiClient<{ signed_url: string }>(`/api/documents/${id}/signed-url`),
+    downloadFile: async (id: string): Promise<string> => {
+      const token = await getAuthToken()
+      const headers = new Headers()
+      if (token) headers.set('Authorization', `Bearer ${token}`)
+      const response = await fetch(`${API_URL}/api/documents/${id}/file`, { headers })
+      if (!response.ok) {
+        const body = await response.json().catch(() => null)
+        throw new ApiError(
+          body?.error || `Request failed with status ${response.status}`,
+          response.status,
+          body
+        )
+      }
+      const blob = await response.blob()
+      return URL.createObjectURL(blob)
+    },
 
     upload: async (file: File, familyMemberId?: string) => {
       const formData = new FormData()

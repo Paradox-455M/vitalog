@@ -330,7 +330,16 @@ export function ReportsPage() {
           </div>
         ) : (
           <>
-            <ReportsTable reports={pagedReports} flaggedMap={flaggedMap} loading={loading} />
+            <ReportsTable
+              reports={pagedReports}
+              flaggedMap={flaggedMap}
+              loading={loading}
+              onDelete={async (id) => {
+                await api.documents.delete(id)
+                await queryClient.invalidateQueries({ queryKey: ['documents'] })
+                await queryClient.invalidateQueries({ queryKey: ['health-values'] })
+              }}
+            />
 
             {!loading && filtered.length > 0 && (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">

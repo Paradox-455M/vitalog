@@ -8,7 +8,7 @@ import (
 
 // CORS sets Access-Control-Allow-Origin to a per-request allowlist check.
 // Configure allowed origins via the ALLOWED_ORIGINS env var (comma-separated).
-// Defaults to http://localhost:5173 when the env var is unset.
+// When unset: in non-production, defaults to Vite dev origins (localhost:5173, :5174). In production, no default — set ALLOWED_ORIGINS.
 func CORS(next http.Handler) http.Handler {
 	allowed := parseAllowedOrigins(os.Getenv("ALLOWED_ORIGINS"))
 
@@ -39,9 +39,13 @@ func parseAllowedOrigins(raw string) map[string]bool {
 			allowed[o] = true
 		}
 	}
-	if len(allowed) == 0 {
+	if len(allowed) == 0 && !isProductionEnv() {
 		allowed["http://localhost:5173"] = true
 		allowed["http://localhost:5174"] = true
 	}
 	return allowed
+}
+
+func isProductionEnv() bool {
+	return strings.TrimSpace(os.Getenv("ENV")) == "production"
 }

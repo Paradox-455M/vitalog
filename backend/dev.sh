@@ -243,6 +243,30 @@ analyser_stop() {
   fi
 }
 
+# ── Encryption key ────────────────────────────────────────────────────────────
+
+ensure_encryption_key() {
+  local env_file="$SCRIPT_DIR/.env"
+  local existing
+  existing=$(grep '^ENCRYPTION_KEY=' "$env_file" 2>/dev/null | cut -d'=' -f2- | tr -d '"' || true)
+
+  if [ -n "$existing" ]; then
+    ok "ENCRYPTION_KEY already set in .env"
+    return
+  fi
+
+  if ! command -v openssl &>/dev/null; then
+    err "openssl not found — cannot auto-generate ENCRYPTION_KEY"
+    echo "     Set it manually: ENCRYPTION_KEY=\$(openssl rand -hex 32)"
+    exit 1
+  fi
+
+  local key
+  key=$(openssl rand -hex 32)
+  patch_env "$env_file" "ENCRYPTION_KEY" "$key"
+  ok "Generated and saved ENCRYPTION_KEY to .env"
+}
+
 # ── Go backend ────────────────────────────────────────────────────────────────
 
 go_backend_start() {
@@ -471,6 +495,8 @@ case "$CMD" in
       info "Mode: remote (SUPABASE_URL is online Supabase)"
       check_prereqs_remote
     fi
+    section "Encryption"
+    ensure_encryption_key
     analyser_start
     go_backend_start
     show_status
@@ -480,6 +506,8 @@ case "$CMD" in
     check_prereqs_local
     supabase_start
     env_patch_local
+    section "Encryption"
+    ensure_encryption_key
     analyser_start
     go_backend_start
     show_status

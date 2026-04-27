@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
 import { ReportCard, type ReportRow, type FlaggedValue } from '../components/ReportCard'
@@ -9,14 +9,8 @@ import { useHealthValues } from '../hooks/useHealthValues'
 import { useProfile } from '../hooks/useProfile'
 import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { greetingFirstName } from '../lib/accountDisplay'
-import type { HealthValue } from '../lib/api'
-
-interface DashboardStats {
-  reportCount: number
-  valueCount: number
-  flaggedCount: number
-  lastUploadDate: string | null
-}
+import { api } from '../lib/api'
+import type { HealthValue, DashboardStats } from '../lib/api'
 
 type FlaggedValueRow = Pick<
   HealthValue,
@@ -49,6 +43,16 @@ export function DashboardPage() {
   const { documents, loading: docsLoading } = useDocuments(familyOpt)
   const { healthValues: allHealthValues, loading: hvLoading } = useHealthValues(familyOpt)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [apiStats, setApiStats] = useState<DashboardStats | null>(null)
+  const [statsLoading, setStatsLoading] = useState(true)
+
+  useEffect(() => {
+    setStatsLoading(true)
+    api.dashboard.stats(activeMemberId ? { family_member_id: activeMemberId } : undefined)
+      .then(s => setApiStats(s))
+      .catch(() => setApiStats(null))
+      .finally(() => setStatsLoading(false))
+  }, [activeMemberId])
 
   const loading = docsLoading || hvLoading
 
@@ -56,16 +60,6 @@ export function DashboardPage() {
     () => [...documents].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
     [documents]
   )
-
-  const stats = useMemo<DashboardStats>(() => {
-    const flaggedValues = allHealthValues.filter((v) => v.is_flagged)
-    return {
-      reportCount: documents.length,
-      valueCount: allHealthValues.length,
-      flaggedCount: flaggedValues.length,
-      lastUploadDate: sortedDocuments[0]?.created_at ?? null,
-    }
-  }, [documents, allHealthValues, sortedDocuments])
 
   const recentReports = useMemo(() => sortedDocuments.slice(0, 3) as unknown as ReportRow[], [sortedDocuments])
 
@@ -104,7 +98,7 @@ export function DashboardPage() {
 
         {/* Stats row */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {loading ? (
+          {statsLoading ? (
             <>
               <SkeletonStat /><SkeletonStat /><SkeletonStat /><SkeletonStat />
             </>
@@ -112,20 +106,20 @@ export function DashboardPage() {
             <>
               <div className="bg-stat-card p-6 rounded-xl flex flex-col justify-between h-32">
                 <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Reports uploaded</span>
-                <span className="text-4xl font-serif font-bold text-primary">{stats?.reportCount ?? 0}</span>
+                <span className="text-4xl font-serif font-bold text-primary">{apiStats?.report_count ?? 0}</span>
               </div>
               <div className="bg-stat-card p-6 rounded-xl flex flex-col justify-between h-32">
                 <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Values tracked</span>
-                <span className="text-4xl font-serif font-bold text-primary">{stats?.valueCount ?? 0}</span>
+                <span className="text-4xl font-serif font-bold text-primary">{apiStats?.values_tracked ?? 0}</span>
               </div>
               <div className="bg-stat-card p-6 rounded-xl flex flex-col justify-between h-32">
                 <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Flagged values</span>
-                <span className="text-4xl font-serif font-bold text-amber">{stats?.flaggedCount ?? 0}</span>
+                <span className="text-4xl font-serif font-bold text-amber">{apiStats?.flagged_count ?? 0}</span>
               </div>
               <div className="bg-stat-card p-6 rounded-xl flex flex-col justify-between h-32">
                 <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Last upload</span>
                 <span className="text-2xl font-serif font-bold text-primary">
-                  {formatRelativeDate(stats?.lastUploadDate ?? null)}
+                  {formatRelativeDate(apiStats?.last_upload_at ?? null)}
                 </span>
               </div>
             </>
@@ -196,7 +190,7 @@ export function DashboardPage() {
                 </span>
                 <p className="font-semibold text-on-surface text-sm">No flagged values</p>
                 <p className="text-on-surface-variant text-xs">
-                  {stats?.reportCount === 0
+                  {apiStats?.report_count === 0
                     ? 'Upload a report to see your health snapshot.'
                     : 'All tracked values are within reference range.'}
                 </p>

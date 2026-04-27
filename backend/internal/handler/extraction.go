@@ -14,6 +14,7 @@ import (
 	"github.com/vitalog/backend/internal/storage"
 )
 
+
 type ExtractionHandler struct {
 	docRepo *repository.DocumentRepository
 	docH    *DocumentHandler
@@ -28,10 +29,14 @@ func NewExtractionHandler(
 	notifRepo *repository.NotificationRepository,
 	storageClient *storage.SupabaseStorage,
 	analyserSvc *service.AnalyserService,
+	cryptoSvc interface {
+		Encrypt(ctx context.Context, userID uuid.UUID, plaintext []byte) ([]byte, error)
+		Decrypt(ctx context.Context, userID uuid.UUID, ciphertext []byte) ([]byte, error)
+	},
 ) *ExtractionHandler {
 	return &ExtractionHandler{
 		docRepo: docRepo,
-		docH:    NewDocumentHandler(serverCtx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc),
+		docH:    NewDocumentHandler(serverCtx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc, cryptoSvc),
 	}
 }
 

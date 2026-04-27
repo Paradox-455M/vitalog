@@ -9,7 +9,7 @@ vi.mock('../lib/api', () => ({
   api: {
     documents: {
       get: vi.fn(),
-      signedUrl: vi.fn(),
+      downloadFile: vi.fn(),
     },
   },
 }))
@@ -19,7 +19,7 @@ vi.mock('../lib/poll', () => ({
 }))
 
 const mockDocumentsGet = vi.mocked(api.documents.get)
-const mockDocumentsSignedUrl = vi.mocked(api.documents.signedUrl)
+const mockDocumentsDownloadFile = vi.mocked(api.documents.downloadFile)
 const mockPollWithBackoff = vi.mocked(pollWithBackoff)
 
 function makeDoc(overrides: Record<string, unknown> = {}) {
@@ -51,8 +51,7 @@ function renderAtRoute(id = 'doc-1') {
 describe('ReportDetailPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // Default: signed URL always resolves
-    mockDocumentsSignedUrl.mockResolvedValue({ signed_url: 'https://example.com/file.pdf' } as never)
+    mockDocumentsDownloadFile.mockResolvedValue('https://example.com/file.pdf')
   })
 
   it('shows loading skeleton while fetch is in flight', () => {
@@ -111,9 +110,9 @@ describe('ReportDetailPage', () => {
     expect(screen.getByText(/blood_test\.pdf/)).toBeInTheDocument()
   })
 
-  it('shows download link in failed state when signed URL is available', async () => {
+  it('shows download link in failed state when file URL is available', async () => {
     mockDocumentsGet.mockResolvedValue(makeDoc({ extraction_status: 'failed' }) as never)
-    mockDocumentsSignedUrl.mockResolvedValue({ signed_url: 'https://cdn.example.com/doc.pdf' } as never)
+    mockDocumentsDownloadFile.mockResolvedValue('https://cdn.example.com/doc.pdf')
 
     renderAtRoute()
 

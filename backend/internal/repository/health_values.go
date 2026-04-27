@@ -9,18 +9,20 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/vitalog/backend/internal/crypto"
 	"github.com/vitalog/backend/internal/model"
 )
 
 type HealthValueRepository struct {
-	pool *pgxpool.Pool
+	pool   *pgxpool.Pool
+	crypto *crypto.Service
 }
 
-func NewHealthValueRepository(pool *pgxpool.Pool) *HealthValueRepository {
-	return &HealthValueRepository{pool: pool}
+func NewHealthValueRepository(pool *pgxpool.Pool, cryptoSvc *crypto.Service) *HealthValueRepository {
+	return &HealthValueRepository{pool: pool, crypto: cryptoSvc}
 }
 
-func (r *HealthValueRepository) CreateBatch(ctx context.Context, values []model.HealthValue) error {
+func (r *HealthValueRepository) CreateBatch(ctx context.Context, ownerID uuid.UUID, values []model.HealthValue) error {
 	if len(values) == 0 {
 		return nil
 	}
@@ -31,31 +33,35 @@ func (r *HealthValueRepository) CreateBatch(ctx context.Context, values []model.
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	`
 
-	batch := &pgx.Batch{}
 	for _, v := range values {
 		v.ID = uuid.New()
-		batch.Queue(query,
+
+		valEnc, err := r.crypto.EncryptFloat64(ctx, ownerID, v.Value)
+		if err != nil {
+			return fmt.Errorf("encrypt value: %w", err)
+		}
+		refLowEnc, err := r.crypto.EncryptOptFloat64(ctx, ownerID, v.ReferenceLow)
+		if err != nil {
+			return fmt.Errorf("encrypt reference_low: %w", err)
+		}
+		refHighEnc, err := r.crypto.EncryptOptFloat64(ctx, ownerID, v.ReferenceHigh)
+		if err != nil {
+			return fmt.Errorf("encrypt reference_high: %w", err)
+		}
+
+		_, err = r.pool.Exec(ctx, query,
 			v.ID,
 			v.DocumentID,
 			v.FamilyMemberID,
 			v.CanonicalName,
 			v.DisplayName,
-			v.Value,
+			valEnc,
 			v.Unit,
-			v.ReferenceLow,
-			v.ReferenceHigh,
+			refLowEnc,
+			refHighEnc,
 			v.IsFlagged,
 			v.ReportDate,
 		)
-	}
-
-	br := r.pool.SendBatch(ctx, batch)
-	defer br.Close()
-
-	for range values {
-		if _, err := br.Exec(); err != nil {
-			return fmt.Errorf("batch insert health value: %w", err)
-		}
 	}
 	return nil
 }
@@ -83,18 +89,22 @@ func (r *HealthValueRepository) GetPreviousValue(ctx context.Context, ownerID uu
 
 	query += " ORDER BY hv.report_date DESC LIMIT 1"
 
-	var value float64
-	err := r.pool.QueryRow(ctx, query, args...).Scan(&value)
+	var encVal []byte
+	err := r.pool.QueryRow(ctx, query, args...).Scan(&encVal)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return 0, false, nil
 		}
 		return 0, false, err
 	}
+	value, err := r.crypto.DecryptToFloat64(ctx, ownerID, encVal)
+	if err != nil {
+		return 0, false, err
+	}
 	return value, true, nil
 }
 
-// GetByDocumentID returns health values only for non-deleted documents owned by ownerID (H4).
+// GetByDocumentID returns health values only for non-deleted documents owned by ownerID.
 func (r *HealthValueRepository) GetByDocumentID(ctx context.Context, ownerID, docID uuid.UUID) ([]model.HealthValue, error) {
 	query := `
 		SELECT hv.id, hv.document_id, hv.family_member_id, hv.canonical_name, hv.display_name,
@@ -114,21 +124,25 @@ func (r *HealthValueRepository) GetByDocumentID(ctx context.Context, ownerID, do
 	var values []model.HealthValue
 	for rows.Next() {
 		var v model.HealthValue
+		var valEnc, refLowEnc, refHighEnc []byte
 		err := rows.Scan(
 			&v.ID,
 			&v.DocumentID,
 			&v.FamilyMemberID,
 			&v.CanonicalName,
 			&v.DisplayName,
-			&v.Value,
+			&valEnc,
 			&v.Unit,
-			&v.ReferenceLow,
-			&v.ReferenceHigh,
+			&refLowEnc,
+			&refHighEnc,
 			&v.IsFlagged,
 			&v.ReportDate,
 			&v.CreatedAt,
 		)
 		if err != nil {
+			return nil, err
+		}
+		if err := r.decryptHealthValue(ctx, ownerID, valEnc, refLowEnc, refHighEnc, &v); err != nil {
 			return nil, err
 		}
 		values = append(values, v)
@@ -187,21 +201,25 @@ func (r *HealthValueRepository) ListByUser(ctx context.Context, userID uuid.UUID
 	var values []model.HealthValue
 	for rows.Next() {
 		var v model.HealthValue
+		var valEnc, refLowEnc, refHighEnc []byte
 		err := rows.Scan(
 			&v.ID,
 			&v.DocumentID,
 			&v.FamilyMemberID,
 			&v.CanonicalName,
 			&v.DisplayName,
-			&v.Value,
+			&valEnc,
 			&v.Unit,
-			&v.ReferenceLow,
-			&v.ReferenceHigh,
+			&refLowEnc,
+			&refHighEnc,
 			&v.IsFlagged,
 			&v.ReportDate,
 			&v.CreatedAt,
 		)
 		if err != nil {
+			return nil, err
+		}
+		if err := r.decryptHealthValue(ctx, userID, valEnc, refLowEnc, refHighEnc, &v); err != nil {
 			return nil, err
 		}
 		values = append(values, v)
@@ -243,25 +261,39 @@ func (r *HealthValueRepository) GetTimeline(ctx context.Context, userID uuid.UUI
 		var point model.TimelinePoint
 		var displayName string
 		var unit *string
-		var refLow, refHigh *float64
+		var refLowEnc, refHighEnc, valEnc []byte
 
 		err := rows.Scan(
 			&timeline.CanonicalName,
 			&displayName,
 			&unit,
-			&refLow,
-			&refHigh,
+			&refLowEnc,
+			&refHighEnc,
 			&point.ReportDate,
-			&point.Value,
+			&valEnc,
 			&point.DocumentID,
 		)
 		if err != nil {
 			return nil, err
 		}
 
+		val, err := r.crypto.DecryptToFloat64(ctx, userID, valEnc)
+		if err != nil {
+			return nil, fmt.Errorf("decrypt timeline value: %w", err)
+		}
+		point.Value = val
+
 		if timeline.DisplayName == "" {
 			timeline.DisplayName = displayName
 			timeline.Unit = unit
+			refLow, err := r.crypto.DecryptToOptFloat64(ctx, userID, refLowEnc)
+			if err != nil {
+				return nil, fmt.Errorf("decrypt reference_low: %w", err)
+			}
+			refHigh, err := r.crypto.DecryptToOptFloat64(ctx, userID, refHighEnc)
+			if err != nil {
+				return nil, fmt.Errorf("decrypt reference_high: %w", err)
+			}
 			timeline.ReferenceLow = refLow
 			timeline.ReferenceHigh = refHigh
 		}
@@ -270,4 +302,67 @@ func (r *HealthValueRepository) GetTimeline(ctx context.Context, userID uuid.UUI
 	}
 
 	return timeline, rows.Err()
+}
+
+// GetFlaggedBatch returns the top-3 flagged health values per document for the given document IDs.
+// Used by DocumentRepository.List to populate the FlaggedValues preview without SQL-side decryption.
+func (r *HealthValueRepository) GetFlaggedBatch(ctx context.Context, userID uuid.UUID, docIDs []uuid.UUID) (map[uuid.UUID][]model.FlaggedValueSummary, error) {
+	if len(docIDs) == 0 {
+		return nil, nil
+	}
+
+	query := `
+		SELECT document_id, canonical_name, display_name, value, unit, is_flagged
+		FROM (
+			SELECT document_id, canonical_name, display_name, value, unit, is_flagged,
+			       ROW_NUMBER() OVER (PARTITION BY document_id ORDER BY canonical_name) AS rn
+			FROM health_values
+			WHERE document_id = ANY($1) AND is_flagged = true
+		) t
+		WHERE rn <= 3
+	`
+
+	rows, err := r.pool.Query(ctx, query, docIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[uuid.UUID][]model.FlaggedValueSummary)
+	for rows.Next() {
+		var docID uuid.UUID
+		var summary model.FlaggedValueSummary
+		var valEnc []byte
+		if err := rows.Scan(&docID, &summary.CanonicalName, &summary.DisplayName, &valEnc, &summary.Unit, &summary.IsFlagged); err != nil {
+			return nil, err
+		}
+		val, err := r.crypto.DecryptToFloat64(ctx, userID, valEnc)
+		if err != nil {
+			return nil, fmt.Errorf("decrypt flagged value: %w", err)
+		}
+		summary.Value = val
+		result[docID] = append(result[docID], summary)
+	}
+	return result, rows.Err()
+}
+
+func (r *HealthValueRepository) decryptHealthValue(ctx context.Context, userID uuid.UUID, valEnc, refLowEnc, refHighEnc []byte, v *model.HealthValue) error {
+	val, err := r.crypto.DecryptToFloat64(ctx, userID, valEnc)
+	if err != nil {
+		return fmt.Errorf("decrypt value: %w", err)
+	}
+	v.Value = val
+
+	refLow, err := r.crypto.DecryptToOptFloat64(ctx, userID, refLowEnc)
+	if err != nil {
+		return fmt.Errorf("decrypt reference_low: %w", err)
+	}
+	v.ReferenceLow = refLow
+
+	refHigh, err := r.crypto.DecryptToOptFloat64(ctx, userID, refHighEnc)
+	if err != nil {
+		return fmt.Errorf("decrypt reference_high: %w", err)
+	}
+	v.ReferenceHigh = refHigh
+	return nil
 }

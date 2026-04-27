@@ -153,7 +153,7 @@ func (h *PrivacyHandler) DataExport(w http.ResponseWriter, r *http.Request) {
 		respondError(w, http.StatusInternalServerError, "export failed")
 		return
 	}
-	docItems, _, err := h.docRepo.List(r.Context(), uid, &model.DocumentsFilter{Limit: 1000})
+	docItems, _, err := h.docRepo.List(r.Context(), uid, &model.DocumentsFilter{Limit: 1000}, h.hvRepo)
 	if err != nil {
 		slog.Error("data export documents", "error", err)
 		respondError(w, http.StatusInternalServerError, "export failed")
@@ -227,7 +227,7 @@ func (h *PrivacyHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	docItems, _, err := h.docRepo.List(r.Context(), uid, &model.DocumentsFilter{Limit: 1000})
+	docItems, _, err := h.docRepo.List(r.Context(), uid, &model.DocumentsFilter{Limit: 1000}, h.hvRepo)
 	if err != nil {
 		slog.Error("delete account list docs", "error", err)
 		respondError(w, http.StatusInternalServerError, "failed to prepare account deletion")
