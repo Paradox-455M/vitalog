@@ -138,6 +138,13 @@ export const ReportCard = memo(function ReportCard({ report, flaggedValues = [],
             ref={menuButtonRef}
             type="button"
             onClick={(e) => { e.stopPropagation(); setMenuOpen(!menuOpen) }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                e.stopPropagation()
+                setMenuOpen(true)
+              }
+            }}
             aria-label="Report options"
             aria-haspopup="menu"
             aria-expanded={menuOpen}

@@ -55,13 +55,15 @@ Run everything from `backend/`:
 cd backend
 ./dev.sh           # auto-detects remote vs local from .env
 ./dev.sh local     # force local Supabase stack (requires Docker)
+./dev.sh deploy    # push schema + deploy edge function to remote
 ./dev.sh stop      # stop all managed services
+./dev.sh kill      # force-kill ports 8080, 3000, 5173
 ./dev.sh status    # show running services
 ./dev.sh analyser  # start only the analyser server
 ```
 Remote mode (default when `SUPABASE_URL` is non-localhost): starts analyser + Go backend only — no Docker needed. Local mode: starts the full Supabase Docker stack, patches `.env` and `frontend/.env.local`, then starts analyser + Go backend.
 
-The **analyser** is a separate HTTP service (default `http://localhost:3000`, set via `ANALYSER_DIR` env var pointing to its directory). It exposes `POST /api/pipeline-file-stream` and returns a Server-Sent Events stream. The Go backend calls it during document extraction.
+The **analyser** is a separate HTTP service (default `http://localhost:3000`, set via `ANALYSER_DIR` env var pointing to its directory). It exposes `POST /api/pipeline-file-stream` and returns a Server-Sent Events stream. The Go backend calls it during document extraction. **The analyser is an external repository** (not inside this monorepo). By default `dev.sh` looks for it at `~/Desktop/analyser`. It requires its own `ANTHROPIC_API_KEY` in its `.env` or environment.
 
 ### 🚀 Frontend Commands (from project root)
 *   **Local Development:** `npm run frontend:dev`
@@ -77,12 +79,15 @@ In dev, Vite proxies `/api/*` to `http://127.0.0.1:8080` — do **not** set `VIT
 cd backend
 go run ./cmd/server          # start the server (reads .env automatically)
 go build ./...               # compile check
+go test ./...                # run all tests
 curl http://127.0.0.1:8080/health   # verify: 200 JSON
 curl -i http://127.0.0.1:8080/api/notification-preferences  # verify: 401 (not 404)
 ```
 The backend auto-runs database migrations on startup (`internal/migrate/sql/schema.sql` + any newer SQL files). No manual migration step is required when running locally.
 
-Required `backend/.env` vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `ANALYSER_URL`. Copy from `backend/.env.example`.
+Go module path: `github.com/vitalog/backend`. Key deps: `go-chi/chi/v5` (router), `jackc/pgx/v5` (Postgres pool), `golang-jwt/jwt/v5`.
+
+Required `backend/.env` vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `ANALYSER_URL`. Copy from `backend/.env.example`. Optional: `ANTHROPIC_API_KEY` (only needed if calling AI directly; the analyser handles it instead), `RAZORPAY_WEBHOOK_SECRET`.
 
 ### 🐘 Supabase Backend (CLI)
 Run Supabase CLI commands from `backend/` (where `supabase/` lives):
@@ -95,6 +100,26 @@ supabase functions serve extraction       # Local test the Edge Function
 The Edge Function entry point is `backend/supabase/functions/extraction/index.ts`.
 Shared helpers live in `backend/supabase/functions/_shared/` (`canonicalMap.ts`, `prompts.ts`).
 Required Edge Function secrets: `ANTHROPIC_API_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`.
+
+### 🏗️ Go Backend Internal Architecture
+The backend follows a strict layered pattern — new features must respect this:
+
+| Layer | Package | Responsibility |
+|---|---|---|
+| Entry point | `cmd/server/` | Wire router, middleware, DI |
+| Handlers | `internal/handler/` | HTTP request parsing + response; one file per domain |
+| Services | `internal/service/` | Business logic; called by handlers |
+| Repositories | `internal/repository/` | All DB queries; **owner_id checked here** (service role bypasses RLS) |
+| Models | `internal/model/` | Shared structs (no logic) |
+| Middleware | `internal/middleware/` | JWT auth (`auth.go`), CORS, rate limiting, security headers |
+| Storage | `internal/storage/` | Supabase Storage operations |
+| Config | `internal/config/` | Env var loading |
+
+Handler files: `documents.go`, `extraction.go`, `family.go`, `profile.go`, `notification.go`, `dashboard.go`, `privacy.go`, `subscription.go`, `razorpay.go` (payment webhook).
+
+**Auth middleware scope:** All `/api/*` routes require a valid JWT except `/api/webhooks/razorpay` (registered outside the auth group — verified by HMAC signature instead). `GET /health` is also public.
+
+**Handler helpers** (`internal/handler/response.go`): use `respondJSON`, `respondError`, `respondCodedError` — never write raw `json.Encode` in handlers. Coded errors (e.g. upload limit) return `{ "error": "...", "code": "..." }` so the frontend can branch on a stable string.
 
 ### 🔌 Go Backend REST API
 The frontend calls the Go backend via `frontend/src/lib/api.ts`. All REST calls go through `apiClient()`, which attaches the Supabase JWT as `Authorization: Bearer <token>`. The `api` object exposes typed namespaces: `api.documents`, `api.healthValues`, `api.family`, `api.profile`, `api.notificationPreferences`, `api.notifications`. Do not call Supabase directly from pages — use the `api` client or hooks instead.
@@ -139,12 +164,16 @@ frontend/src/
                   #   AuthSplitPanel, BiomarkerDetailDrawer, AddFamilyMemberModal
   hooks/          # Custom data hooks: useDocuments, useDocument, useUpload, useExtraction,
                   #   useFamilyMembers, useHealthValues, useProfile — all call api.*
+                  #   Powered by TanStack React Query v5 (useQuery / useMutation)
   layout/         # AppShell (SideNav + collapsible panel), SettingsLayout (sub-nav sidebar)
                   #   AppLayout.tsx — legacy skeleton, NOT used in current routing; ignore it
   lib/            # supabaseClient.ts — single Supabase client instance
                   # api.ts — Go backend REST client (typed namespaces + interfaces)
+                  # poll.ts — polling helper used to watch extraction_status after upload
+                  # healthValues.ts, insightsFromHealthValues.ts — data-transform utilities
+  types/          # Shared TypeScript types: biomarkers.ts, insights.ts
   pages/          # All app screens (see routing below)
-  mock/           # Typed static data fixtures (retained for pages not yet wired to backend)
+  data/           # Typed static data fixtures (retained for pages not yet wired to backend)
 ```
 
 **Auth pattern:** `AuthProvider` wraps the whole tree. `useAuth()` returns `{ session, user, loading, signOut }`. `RequireAuth` redirects unauthenticated users to `/login`. Do not call `supabase.auth` directly outside `AuthProvider`.

@@ -158,7 +158,7 @@ func main() {
 		Addr:           ":" + cfg.Port,
 		Handler:        r,
 		ReadTimeout:    60 * time.Second,
-		WriteTimeout:   60 * time.Second,
+		WriteTimeout:   6 * time.Minute, // accommodate large data-export responses
 		IdleTimeout:    60 * time.Second,
 		MaxHeaderBytes: 1 << 20, // H6: 1MB header cap
 	}
