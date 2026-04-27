@@ -215,7 +215,7 @@ export function TopBar({
               </div>
               <div className="px-4 py-3 border-t border-outline-variant/20">
                 <Link
-                  to="/settings/notifications"
+                  to="/notifications"
                   className="text-sm text-secondary font-semibold hover:underline flex items-center justify-center gap-1"
                   onClick={() => setNotificationsOpen(false)}
                 >

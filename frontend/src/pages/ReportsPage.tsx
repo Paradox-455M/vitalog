@@ -7,6 +7,7 @@ import { TopBar } from '../components/TopBar'
 import { UploadModal } from '../components/UploadModal'
 import { useDocuments } from '../hooks/useDocuments'
 import { useHealthValues } from '../hooks/useHealthValues'
+import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { api } from '../lib/api'
 import { pollWithBackoff } from '../lib/poll'
 
@@ -65,7 +66,8 @@ function matchesDocType(r: ReportRow, f: DocTypeFilter): boolean {
 
 export function ReportsPage() {
   const [searchParams] = useSearchParams()
-  const familyFilterId = searchParams.get('family_member_id') ?? null
+  const { activeMemberId } = useFamilyMember()
+  const familyFilterId = searchParams.get('family_member_id') ?? activeMemberId ?? null
   const queryClient = useQueryClient()
 
   const { documents, loading } = useDocuments()

@@ -7,6 +7,7 @@ import { TopBar } from '../components/TopBar'
 import { useDocuments } from '../hooks/useDocuments'
 import { useHealthValues } from '../hooks/useHealthValues'
 import { useProfile } from '../hooks/useProfile'
+import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { greetingFirstName } from '../lib/accountDisplay'
 import type { HealthValue } from '../lib/api'
 
@@ -43,8 +44,10 @@ function SkeletonStat() {
 export function DashboardPage() {
   const { user } = useAuth()
   const { profile, loading: profileLoading } = useProfile()
-  const { documents, loading: docsLoading } = useDocuments()
-  const { healthValues: allHealthValues, loading: hvLoading } = useHealthValues()
+  const { activeMemberId } = useFamilyMember()
+  const familyOpt = activeMemberId ? { familyMemberId: activeMemberId } : undefined
+  const { documents, loading: docsLoading } = useDocuments(familyOpt)
+  const { healthValues: allHealthValues, loading: hvLoading } = useHealthValues(familyOpt)
   const [showUploadModal, setShowUploadModal] = useState(false)
 
   const loading = docsLoading || hvLoading

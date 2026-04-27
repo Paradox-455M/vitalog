@@ -30,7 +30,17 @@ func (h *DashboardHandler) Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stats, err := h.docRepo.GetDashboardStats(r.Context(), userUUID)
+	var familyMemberID *uuid.UUID
+	if fmid := r.URL.Query().Get("family_member_id"); fmid != "" {
+		parsed, err := uuid.Parse(fmid)
+		if err != nil {
+			respondError(w, http.StatusBadRequest, "invalid family_member_id")
+			return
+		}
+		familyMemberID = &parsed
+	}
+
+	stats, err := h.docRepo.GetDashboardStats(r.Context(), userUUID, familyMemberID)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, "failed to fetch stats")
 		return

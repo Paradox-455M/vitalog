@@ -16,6 +16,8 @@ type Config struct {
 	AnthropicAPIKey        string
 	AnalyserURL            string
 	RazorpayWebhookSecret  string
+	RazorpayKeyID          string
+	RazorpayKeySecret      string
 	// Plan limits (overridable without redeploy)
 	FamilyLimitFree int
 	FamilyLimitPro  int
@@ -32,6 +34,8 @@ func Load() (*Config, error) {
 		AnthropicAPIKey:        os.Getenv("ANTHROPIC_API_KEY"),
 		AnalyserURL:            getEnv("ANALYSER_URL", "http://localhost:3000"),
 		RazorpayWebhookSecret:  os.Getenv("RAZORPAY_WEBHOOK_SECRET"),
+		RazorpayKeyID:          os.Getenv("RAZORPAY_KEY_ID"),
+		RazorpayKeySecret:      os.Getenv("RAZORPAY_KEY_SECRET"),
 		FamilyLimitFree:        getEnvInt("FAMILY_LIMIT_FREE", 1),
 		FamilyLimitPro:         getEnvInt("FAMILY_LIMIT_PRO", 5),
 	}
