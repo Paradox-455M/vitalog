@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { SideNav } from '../components/SideNav'
+import { FamilyMemberProvider } from '../contexts/FamilyMemberContext'
 
 export function AppShell() {
   const location = useLocation()
@@ -46,6 +47,7 @@ export function AppShell() {
   }, [])
 
   return (
+    <FamilyMemberProvider>
     <div className="flex h-screen bg-surface overflow-hidden">
       {/* Skip to main content link for keyboard users */}
       <a
@@ -139,5 +141,6 @@ export function AppShell() {
         <Outlet />
       </main>
     </div>
+    </FamilyMemberProvider>
   )
 }

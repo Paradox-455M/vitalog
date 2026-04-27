@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
 import { useProfile } from '../hooks/useProfile'
+import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { accountDisplayName, initialsFromDisplayName, profileAvatarUrl } from '../lib/accountDisplay'
 import { api } from '../lib/api'
 
@@ -21,12 +22,27 @@ export function SideNav() {
   const location = useLocation()
   const { profile, loading: profileLoading } = useProfile()
   const [reportCount, setReportCount] = useState<number | null>(null)
+  const { activeMemberId, activeMemberName, setActiveMemberId, members } = useFamilyMember()
+  const [switcherOpen, setSwitcherOpen] = useState(false)
+  const switcherRef = useRef<HTMLDivElement>(null)
 
   const displayName = useMemo(() => accountDisplayName(profile, user), [profile, user])
 
   const initials = useMemo(() => initialsFromDisplayName(displayName), [displayName])
 
   const avatarUrl = profileAvatarUrl(profile)
+
+  // Close switcher on click outside
+  useEffect(() => {
+    if (!switcherOpen) return
+    function handleClickOutside(e: MouseEvent) {
+      if (switcherRef.current && !switcherRef.current.contains(e.target as Node)) {
+        setSwitcherOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [switcherOpen])
 
   useEffect(() => {
     let cancelled = false
@@ -64,6 +80,85 @@ export function SideNav() {
         </div>
         <span className="font-serif text-xl font-bold text-on-surface">Vitalog</span>
       </div>
+
+      {/* Profile switcher */}
+      {members.length > 0 && (
+        <div ref={switcherRef} className="relative mb-4 px-1">
+          <button
+            type="button"
+            onClick={() => setSwitcherOpen((o) => !o)}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container transition-colors text-left"
+            aria-expanded={switcherOpen}
+            aria-haspopup="listbox"
+          >
+            <span className="material-symbols-outlined text-lg text-on-surface-variant" aria-hidden="true">
+              {activeMemberId ? 'family_restroom' : 'person'}
+            </span>
+            <span className="flex-1 text-sm font-medium text-on-surface truncate">
+              {activeMemberName}
+            </span>
+            <span className="material-symbols-outlined text-sm text-on-surface-variant" aria-hidden="true">
+              {switcherOpen ? 'expand_less' : 'expand_more'}
+            </span>
+          </button>
+
+          {switcherOpen && (
+            <div
+              role="listbox"
+              aria-label="Select family member"
+              className="absolute left-1 right-1 top-full mt-1 z-50 bg-surface border border-outline-variant/30 rounded-xl shadow-lg py-1 max-h-64 overflow-y-auto"
+            >
+              <button
+                type="button"
+                role="option"
+                aria-selected={!activeMemberId}
+                className={`w-full text-left px-4 py-2.5 flex items-center gap-3 text-sm hover:bg-surface-container transition-colors ${
+                  !activeMemberId ? 'text-primary font-semibold' : 'text-on-surface'
+                }`}
+                onClick={() => {
+                  setActiveMemberId(null)
+                  setSwitcherOpen(false)
+                }}
+              >
+                <span className="material-symbols-outlined text-lg" aria-hidden="true">person</span>
+                <span className="flex-1">Self</span>
+                {!activeMemberId && (
+                  <span className="material-symbols-outlined text-primary text-lg" aria-hidden="true">check</span>
+                )}
+              </button>
+
+              <div className="border-t border-outline-variant/20 my-1" />
+
+              {members.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  role="option"
+                  aria-selected={activeMemberId === m.id}
+                  className={`w-full text-left px-4 py-2.5 flex items-center gap-3 text-sm hover:bg-surface-container transition-colors ${
+                    activeMemberId === m.id ? 'text-primary font-semibold' : 'text-on-surface'
+                  }`}
+                  onClick={() => {
+                    setActiveMemberId(m.id)
+                    setSwitcherOpen(false)
+                  }}
+                >
+                  <span className="material-symbols-outlined text-lg" aria-hidden="true">family_restroom</span>
+                  <span className="flex-1 truncate">{m.name}</span>
+                  {m.relationship && (
+                    <span className="text-[10px] bg-surface-container px-2 py-0.5 rounded-full text-on-surface-variant font-medium">
+                      {m.relationship}
+                    </span>
+                  )}
+                  {activeMemberId === m.id && (
+                    <span className="material-symbols-outlined text-primary text-lg" aria-hidden="true">check</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Nav items */}
       <nav className="flex-1 overflow-y-auto flex flex-col gap-0.5">

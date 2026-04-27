@@ -254,7 +254,8 @@ func (r *DocumentRepository) UpdateExtraction(ctx context.Context, ownerID, docI
 }
 
 // GetDashboardStats returns aggregated metrics for the user's dashboard in one query.
-func (r *DocumentRepository) GetDashboardStats(ctx context.Context, userID uuid.UUID) (*model.DashboardStats, error) {
+// If familyMemberID is non-nil, results are scoped to that family member's documents.
+func (r *DocumentRepository) GetDashboardStats(ctx context.Context, userID uuid.UUID, familyMemberID *uuid.UUID) (*model.DashboardStats, error) {
 	query := `
 		SELECT
 			COUNT(DISTINCT d.id)::int                                   AS report_count,
@@ -265,8 +266,13 @@ func (r *DocumentRepository) GetDashboardStats(ctx context.Context, userID uuid.
 		LEFT JOIN health_values hv ON hv.document_id = d.id
 		WHERE d.owner_id = $1 AND d.deleted_at IS NULL
 	`
+	args := []interface{}{userID}
+	if familyMemberID != nil {
+		query += " AND d.family_member_id = $2"
+		args = append(args, *familyMemberID)
+	}
 	var s model.DashboardStats
-	err := r.pool.QueryRow(ctx, query, userID).Scan(
+	err := r.pool.QueryRow(ctx, query, args...).Scan(
 		&s.ReportCount,
 		&s.ValuesTracked,
 		&s.FlaggedCount,

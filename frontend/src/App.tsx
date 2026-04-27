@@ -16,6 +16,7 @@ import { PrivacyPage } from './pages/PrivacyPage'
 import { SubscriptionPage } from './pages/SubscriptionPage'
 import { BiomarkerLibraryPage } from './pages/BiomarkerLibraryPage'
 import { InsightsPage } from './pages/InsightsPage'
+import { NotificationInboxPage } from './pages/NotificationInboxPage'
 
 // Lazy — heavy Recharts-backed pages
 const ReportsPage = lazy(() => import('./pages/ReportsPage').then((m) => ({ default: m.ReportsPage })))
@@ -65,6 +66,7 @@ export default function App() {
             } />
             <Route path="/biomarkers" element={<BiomarkerLibraryPage />} />
             <Route path="/insights" element={<InsightsPage />} />
+            <Route path="/notifications" element={<NotificationInboxPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
             <Route path="/settings/privacy" element={<PrivacyPage />} />

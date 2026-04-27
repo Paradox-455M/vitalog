@@ -265,10 +265,17 @@ export const api = {
       const q = limit != null ? `?limit=${limit}` : ''
       return apiClient<SubscriptionPayment[]>(`/api/subscription/payments${q}`)
     },
+    createOrder: () =>
+      apiClient<CreateOrderResponse>('/api/subscription/create-order', { method: 'POST' }),
   },
 
   dashboard: {
-    stats: () => apiClient<DashboardStats>('/api/dashboard/stats'),
+    stats: (params?: { family_member_id?: string }) => {
+      const searchParams = new URLSearchParams()
+      if (params?.family_member_id) searchParams.set('family_member_id', params.family_member_id)
+      const q = searchParams.toString()
+      return apiClient<DashboardStats>(`/api/dashboard/stats${q ? `?${q}` : ''}`)
+    },
   },
 }
 
@@ -279,6 +286,14 @@ export interface AccessEvent {
   ip_address: string | null
   user_agent: string | null
   event_type: string
+}
+
+export interface CreateOrderResponse {
+  order_id: string
+  amount: number
+  currency: string
+  key_id: string
+  mock: boolean
 }
 
 export interface SubscriptionPayment {

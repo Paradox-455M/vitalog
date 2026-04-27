@@ -8,6 +8,17 @@ import { useProfile } from '../hooks/useProfile'
 import { api } from '../lib/api'
 import type { SubscriptionPayment } from '../lib/api'
 
+function loadRazorpayScript(): Promise<void> {
+  if (document.querySelector('script[src*="razorpay"]')) return Promise.resolve()
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script')
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    s.onload = () => resolve()
+    s.onerror = () => reject(new Error('Failed to load Razorpay SDK'))
+    document.head.appendChild(s)
+  })
+}
+
 const FREE_MAX_UPLOADS = 3
 const FAMILY_MAX_FREE = 1
 const FAMILY_MAX_PRO = 5
@@ -31,7 +42,7 @@ function billingLoadErrorMessage(detail: string): string {
 
 export function SubscriptionPage() {
   const { addToast } = useToast()
-  const { profile, loading: profileLoading, error: profileError } = useProfile()
+  const { profile, loading: profileLoading, error: profileError, refetch: refetchProfile } = useProfile()
   const { members, loading: familyLoading, error: familyError } = useFamilyMembers()
   const [payments, setPayments] = useState<SubscriptionPayment[]>([])
   const [paymentsLoading, setPaymentsLoading] = useState(true)
@@ -68,13 +79,48 @@ export function SubscriptionPage() {
     : `${docCount} / ${FREE_MAX_UPLOADS} uploads`
   const familyLabel = `${familyCount} / ${maxFamily} family profiles`
 
-  const handleUpgradePlaceholder = () => {
-    addToast({
-      type: 'info',
-      title: 'Upgrade checkout',
-      message: 'In-app Razorpay checkout is not wired yet. Your plan updates when a payment is completed via your existing integration.',
-    })
-  }
+  const [upgrading, setUpgrading] = useState(false)
+
+  const handleUpgrade = useCallback(async () => {
+    setUpgrading(true)
+    try {
+      const order = await api.subscription.createOrder()
+      if (order.mock) {
+        addToast({ type: 'success', title: 'Upgrade successful!', message: 'Welcome to Vitalog Pro!' })
+        void refetchProfile()
+        void loadPayments()
+        return
+      }
+      // Real mode: load Razorpay SDK and open checkout
+      await loadRazorpayScript()
+      const rzp = new window.Razorpay({
+        key: order.key_id,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.order_id,
+        name: 'Vitalog',
+        description: 'Pro Plan - Monthly',
+        handler: () => {
+          addToast({ type: 'success', title: 'Payment successful!' })
+          setTimeout(() => {
+            void refetchProfile()
+            void loadPayments()
+          }, 2000)
+        },
+        prefill: { email: profile?.email },
+        theme: { color: '#3e6327' },
+      })
+      rzp.open()
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Checkout failed',
+        message: err instanceof Error ? err.message : 'Please try again.',
+      })
+    } finally {
+      setUpgrading(false)
+    }
+  }, [addToast, profile?.email, refetchProfile, loadPayments])
 
   const handleNotAvailable = (what: string) => {
     addToast({
@@ -215,8 +261,9 @@ export function SubscriptionPage() {
                 ) : (
                   <button
                     type="button"
-                    onClick={handleUpgradePlaceholder}
-                    className="w-full py-3 bg-white text-primary rounded-lg font-bold hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
+                    onClick={() => void handleUpgrade()}
+                    disabled={upgrading}
+                    className="w-full py-3 bg-white text-primary rounded-lg font-bold hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                   >
                     <span className="material-symbols-outlined text-lg">bolt</span>
                     Upgrade to Pro
@@ -257,8 +304,9 @@ export function SubscriptionPage() {
                   {!isPro && (
                     <button
                       type="button"
-                      onClick={handleUpgradePlaceholder}
-                      className="bg-primary-container text-on-primary-container hover:opacity-90 px-8 py-3 rounded-lg font-bold transition-all shadow-md flex items-center justify-center gap-2"
+                      onClick={() => void handleUpgrade()}
+                      disabled={upgrading}
+                      className="bg-primary-container text-on-primary-container hover:opacity-90 px-8 py-3 rounded-lg font-bold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                       <span className="material-symbols-outlined text-base">bolt</span>
                       Upgrade Plan

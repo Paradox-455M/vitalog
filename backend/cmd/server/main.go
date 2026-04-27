@@ -79,7 +79,7 @@ func main() {
 	profileHandler := handler.NewProfileHandler(profileRepo)
 	notifHandler := handler.NewNotificationHandler(profileRepo, notifRepo)
 	razorpayHandler := handler.NewRazorpayHandler(profileRepo, paymentEventRepo, cfg.RazorpayWebhookSecret)
-	subscriptionHandler := handler.NewSubscriptionHandler(paymentEventRepo)
+	subscriptionHandler := handler.NewSubscriptionHandler(paymentEventRepo, profileRepo, cfg.RazorpayKeyID, cfg.RazorpayKeySecret)
 	healthHandler := handler.NewHealthHandler(pool)
 
 	// H2: rate limiter for document uploads (10 uploads per user per hour).
@@ -147,7 +147,10 @@ func main() {
 			r.Post("/delete-account", privacyHandler.DeleteAccount)
 		})
 
-		r.Get("/subscription/payments", subscriptionHandler.ListPayments)
+		r.Route("/subscription", func(r chi.Router) {
+			r.Get("/payments", subscriptionHandler.ListPayments)
+			r.Post("/create-order", subscriptionHandler.CreateOrder)
+		})
 	})
 
 	r.Post("/api/webhooks/razorpay", razorpayHandler.Handle)

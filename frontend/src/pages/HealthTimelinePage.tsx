@@ -14,6 +14,7 @@ import {
 import { UploadModal } from '../components/UploadModal'
 import { TimelineSkeleton } from '../components/Skeleton'
 import { useHealthValues } from '../hooks/useHealthValues'
+import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { groupByCanonical, timelineChartElementId } from '../lib/healthValues'
 import type { HealthValue } from '../lib/api'
 
@@ -279,8 +280,13 @@ export function HealthTimelinePage() {
   const focusCanonical = searchParams.get('canonical')
   const spotlightCanonical = focusCanonical ?? stickySpotlight
 
+  const { activeMemberId } = useFamilyMember()
   const { fromDate, toDate } = useMemo(() => getDateRange(preset), [preset])
-  const { healthValues, loading, error, refetch } = useHealthValues({ fromDate, toDate })
+  const { healthValues, loading, error, refetch } = useHealthValues({
+    fromDate,
+    toDate,
+    familyMemberId: activeMemberId ?? undefined,
+  })
 
   const seriesList = useMemo(() => {
     const map = groupByCanonical(healthValues)
