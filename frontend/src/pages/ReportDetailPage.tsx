@@ -2,6 +2,12 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import { pollWithBackoff } from '../lib/poll'
+import {
+  biomarkerStatusIcon,
+  biomarkerStatusLabel,
+  classifyBiomarkerStatus,
+} from '../lib/biomarkerStatus'
+import { getReportPrimaryTitle } from '../lib/reportDisplay'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,6 +43,7 @@ interface Layer2Finding {
   value: number
   unit: string
   reference_range: string | null
+  definition?: string
   plain_explanation: string
   plain_result: string
   severity: 'all_clear' | 'watch' | 'attention' | 'discuss_soon'
@@ -97,8 +104,8 @@ function formatNormalRangeForTile(hv: HealthValueRow, finding: Layer2Finding | u
 function StatusBadge({ status }: { status: DocumentRow['extraction_status'] }) {
   const map = {
     complete:   { label: 'Complete',   cls: 'bg-secondary-container text-on-secondary-container' },
-    processing: { label: 'Processing', cls: 'bg-surface-container-high text-stone-600' },
-    pending:    { label: 'Pending',    cls: 'bg-surface-container-high text-stone-600' },
+    processing: { label: 'Processing', cls: 'bg-surface-container-high text-on-surface-variant' },
+    pending:    { label: 'Pending',    cls: 'bg-surface-container-high text-on-surface-variant' },
     failed:     { label: 'Failed',     cls: 'bg-error/10 text-error' },
   }
   const { label, cls } = map[status]
@@ -130,7 +137,15 @@ function OverallStatusBadge({ status }: { status: Layer2Result['overall_status']
   )
 }
 
-function FindingBadge({ status }: { status: Layer2Finding['status'] }) {
+function FindingBadge({
+  status,
+  flagDirection,
+  hvRefs,
+}: {
+  status: Layer2Finding['status']
+  flagDirection?: Layer2Finding['flag_direction'] | null
+  hvRefs?: Pick<HealthValueRow, 'value' | 'reference_low' | 'reference_high'> | null
+}) {
   if (status === 'normal') {
     return (
       <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-secondary-container text-on-secondary-container">
@@ -145,9 +160,28 @@ function FindingBadge({ status }: { status: Layer2Finding['status'] }) {
       </span>
     )
   }
+  let label: string
+  let iconName: string
+  if (flagDirection === 'high') {
+    label = biomarkerStatusLabel('above')
+    iconName = biomarkerStatusIcon('above')
+  } else if (flagDirection === 'low') {
+    label = biomarkerStatusLabel('below')
+    iconName = biomarkerStatusIcon('below')
+  } else if (hvRefs) {
+    const k = classifyBiomarkerStatus(hvRefs)
+    label = biomarkerStatusLabel(k)
+    iconName = biomarkerStatusIcon(k)
+  } else {
+    label = biomarkerStatusLabel('outside')
+    iconName = biomarkerStatusIcon('outside')
+  }
   return (
-    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-error/10 text-error">
-      Flagged
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-error/10 text-error">
+      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+        {iconName}
+      </span>
+      {label}
     </span>
   )
 }
@@ -164,7 +198,7 @@ function FlagDirectionIcon({ direction, status }: { direction: Layer2Finding['fl
 
 function LoadingSkeleton() {
   return (
-    <div className="px-12 py-8 max-w-7xl mx-auto space-y-10 animate-pulse">
+    <div className="px-4 sm:px-8 lg:px-12 py-8 max-w-7xl mx-auto space-y-10 animate-pulse">
       <div className="flex items-center gap-6">
         <div className="w-16 h-16 rounded-2xl bg-surface-container-high" />
         <div className="space-y-2">
@@ -182,7 +216,7 @@ function LoadingSkeleton() {
 
 function ProcessingState({ fileName }: { fileName: string }) {
   return (
-    <div className="px-12 py-16 max-w-7xl mx-auto text-center space-y-6">
+    <div className="px-4 sm:px-8 lg:px-12 py-16 max-w-7xl mx-auto text-center space-y-6">
       <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
         <span className="material-symbols-outlined text-primary text-4xl animate-spin">
           progress_activity
@@ -218,7 +252,7 @@ function FailedState({
   retrying?: boolean
 }) {
   return (
-    <div className="px-12 py-16 max-w-7xl mx-auto text-center space-y-6">
+    <div className="px-4 sm:px-8 lg:px-12 py-16 max-w-7xl mx-auto text-center space-y-6">
       <div className="w-20 h-20 rounded-full bg-error/10 flex items-center justify-center mx-auto">
         <span className="material-symbols-outlined text-error text-4xl">error</span>
       </div>
@@ -322,8 +356,8 @@ export function ReportDetailPage() {
   // ── Not found ──────────────────────────────────────────────────────────────
   if (doc === null) {
     return (
-      <div className="px-12 py-16 max-w-7xl mx-auto text-center">
-        <span className="material-symbols-outlined text-5xl text-stone-300 mb-4 block">description</span>
+      <div className="px-4 sm:px-8 lg:px-12 py-16 max-w-7xl mx-auto text-center">
+        <span className="material-symbols-outlined text-5xl text-outline/30 mb-4 block">description</span>
         <h1 className="font-serif text-2xl font-bold text-on-surface mb-2">Report not found</h1>
         <p className="text-on-surface-variant mb-6">
           This report does not exist or has been removed.
@@ -367,6 +401,8 @@ export function ReportDetailPage() {
   // ── Complete ───────────────────────────────────────────────────────────────
   const layer2 = parseExplanation(doc.explanation_text)
 
+  const pageTitle = getReportPrimaryTitle(doc.lab_name, doc.report_date, doc.file_name)
+
   // Build a lookup map from layer2 findings for enriching health_value rows
   const findingsByCanonical = new Map<string, Layer2Finding>()
   layer2?.findings.forEach((f) => findingsByCanonical.set(f.canonical_name, f))
@@ -381,11 +417,13 @@ export function ReportDetailPage() {
   return (
     <>
       {/* Sticky topbar */}
-      <header className="sticky top-0 z-40 flex justify-between items-center w-full px-12 py-5 bg-surface/70 backdrop-blur-md border-b border-outline-variant/15">
-        <div className="flex items-center gap-3 text-sm font-medium">
-          <Link to="/reports" className="text-stone-400 hover:text-on-surface transition-colors">My Reports</Link>
-          <span className="material-symbols-outlined text-xs text-stone-300">chevron_right</span>
-          <span className="text-primary font-semibold truncate max-w-xs">{doc.file_name}</span>
+      <header className="sticky top-0 z-40 flex justify-between items-center w-full px-4 sm:px-8 lg:px-12 py-4 sm:py-5 bg-surface/70 backdrop-blur-md border-b border-outline-variant/15">
+        <div className="flex items-center gap-3 text-sm font-medium pl-14 lg:pl-0">
+          <Link to="/reports" className="text-on-surface-variant hover:text-on-surface transition-colors">My Reports</Link>
+          <span className="material-symbols-outlined text-xs text-outline/30">chevron_right</span>
+          <span className="text-primary font-semibold truncate max-w-xs" title={pageTitle}>
+            {pageTitle}
+          </span>
         </div>
         <div className="flex items-center gap-4">
           {signedUrl && (
@@ -393,7 +431,7 @@ export function ReportDetailPage() {
               href={signedUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-stone-600 hover:text-primary transition-colors"
+              className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors"
             >
               <span className="material-symbols-outlined text-xl">download</span>
               <span className="text-sm font-medium">Download original</span>
@@ -401,7 +439,7 @@ export function ReportDetailPage() {
           )}
           <button
             type="button"
-            className="flex items-center justify-center text-stone-600 hover:text-primary transition-colors"
+            className="flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
             onClick={() => window.print()}
           >
             <span className="material-symbols-outlined text-xl">print</span>
@@ -410,7 +448,7 @@ export function ReportDetailPage() {
       </header>
 
       {/* Page body */}
-      <div className="px-12 py-8 max-w-7xl mx-auto space-y-10">
+      <div className="px-4 sm:px-8 lg:px-12 py-8 max-w-7xl mx-auto space-y-10">
 
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <div className="flex items-center gap-6">
@@ -423,11 +461,11 @@ export function ReportDetailPage() {
             </span>
           </div>
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-on-surface mb-2 font-serif">
-              {doc.file_name}
+            <h1 className="text-4xl font-bold tracking-tight text-on-surface mb-2 font-serif break-words">
+              {pageTitle}
             </h1>
-            <div className="flex items-center gap-4 text-stone-500 text-sm flex-wrap">
-              {doc.lab_name && (
+            <div className="flex items-center gap-4 text-on-surface-variant text-sm flex-wrap">
+              {doc.lab_name && !pageTitle.includes(doc.lab_name.trim()) && (
                 <>
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-sm">apartment</span>
@@ -444,7 +482,7 @@ export function ReportDetailPage() {
                   <span>•</span>
                   <span>{healthValues.length} values</span>
                   {flaggedCount > 0 && (
-                    <span className="text-error font-medium">· {flaggedCount} flagged</span>
+                    <span className="text-error font-medium">· {flaggedCount} out of range</span>
                   )}
                 </>
               )}
@@ -518,7 +556,7 @@ export function ReportDetailPage() {
           <div className="bg-surface-container-lowest rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-outline-variant/10">
               <h2 className="font-serif text-xl font-bold text-on-surface">Biomarker Results</h2>
-              <span className="text-sm text-stone-500">
+              <span className="text-sm text-on-surface-variant">
                 {healthValues.length} value{healthValues.length !== 1 ? 's' : ''} extracted
               </span>
             </div>
@@ -528,7 +566,7 @@ export function ReportDetailPage() {
                   {['Name', 'Value', 'Reference Range', 'Status', 'What it measures'].map((col) => (
                     <th
                       key={col}
-                      className="text-left text-xs uppercase tracking-widest text-stone-500 px-6 py-3 font-semibold"
+                      className="text-left text-xs uppercase tracking-widest text-on-surface-variant px-6 py-3 font-semibold"
                     >
                       {col}
                     </th>
@@ -553,7 +591,7 @@ export function ReportDetailPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
                           <span className="font-bold text-on-surface">{hv.value}</span>
-                          {hv.unit && <span className="text-stone-500 text-sm">{hv.unit}</span>}
+                          {hv.unit && <span className="text-on-surface-variant text-sm">{hv.unit}</span>}
                           {finding && (
                             <FlagDirectionIcon direction={finding.flag_direction} status={status} />
                           )}
@@ -562,12 +600,20 @@ export function ReportDetailPage() {
                           <p className="text-xs text-on-surface-variant mt-0.5">{finding.plain_result}</p>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-stone-500 text-sm">{refRange}</td>
+                      <td className="px-6 py-4 text-on-surface-variant text-sm">{refRange}</td>
                       <td className="px-6 py-4">
-                        <FindingBadge status={status} />
+                        <FindingBadge
+                          status={status}
+                          flagDirection={finding?.flag_direction ?? null}
+                          hvRefs={
+                            status === 'flagged'
+                              ? { value: hv.value, reference_low: hv.reference_low, reference_high: hv.reference_high }
+                              : undefined
+                          }
+                        />
                       </td>
                       <td className="px-6 py-4 text-sm text-on-surface-variant max-w-xs">
-                        {finding?.plain_explanation ?? '—'}
+                        {finding?.definition || finding?.plain_explanation || '—'}
                       </td>
                     </tr>
                   )
@@ -618,19 +664,9 @@ export function ReportDetailPage() {
         {/* ── Implications (table) + Ask analyser ────────────────────────── */}
         {worthWatchingFindings.length > 0 && layer2 && (
           <section className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                Implications
-              </h2>
-              <button
-                type="button"
-                disabled
-                title="Ask analyser will be available in a future update"
-                className="self-start sm:self-center px-4 py-2 rounded-full text-sm font-semibold border border-outline-variant text-on-surface-variant cursor-not-allowed opacity-70"
-              >
-                Ask analyser
-              </button>
-            </div>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+              Implications
+            </h2>
             <div className="overflow-x-auto rounded-xl border border-outline-variant">
               <table className="w-full text-sm">
                 <thead className="bg-surface-container border-b border-outline-variant">
@@ -683,7 +719,7 @@ export function ReportDetailPage() {
                     key={hv.id}
                     className={`rounded-xl border-2 ${borderClass} bg-surface-container-lowest p-3 flex flex-col justify-between min-h-[7.5rem]`}
                   >
-                    <p className="text-[10px] uppercase tracking-wide text-on-surface-variant line-clamp-2 leading-tight text-center">
+                    <p className="text-[11px] uppercase tracking-wide text-on-surface-variant line-clamp-2 leading-tight text-center">
                       {hv.display_name}
                     </p>
                     <p
@@ -697,10 +733,10 @@ export function ReportDetailPage() {
                       )}
                     </p>
                     <div className="pt-2 mt-auto border-t border-outline-variant/30">
-                      <p className="text-[9px] uppercase tracking-wide text-on-surface-variant text-center mb-0.5">
+                      <p className="text-[11px] uppercase tracking-wide text-on-surface-variant text-center mb-0.5">
                         Reference range
                       </p>
-                      <p className="text-[10px] text-on-surface text-center leading-snug break-words px-0.5">
+                      <p className="text-xs text-on-surface text-center leading-snug break-words px-0.5">
                         {rangeText}
                       </p>
                     </div>

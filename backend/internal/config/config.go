@@ -19,6 +19,9 @@ type Config struct {
 	RazorpayKeyID          string
 	RazorpayKeySecret      string
 	VaultSecretName        string
+	// Async analyser callback
+	CallbackBaseURL string // base URL of this Go server, used to build callback URLs
+	CallbackSecret  string // HMAC secret for verifying analyser callbacks
 	// Plan limits (overridable without redeploy)
 	FamilyLimitFree int
 	FamilyLimitPro  int
@@ -40,6 +43,8 @@ func Load() (*Config, error) {
 		VaultSecretName:        getEnv("VAULT_SECRET_NAME", "vitalog-kek"),
 		FamilyLimitFree:        getEnvInt("FAMILY_LIMIT_FREE", 1),
 		FamilyLimitPro:         getEnvInt("FAMILY_LIMIT_PRO", 5),
+		CallbackBaseURL:        getEnv("CALLBACK_BASE_URL", "http://localhost:8080"),
+		CallbackSecret:         os.Getenv("EXTRACTION_CALLBACK_SECRET"),
 	}
 
 	if err := cfg.validate(); err != nil {

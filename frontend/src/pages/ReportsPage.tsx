@@ -10,6 +10,7 @@ import { useHealthValues } from '../hooks/useHealthValues'
 import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { api, type PaginatedDocuments } from '../lib/api'
 import { pollWithBackoff } from '../lib/poll'
+import { useToast } from '../components/Toast'
 
 type DateRange = 'all' | '30days' | '3months' | '6months' | '1year'
 type DocTypeFilter = 'all' | 'blood_test' | 'scan' | 'prescription'
@@ -69,6 +70,7 @@ export function ReportsPage() {
   const { activeMemberId } = useFamilyMember()
   const familyFilterId = searchParams.get('family_member_id') ?? activeMemberId ?? null
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
 
   const { documents, loading } = useDocuments()
   const { healthValues: hvRows } = useHealthValues()
@@ -95,7 +97,14 @@ export function ReportsPage() {
     for (const hv of hvRows) {
       if (!hv.is_flagged || !docIds.has(hv.document_id)) continue
       const arr = map.get(hv.document_id) ?? []
-      arr.push({ id: hv.id, display_name: hv.display_name, value: hv.value, unit: hv.unit })
+      arr.push({
+        id: hv.id,
+        display_name: hv.display_name,
+        value: hv.value,
+        unit: hv.unit,
+        reference_low: hv.reference_low,
+        reference_high: hv.reference_high,
+      })
       map.set(hv.document_id, arr)
     }
     return map
@@ -133,6 +142,13 @@ export function ReportsPage() {
     abortRef.current = controller
     const listParams = familyFilterId ? { family_member_id: familyFilterId } : undefined
 
+    // Track which docs were in-progress so we can toast per-doc on completion.
+    const inProgress = new Map(
+      reports
+        .filter((r) => r.extraction_status === 'pending' || r.extraction_status === 'processing')
+        .map((r) => [r.id, r.file_name])
+    )
+
     void pollWithBackoff(
       async () => {
         const latest = await api.documents.list(listParams)
@@ -144,6 +160,31 @@ export function ReportsPage() {
             items: current.items.map((doc) => latestById.get(doc.id) ?? doc),
           }
         })
+
+        // Toast for each doc that just finished.
+        for (const [id, fileName] of inProgress) {
+          const updated = latestById.get(id)
+          if (!updated) continue
+          if (updated.extraction_status === 'complete') {
+            const hv = (updated as { health_values?: { is_flagged?: boolean }[] }).health_values ?? []
+            const flagged = hv.filter((v) => v.is_flagged).length
+            addToast({
+              type: 'success',
+              title: 'Report ready',
+              message: `${fileName}${flagged > 0 ? ` — ${flagged} value${flagged > 1 ? 's' : ''} flagged` : ''}`,
+              duration: 7000,
+            })
+            inProgress.delete(id)
+          } else if (updated.extraction_status === 'failed') {
+            addToast({
+              type: 'error',
+              title: 'Extraction failed',
+              message: fileName,
+              duration: 7000,
+            })
+            inProgress.delete(id)
+          }
+        }
 
         const complete = !latest.items.some(
           (r) => r.extraction_status === 'pending' || r.extraction_status === 'processing'
@@ -161,7 +202,7 @@ export function ReportsPage() {
     )
 
     return () => controller.abort()
-  }, [familyFilterId, reports, queryClient])
+  }, [familyFilterId, reports, queryClient, addToast])
 
   const uniqueLabs = useMemo(() => {
     const labs = new Set(reports.map((r) => r.lab_name).filter(Boolean) as string[])
@@ -234,29 +275,42 @@ export function ReportsPage() {
           </div>
         )}
 
+        {/* Search */}
         <div className="flex justify-center">
           <div className="relative w-full max-w-md">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">
+            <label htmlFor="reports-search" className="sr-only">Search reports by name or lab</label>
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm" aria-hidden="true">
               search
             </span>
             <input
+              id="reports-search"
               type="search"
               placeholder="Search by name or lab..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-sm focus:ring-1 focus:ring-primary-container focus:outline-none"
+              className="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-sm focus:ring-2 focus:ring-primary/30 focus:outline-none"
             />
           </div>
         </div>
 
-        <div>
-          <div className="flex flex-wrap items-center gap-4 mb-6">
-            <div className="flex bg-surface-container-lowest border border-outline-variant rounded-lg p-1">
+        {/* Unified filter bar */}
+        <fieldset className="space-y-3">
+          <legend className="sr-only">Filter reports</legend>
+
+          {/* Row 1: Type + Status */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Doc type segmented control */}
+            <div
+              role="group"
+              aria-label="Document type"
+              className="flex bg-surface-container-lowest border border-outline-variant rounded-lg p-1"
+            >
               {DOC_TYPE_PILLS.map((pill) => (
                 <button
                   key={pill.value}
                   type="button"
                   onClick={() => setDocTypeFilter(pill.value)}
+                  aria-pressed={docTypeFilter === pill.value}
                   className={`px-4 py-1.5 text-xs font-bold rounded-md transition-colors ${
                     docTypeFilter === pill.value
                       ? 'bg-primary-container text-on-primary'
@@ -268,11 +322,38 @@ export function ReportsPage() {
               ))}
             </div>
 
+            {/* Divider */}
+            <span className="hidden sm:block w-px h-6 bg-outline-variant/40" aria-hidden="true" />
+
+            {/* Status pills */}
+            <div role="group" aria-label="Extraction status" className="flex flex-wrap gap-1.5">
+              {(['all', 'complete', 'processing', 'failed'] as const).map((status) => (
+                <button
+                  key={status}
+                  type="button"
+                  onClick={() => setStatusFilter(status)}
+                  aria-pressed={statusFilter === status}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${
+                    statusFilter === status
+                      ? 'bg-primary text-white'
+                      : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
+                  }`}
+                >
+                  {status === 'all' ? 'All status' : status.charAt(0).toUpperCase() + status.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 2: Date range + Lab */}
+          <div className="flex flex-wrap items-center gap-3">
             <div className="relative">
+              <label htmlFor="date-range-select" className="sr-only">Date range</label>
               <select
+                id="date-range-select"
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value as DateRange)}
-                className="appearance-none flex items-center gap-2 bg-surface-container-lowest border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-xs font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                className="appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-xs font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
               >
                 {DATE_RANGE_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -280,14 +361,16 @@ export function ReportsPage() {
                   </option>
                 ))}
               </select>
-              <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none text-lg">
+              <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-lg" aria-hidden="true">
                 expand_more
               </span>
             </div>
 
             {uniqueLabs.length > 0 && (
               <div className="relative">
+                <label htmlFor="lab-filter-select" className="sr-only">Filter by lab</label>
                 <select
+                  id="lab-filter-select"
                   value={labFilter}
                   onChange={(e) => setLabFilter(e.target.value)}
                   className="appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg pl-4 pr-10 py-2 text-xs font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
@@ -299,30 +382,13 @@ export function ReportsPage() {
                     </option>
                   ))}
                 </select>
-                <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none text-lg">
+                <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-lg" aria-hidden="true">
                   expand_more
                 </span>
               </div>
             )}
           </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {(['all', 'complete', 'processing', 'failed'] as const).map((status) => (
-            <button
-              key={status}
-              type="button"
-              onClick={() => setStatusFilter(status)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors capitalize ${
-                statusFilter === status
-                  ? 'bg-primary text-white'
-                  : 'bg-surface-container text-stone-600 hover:bg-surface-container-high'
-              }`}
-            >
-              {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-            </button>
-          ))}
-        </div>
+        </fieldset>
 
         {!loading && filtered.length === 0 ? (
           <div className="text-center py-24 space-y-4">
@@ -330,7 +396,7 @@ export function ReportsPage() {
             <p className="text-xl font-serif font-bold text-on-surface">
               {reports.length === 0 ? 'No reports yet' : 'No reports match your filters'}
             </p>
-            <p className="text-stone-500 text-sm">
+            <p className="text-on-surface-variant text-sm">
               {reports.length === 0
                 ? 'Upload your first health report to get started.'
                 : 'Try adjusting your search or filters.'}

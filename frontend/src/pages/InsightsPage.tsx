@@ -96,6 +96,9 @@ function TrendChart({ trend }: { trend: BiomarkerTrend }) {
                 ? 'bg-amber-light text-amber-text'
                 : 'bg-secondary-container text-on-secondary-container'
             }`}
+            title={
+              trend.isFlagged ? 'Latest value is outside your lab reference range.' : undefined
+            }
           >
             {trend.latestDelta > 0 ? '+' : ''}
             {trend.latestDelta}% since last
@@ -249,8 +252,8 @@ export function InsightsPage() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <header className="bg-surface/70 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-8 h-20 w-full border-b border-outline-variant/20">
-        <span className="font-serif text-xl text-primary font-bold">Health Insights</span>
+      <header className="bg-surface/70 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 sm:px-6 lg:px-8 h-14 sm:h-16 lg:h-20 w-full border-b border-outline-variant/20">
+        <span className="font-serif text-lg sm:text-xl text-primary font-bold pl-14 lg:pl-0">Health Insights</span>
         <div className="flex items-center gap-3">
           <div className="relative flex items-center">
             <label htmlFor="insights-date-range" className="sr-only">
@@ -293,7 +296,7 @@ export function InsightsPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-8 py-12 space-y-12">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12">
         {hvError && (
           <div
             className="rounded-xl border border-error/30 bg-error/5 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"

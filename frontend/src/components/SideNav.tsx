@@ -195,6 +195,33 @@ export function SideNav() {
         ))}
       </nav>
 
+      {/* Dev-only link */}
+      {import.meta.env.DEV && (
+        <NavLink
+          to="/dev/logs"
+          className={({ isActive }) =>
+            [
+              'flex items-center gap-3 py-2.5 px-4 rounded-xl cursor-pointer transition-colors mt-1',
+              isActive
+                ? 'text-primary font-bold bg-surface-container-high'
+                : 'text-on-surface-variant hover:bg-surface-container-highest',
+            ].join(' ')
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <span
+                className={`material-symbols-outlined text-xl ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}
+                aria-hidden="true"
+              >
+                terminal
+              </span>
+              <span className="text-sm font-medium">Dev Logs</span>
+            </>
+          )}
+        </NavLink>
+      )}
+
       {/* Bottom section */}
       <div className="mt-auto">
         {/* Upgrade nudge — only on free tier once profile is known */}

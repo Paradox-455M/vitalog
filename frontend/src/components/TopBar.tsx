@@ -98,8 +98,8 @@ export function TopBar({
 
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14 sm:h-16 bg-surface/70 backdrop-blur-md border-b border-outline-variant/20">
-      {/* Left: title + subtitle */}
-      <div className="min-w-0 flex-1">
+      {/* Left: title + subtitle — pl-14 clears the mobile hamburger button */}
+      <div className="min-w-0 flex-1 pl-14 lg:pl-0">
         <h1 className="font-serif text-lg sm:text-xl font-bold text-primary truncate">{title}</h1>
         {subtitle && (
           <p className="text-xs sm:text-sm text-on-surface-variant truncate hidden sm:block">{subtitle}</p>
@@ -110,8 +110,9 @@ export function TopBar({
       <div className="flex items-center gap-1 sm:gap-2 shrink-0">
         {showCta && onCtaClick && (
           <button
+            type="button"
             onClick={onCtaClick}
-            className="bg-primary text-on-primary text-xs sm:text-sm font-bold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full hover:opacity-90 transition-opacity flex items-center gap-1 sm:gap-2"
+            className="bg-primary text-on-primary text-xs sm:text-sm font-bold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full hover:opacity-90 transition-opacity flex items-center gap-1 sm:gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <span className="material-symbols-outlined text-base" aria-hidden="true">upload_file</span>
             <span className="hidden sm:inline">{ctaLabel}</span>

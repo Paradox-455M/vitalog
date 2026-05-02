@@ -28,6 +28,8 @@ vi.mock('../hooks/useDocuments', () => ({
         report_date: '2026-04-27',
         extraction_status: 'processing',
         created_at: '2026-04-27T00:00:00Z',
+        flagged_count: 0,
+        flagged_values: [],
       },
     ],
     loading: false,

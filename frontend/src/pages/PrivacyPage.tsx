@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { SettingsLayout } from '../layout/SettingsLayout'
 import { useProfile } from '../hooks/useProfile'
 import { useToast } from '../components/Toast'
+import { ConfirmModal } from '../components/ConfirmModal'
 import { api, ApiError } from '../lib/api'
 import type { AccessEvent } from '../lib/api'
 import { supabase } from '../lib/supabaseClient'
@@ -32,6 +33,7 @@ export function PrivacyPage() {
   const [mfaEnabled, setMfaEnabled] = useState<boolean | null>(null)
   const [exporting, setExporting] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [signingOutOthers, setSigningOutOthers] = useState(false)
 
   const loadEvents = useCallback(async () => {
@@ -85,14 +87,8 @@ export function PrivacyPage() {
     }
   }
 
-  const handleDeleteAccount = async () => {
-    const typed = window.prompt(
-      'This permanently deletes your Vitalog account and data. Type DELETE_MY_ACCOUNT to confirm.',
-    )
-    if (typed !== 'DELETE_MY_ACCOUNT') {
-      if (typed !== null) addToast({ type: 'info', title: 'Account deletion cancelled' })
-      return
-    }
+  const handleConfirmDelete = async () => {
+    setShowDeleteModal(false)
     setDeleting(true)
     try {
       await api.privacy.deleteAccount('DELETE_MY_ACCOUNT')
@@ -249,7 +245,7 @@ export function PrivacyPage() {
               <button
                 type="button"
                 disabled={deleting}
-                onClick={() => void handleDeleteAccount()}
+                onClick={() => setShowDeleteModal(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 border border-error text-error font-bold rounded-lg hover:bg-error/5 transition-colors disabled:opacity-50"
               >
                 <span className="material-symbols-outlined text-base">delete_forever</span>
@@ -333,6 +329,17 @@ export function PrivacyPage() {
           ) : null}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete your account"
+        description="This permanently deletes your Vitalog account and all your health data. This action cannot be reversed."
+        confirmLabel="Delete my account"
+        variant="danger"
+        requireText="DELETE_MY_ACCOUNT"
+        loading={deleting}
+      />
     </SettingsLayout>
   )
 }

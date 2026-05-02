@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../lib/api'
 import { FREE_TIER_MAX_DOCUMENTS } from '../hooks/useProfile'
 import { pollWithBackoff } from '../lib/poll'
+import { useToast } from './Toast'
 
 type UploadState = 'idle' | 'uploading' | 'extracting' | 'complete' | 'failed'
 
@@ -36,12 +37,12 @@ function FreeUploadLimitNotice({
         <h3 className="font-serif text-xl font-bold text-on-surface">
           You’ve used all {FREE_TIER_MAX_DOCUMENTS} free uploads
         </h3>
-        <p className="text-sm text-stone-600">
+        <p className="text-sm text-on-surface-variant">
           Your free plan includes up to {FREE_TIER_MAX_DOCUMENTS} saved reports. Upgrade to Pro for unlimited uploads
           and more family profiles.
         </p>
         {serverDetail ? (
-          <p className="text-sm text-stone-500 pt-1">{serverDetail}</p>
+          <p className="text-sm text-on-surface-variant pt-1">{serverDetail}</p>
         ) : null}
       </div>
       <div className="flex flex-col gap-3 w-full">
@@ -65,6 +66,7 @@ function FreeUploadLimitNotice({
 }
 
 export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalProps) {
+  const { addToast } = useToast()
   const [uploadState, setUploadState] = useState<UploadState>('idle')
   const [fileName, setFileName] = useState('')
   const [resultSummary, setResultSummary] = useState<{ count: number; flagged: number } | null>(null)
@@ -160,45 +162,53 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
       const uploaded = await api.documents.upload(file)
       window.dispatchEvent(new Event('vitalog-documents-changed'))
       setUploadState('extracting')
-      // Extraction is started server-side on upload; poll until complete.
 
-      let resolvedDoc = uploaded
-      let settled = false
+      // If extraction takes more than 15 s, dismiss the modal and let it process
+      // in the background. ReportsPage polls processing docs and will toast on finish.
+      const bgTimer = setTimeout(() => {
+        if (controller.signal.aborted) return
+        controller.abort()
+        onUploadComplete?.()
+        onClose()
+        addToast({
+          type: 'info',
+          title: 'Processing in background',
+          message: "We'll notify you when your report is ready.",
+          duration: 6000,
+        })
+      }, 15_000)
 
-      await pollWithBackoff(
-        async () => {
-          const latest = await api.documents.get(uploaded.id)
-          resolvedDoc = latest
+      try {
+        await pollWithBackoff(
+          async () => {
+            const latest = await api.documents.get(uploaded.id)
 
-          if (latest.extraction_status === 'complete') {
-            setResultSummary({
-              count: latest.health_values.length,
-              flagged: latest.health_values.filter((value) => value.is_flagged).length,
-            })
-            setCompletedDocId(uploaded.id)
-            setUploadState('complete')
-            onUploadComplete?.()
-            settled = true
-            return true
-          }
+            if (latest.extraction_status === 'complete') {
+              clearTimeout(bgTimer)
+              setResultSummary({
+                count: latest.health_values.length,
+                flagged: latest.health_values.filter((v) => v.is_flagged).length,
+              })
+              setCompletedDocId(uploaded.id)
+              setUploadState('complete')
+              onUploadComplete?.()
+              return true
+            }
 
-          if (latest.extraction_status === 'failed') {
-            setErrorMessage('Extraction failed. Please try again with a clearer file.')
-            setUploadState('failed')
-            settled = true
-            return true
-          }
+            if (latest.extraction_status === 'failed') {
+              clearTimeout(bgTimer)
+              setErrorMessage('Extraction failed. Please try again with a clearer file.')
+              setUploadState('failed')
+              return true
+            }
 
-          return false
-        },
-        controller.signal,
-        { initial: 2000, max: 30_000, factor: 1.5 },
-      )
-
-      if (!settled && !controller.signal.aborted) {
-        setErrorMessage('Extraction timed out. Please check report status in My Reports.')
-        setCompletedDocId(resolvedDoc.id)
-        setUploadState('failed')
+            return false
+          },
+          controller.signal,
+          { initial: 2000, max: 30_000, factor: 1.5 },
+        )
+      } finally {
+        clearTimeout(bgTimer)
       }
     } catch (err) {
       if ((err as Error).name === 'AbortError' || controller.signal.aborted) return
@@ -214,7 +224,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
       setErrorMessage(err instanceof Error ? err.message : 'Upload failed')
       setUploadState('failed')
     }
-  }, [onUploadComplete])
+  }, [onUploadComplete, onClose, addToast])
 
   function handleFileSelect(file: File) {
     if (freeLimitBlocked) return
@@ -303,13 +313,13 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
               <h2 id="upload-modal-title" className="font-serif text-xl font-bold">
                 {freeLimitBlocked ? 'Upload limit reached' : 'Upload Report'}
               </h2>
-              <button type="button" className="text-stone-400 hover:text-stone-600" onClick={onClose} aria-label="Close">
+              <button type="button" className="text-on-surface-variant hover:text-on-surface-variant" onClick={onClose} aria-label="Close">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             {profileGate === 'loading' ? (
-              <div className="w-full py-16 flex flex-col items-center gap-3 text-stone-500" role="status" aria-live="polite">
+              <div className="w-full py-16 flex flex-col items-center gap-3 text-on-surface-variant" role="status" aria-live="polite">
                 <span className="material-symbols-outlined text-3xl animate-spin" aria-hidden="true">progress_activity</span>
                 <p className="text-sm">Checking your plan…</p>
               </div>
@@ -329,7 +339,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
                 >
                   <span className="material-symbols-outlined text-5xl text-primary">cloud_upload</span>
                   <p className="text-lg font-semibold text-on-surface">Drop your report here</p>
-                  <p className="text-sm text-stone-500">PDF, JPG, PNG — max 20 MB</p>
+                  <p className="text-sm text-on-surface-variant">PDF, JPG, PNG — max 20 MB</p>
                   <button
                     type="button"
                     className="mt-2 px-6 py-2.5 bg-primary text-white rounded-full text-sm font-semibold"
@@ -339,7 +349,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
                   </button>
                 </div>
 
-                <p className="text-xs text-stone-400 text-center">
+                <p className="text-xs text-on-surface-variant text-center">
                   Supports: Apollo, SRL, Dr. Lal PathLabs, Thyrocare, Metropolis
                 </p>
               </>
@@ -352,7 +362,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
           <div className="flex flex-col gap-6" role="status" aria-live="polite">
             <div className="flex justify-between items-center">
               <h2 id="upload-modal-title" className="font-serif text-xl font-bold">Uploading…</h2>
-              <button type="button" className="text-stone-400 hover:text-stone-600" onClick={onClose} aria-label="Close">
+              <button type="button" className="text-on-surface-variant hover:text-on-surface-variant" onClick={onClose} aria-label="Close">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -365,12 +375,12 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
                   <div className="h-full bg-primary rounded-full animate-pulse" style={{ width: '60%' }} />
                 </div>
               </div>
-              <button type="button" className="text-stone-400 hover:text-stone-600 text-xs shrink-0" onClick={handleCancel}>
+              <button type="button" className="text-on-surface-variant hover:text-on-surface-variant text-xs shrink-0" onClick={handleCancel}>
                 Cancel
               </button>
             </div>
 
-            <p className="text-sm text-stone-500 text-center">Saving to secure storage…</p>
+            <p className="text-sm text-on-surface-variant text-center">Saving to secure storage…</p>
           </div>
         )}
 
@@ -385,12 +395,12 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
 
             <div className="text-center">
               <h2 id="upload-modal-title" className="font-serif text-xl font-bold mb-2">AI is reading your report…</h2>
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-on-surface-variant">
                 Extracting biomarker values and generating your health summary.
               </p>
             </div>
 
-            <button type="button" className="text-sm text-stone-400 hover:text-stone-600" onClick={handleCancel}>
+            <button type="button" className="text-sm text-on-surface-variant hover:text-on-surface-variant" onClick={handleCancel}>
               Cancel
             </button>
           </div>
@@ -412,7 +422,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
             <div className="text-center">
               <h2 id="upload-modal-title" className="font-serif text-xl font-bold mb-2">Report processed!</h2>
               {resultSummary && (
-                <p className="text-sm text-stone-500">
+                <p className="text-sm text-on-surface-variant">
                   {resultSummary.count} values extracted
                   {resultSummary.flagged > 0 && (
                     <span className="text-amber font-medium"> · {resultSummary.flagged} flagged</span>
@@ -449,7 +459,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
 
             <div className="text-center">
               <h2 id="upload-modal-title" className="font-serif text-xl font-bold mb-2">Upload failed</h2>
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-on-surface-variant">
                 {errorMessage ?? "We couldn't read your report. Please try a clearer scan or different format."}
               </p>
             </div>
@@ -481,7 +491,7 @@ export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalPr
                 key={s}
                 type="button"
                 onClick={() => setUploadState(s)}
-                className="text-[10px] px-2 py-1 bg-surface-container rounded text-stone-500"
+                className="text-[10px] px-2 py-1 bg-surface-container rounded text-on-surface-variant"
               >
                 {s}
               </button>

@@ -28,26 +28,32 @@ type PipelineFinding struct {
 	Severity         string   `json:"severity"`
 }
 
+type PipelinePatientInfo struct {
+	Name       *string `json:"name"`
+	Age        *int    `json:"age"`
+	Gender     *string `json:"gender"`
+	LabName    *string `json:"labName"`
+	ReportDate *string `json:"reportDate"`
+}
+
+type PipelineLayer1 struct {
+	PatientInfo PipelinePatientInfo `json:"patientInfo"`
+}
+
+type PipelineLayer2 struct {
+	Summary            string            `json:"summary"`
+	OverallStatus      string            `json:"overall_status"`
+	Findings           []PipelineFinding `json:"findings"`
+	AllClearSummary    string            `json:"all_clear_summary"`
+	WhatToDoNext       string            `json:"what_to_do_next"`
+	PossibleRootCauses []string          `json:"possible_root_causes"`
+	HasPendingTests    bool              `json:"has_pending_tests"`
+	PendingNote        *string           `json:"pending_note"`
+}
+
 type PipelineResult struct {
-	Layer1 struct {
-		PatientInfo struct {
-			Name       *string `json:"name"`
-			Age        *int    `json:"age"`
-			Gender     *string `json:"gender"`
-			LabName    *string `json:"labName"`
-			ReportDate *string `json:"reportDate"`
-		} `json:"patientInfo"`
-	} `json:"layer1"`
-	Layer2 struct {
-		Summary            string            `json:"summary"`
-		OverallStatus      string            `json:"overall_status"`
-		Findings           []PipelineFinding `json:"findings"`
-		AllClearSummary    string            `json:"all_clear_summary"`
-		WhatToDoNext       string            `json:"what_to_do_next"`
-		PossibleRootCauses []string          `json:"possible_root_causes"`
-		HasPendingTests    bool              `json:"has_pending_tests"`
-		PendingNote        *string           `json:"pending_note"`
-	} `json:"layer2"`
+	Layer1 PipelineLayer1 `json:"layer1"`
+	Layer2 PipelineLayer2 `json:"layer2"`
 }
 
 type AnalyserService struct {
@@ -59,7 +65,7 @@ func NewAnalyserService(baseURL string) *AnalyserService {
 	return &AnalyserService{
 		baseURL: strings.TrimSuffix(baseURL, "/"),
 		client: &http.Client{
-			Timeout: 5 * time.Minute,
+			Timeout: 18 * time.Minute,
 		},
 	}
 }
@@ -83,7 +89,9 @@ func mimeTypeFromFilename(fileName string) string {
 	}
 }
 
-func (s *AnalyserService) AnalyzeFile(ctx context.Context, fileName string, fileBytes []byte) (*PipelineResult, error) {
+// buildMultipartBody constructs the multipart form body for the analyser.
+// extraFields is a map of additional text fields to add to the form.
+func buildMultipartBody(fileName string, fileBytes []byte, extraFields map[string]string) (bodyBytes []byte, contentType string, err error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -93,18 +101,30 @@ func (s *AnalyserService) AnalyzeFile(ctx context.Context, fileName string, file
 	h.Set("Content-Type", mimeType)
 	part, err := writer.CreatePart(h)
 	if err != nil {
-		return nil, fmt.Errorf("create form file: %w", err)
+		return nil, "", fmt.Errorf("create form file: %w", err)
 	}
 	if _, err := part.Write(fileBytes); err != nil {
-		return nil, fmt.Errorf("write file bytes: %w", err)
-	}
-	if err := writer.Close(); err != nil {
-		return nil, fmt.Errorf("close multipart writer: %w", err)
+		return nil, "", fmt.Errorf("write file bytes: %w", err)
 	}
 
-	// Snapshot body bytes so we can re-create the reader on each retry attempt.
-	bodyBytes := body.Bytes()
-	contentType := writer.FormDataContentType()
+	for k, v := range extraFields {
+		if err := writer.WriteField(k, v); err != nil {
+			return nil, "", fmt.Errorf("write field %s: %w", k, err)
+		}
+	}
+
+	if err := writer.Close(); err != nil {
+		return nil, "", fmt.Errorf("close multipart writer: %w", err)
+	}
+
+	return body.Bytes(), writer.FormDataContentType(), nil
+}
+
+func (s *AnalyserService) AnalyzeFile(ctx context.Context, fileName string, fileBytes []byte) (*PipelineResult, error) {
+	bodyBytes, contentType, err := buildMultipartBody(fileName, fileBytes, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	const maxAttempts = 3
 	var lastErr error
@@ -130,6 +150,40 @@ func (s *AnalyserService) AnalyzeFile(ctx context.Context, fileName string, file
 		lastErr = err
 	}
 	return nil, lastErr
+}
+
+// AnalyzeFileAsync submits the file to the analyser's async endpoint, which returns 202
+// immediately and will POST the result to callbackURL when processing is complete.
+func (s *AnalyserService) AnalyzeFileAsync(ctx context.Context, fileName string, fileBytes []byte, callbackURL string) error {
+	bodyBytes, contentType, err := buildMultipartBody(fileName, fileBytes, map[string]string{
+		"callbackUrl": callbackURL,
+	})
+	if err != nil {
+		return err
+	}
+
+	// Short deadline — we only need the 202 accept, not the full LLM response.
+	callCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(callCtx, http.MethodPost, s.baseURL+"/api/pipeline-file-async", bytes.NewReader(bodyBytes))
+	if err != nil {
+		return fmt.Errorf("create async analyser request: %w", err)
+	}
+	req.Header.Set("Content-Type", contentType)
+
+	resp, err := s.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("call analyser async: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusAccepted {
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		return fmt.Errorf("analyser async returned status %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
+	}
+
+	return nil
 }
 
 func (s *AnalyserService) doRequest(req *http.Request) (*PipelineResult, error) {

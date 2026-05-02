@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 import { useAuth } from '../auth/authContext'
 import { BiomarkerDetailDrawer } from '../components/BiomarkerDetailDrawer'
+import { BiomarkerStatusChip } from '../components/BiomarkerStatusChip'
 import { UploadModal } from '../components/UploadModal'
 import { TopBar } from '../components/TopBar'
 import { BiomarkerLibrarySkeleton } from '../components/Skeleton'
@@ -568,9 +569,12 @@ export function BiomarkerLibraryPage() {
                           <div className="flex justify-between items-start mb-4 gap-2">
                             <h4 className="text-xl font-bold font-serif text-secondary">{b.display_name}</h4>
                             {latest?.is_flagged && (
-                              <span className="shrink-0 px-2 py-0.5 bg-amber-light text-amber-text rounded-full text-xs font-bold">
-                                Flagged
-                              </span>
+                              <BiomarkerStatusChip
+                                value={latest.value}
+                                reference_low={latest.reference_low}
+                                reference_high={latest.reference_high}
+                                className="shrink-0"
+                              />
                             )}
                           </div>
                           <p className="text-on-surface-variant text-sm mb-4 flex-1">{b.description}</p>
@@ -650,7 +654,13 @@ export function BiomarkerLibraryPage() {
                                 {latest.unit ? ` ${latest.unit}` : ''}
                                 <span className="text-on-surface-variant"> — {formatShortDate(latest.report_date)}</span>
                                 {latest.is_flagged && (
-                                  <span className="ml-2 text-xs font-bold text-amber-text">Flagged</span>
+                                  <span className="ml-2 inline-flex align-middle">
+                                    <BiomarkerStatusChip
+                                      value={latest.value}
+                                      reference_low={latest.reference_low}
+                                      reference_high={latest.reference_high}
+                                    />
+                                  </span>
                                 )}
                               </p>
                             ) : (
@@ -690,7 +700,13 @@ export function BiomarkerLibraryPage() {
                           {v.value}
                           {v.unit ? ` ${v.unit}` : ''} · {formatShortDate(v.report_date)}
                           {v.is_flagged && (
-                            <span className="ml-2 text-xs font-bold text-amber-text">Flagged</span>
+                            <span className="ml-2 inline-flex align-middle">
+                              <BiomarkerStatusChip
+                                value={v.value}
+                                reference_low={v.reference_low}
+                                reference_high={v.reference_high}
+                              />
+                            </span>
                           )}
                         </p>
                       </div>

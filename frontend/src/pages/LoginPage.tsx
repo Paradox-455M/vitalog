@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
 import { AuthSplitPanel } from '../components/AuthSplitPanel'
 
@@ -95,9 +95,14 @@ export function LoginPage() {
             className="w-full bg-surface-container-highest border-0 rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all outline-none"
           />
           <div className="flex justify-end mt-2">
-            <span className="text-sm text-outline cursor-default">
+            <button
+              type="button"
+              disabled
+              title="Coming soon — password reset via email"
+              className="text-sm text-outline opacity-50 cursor-not-allowed"
+            >
               Forgot password?
-            </span>
+            </button>
           </div>
         </div>
 
@@ -110,7 +115,7 @@ export function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#4A7C5F] hover:bg-[#3E6327] text-white font-semibold py-4 rounded-full transition-all active:scale-[0.98] shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-primary hover:bg-forest text-white font-semibold py-4 rounded-full transition-all active:scale-[0.98] shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           {loading ? (
             <>
@@ -154,23 +159,20 @@ export function LoginPage() {
       {/* Footer — new to Vitalog */}
       <p className="mt-12 text-sm text-on-surface-variant">
         New to Vitalog?
-        <span
-          className="text-primary font-bold hover:underline ml-1 cursor-pointer"
-          onClick={() => navigate('/signup')}
-        >
+        <Link to="/signup" className="text-primary font-bold hover:underline ml-1">
           Sign up
-        </span>
+        </Link>
       </p>
 
       {/* Fixed bottom footer — right panel only */}
-      <div className="fixed bottom-0 w-full lg:w-[45%] right-0 py-6 px-12 flex justify-center lg:justify-between items-center bg-[#FAFAF7]/80 backdrop-blur-sm">
-        <a href="#" className="text-[10px] uppercase tracking-widest text-outline hover:text-primary transition-colors">
+      <div className="fixed bottom-0 w-full lg:w-[45%] right-0 py-6 px-12 flex justify-center lg:justify-between items-center bg-surface/80 backdrop-blur-sm">
+        <a href="#" className="text-xs uppercase tracking-widest text-outline hover:text-primary transition-colors">
           Privacy Policy
         </a>
-        <a href="#" className="text-[10px] uppercase tracking-widest text-outline hover:text-primary transition-colors">
+        <a href="#" className="text-xs uppercase tracking-widest text-outline hover:text-primary transition-colors">
           Terms of Service
         </a>
-        <a href="#" className="text-[10px] uppercase tracking-widest text-outline hover:text-primary transition-colors">
+        <a href="#" className="text-xs uppercase tracking-widest text-outline hover:text-primary transition-colors">
           Help Center
         </a>
       </div>

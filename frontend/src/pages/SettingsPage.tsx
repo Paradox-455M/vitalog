@@ -238,12 +238,12 @@ export function SettingsPage() {
           <div
             className={`md:col-span-4 rounded-xl p-6 shadow-sm overflow-hidden relative ${
               profile.plan === 'pro'
-                ? 'bg-[#173901] text-white'
+                ? 'bg-forest text-white'
                 : 'bg-surface-container-lowest border border-outline-variant/20'
             }`}
           >
               {profile.plan === 'pro' && (
-                <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#2d5016] rounded-full opacity-50" />
+                <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/50 rounded-full opacity-50" />
               )}
               <div className="relative z-10 h-full flex flex-col min-h-[12rem]">
                 <h2
@@ -280,7 +280,7 @@ export function SettingsPage() {
                 <div
                   className={
                     profile.plan === 'pro'
-                      ? 'mt-4 bg-[#2d5016]/50 p-3 rounded-lg border border-[#3e6327]/30'
+                      ? 'mt-4 bg-forest/50 p-3 rounded-lg border border-primary/30'
                       : 'mt-4 bg-surface-container p-3 rounded-lg border border-outline-variant/20'
                   }
                 >

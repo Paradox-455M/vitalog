@@ -181,11 +181,11 @@ export function SubscriptionPage() {
                   <span className="material-symbols-outlined text-secondary text-lg">check_circle</span>
                   Basic AI summary
                 </li>
-                <li className="flex items-center gap-3 text-sm text-stone-400">
+                <li className="flex items-center gap-3 text-sm text-on-surface-variant">
                   <span className="material-symbols-outlined text-lg">cancel</span>
                   Higher family limits
                 </li>
-                <li className="flex items-center gap-3 text-sm text-stone-400">
+                <li className="flex items-center gap-3 text-sm text-on-surface-variant">
                   <span className="material-symbols-outlined text-lg">cancel</span>
                   Unlimited uploads
                 </li>

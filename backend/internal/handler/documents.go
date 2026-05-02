@@ -3,7 +3,11 @@ package handler
 import (
 	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -47,8 +51,10 @@ type DocumentHandler struct {
 		Encrypt(ctx context.Context, userID uuid.UUID, plaintext []byte) ([]byte, error)
 		Decrypt(ctx context.Context, userID uuid.UUID, ciphertext []byte) ([]byte, error)
 	}
-	extractionSem chan struct{} // bounded goroutine pool for analyser calls
-	serverCtx     context.Context
+	extractionSem   chan struct{} // bounded goroutine pool for analyser calls
+	serverCtx       context.Context
+	callbackBaseURL string // base URL of this server, used to build analyser callback URLs
+	callbackSecret  string // HMAC key for signing/verifying callback tokens
 }
 
 func NewDocumentHandler(
@@ -64,18 +70,21 @@ func NewDocumentHandler(
 		Encrypt(ctx context.Context, userID uuid.UUID, plaintext []byte) ([]byte, error)
 		Decrypt(ctx context.Context, userID uuid.UUID, ciphertext []byte) ([]byte, error)
 	},
+	callbackBaseURL, callbackSecret string,
 ) *DocumentHandler {
 	return &DocumentHandler{
-		docRepo:       docRepo,
-		hvRepo:        hvRepo,
-		profileRepo:   profileRepo,
-		familyRepo:    familyRepo,
-		notifRepo:     notifRepo,
-		storage:       storage,
-		analyserSvc:   analyserSvc,
-		cryptoSvc:     cryptoSvc,
-		extractionSem: make(chan struct{}, extractionConcurrency),
-		serverCtx:     serverCtx,
+		docRepo:         docRepo,
+		hvRepo:          hvRepo,
+		profileRepo:     profileRepo,
+		familyRepo:      familyRepo,
+		notifRepo:       notifRepo,
+		storage:         storage,
+		analyserSvc:     analyserSvc,
+		cryptoSvc:       cryptoSvc,
+		extractionSem:   make(chan struct{}, extractionConcurrency),
+		serverCtx:       serverCtx,
+		callbackBaseURL: callbackBaseURL,
+		callbackSecret:  callbackSecret,
 	}
 }
 
@@ -529,76 +538,32 @@ func (h *DocumentHandler) Timeline(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, timeline)
 }
 
-// runExtraction downloads the file, calls the analyser, and persists results.
-// Called in a goroutine — all errors are logged, never returned.
-func (h *DocumentHandler) runExtraction(doc *model.Document) {
-	// M3: Acquire bounded semaphore to cap concurrent analyser calls.
-	select {
-	case h.extractionSem <- struct{}{}:
-	default:
-		slog.Warn("extraction: semaphore full, dropping", "doc_id", doc.ID)
-		_ = h.docRepo.UpdateStatus(h.serverCtx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
-		return
-	}
-	defer func() { <-h.extractionSem }()
-
-	// Derive from serverCtx so in-flight extractions are cancelled on graceful shutdown.
-	ctx, cancel := context.WithTimeout(h.serverCtx, 5*time.Minute)
+// markFailed sets extraction_status to "failed" using a fresh context so it
+// succeeds even when the main extraction ctx has already expired.
+func (h *DocumentHandler) markFailed(ownerID, docID uuid.UUID, reason string) {
+	cleanCtx, cancel := context.WithTimeout(h.serverCtx, 10*time.Second)
 	defer cancel()
-
-	log := slog.With("doc_id", doc.ID)
-	log.Info("extraction: starting")
-	observability.Publish("info", "extraction_started", map[string]any{
-		"doc_id": doc.ID.String(),
+	_ = h.docRepo.UpdateStatus(cleanCtx, ownerID, docID, model.ExtractionStatusFailed)
+	observability.Publish("error", "extraction_status_changed", map[string]any{
+		"doc_id": docID.String(),
+		"status": "failed",
+		"reason": reason,
 	})
+}
 
-	mimeType := ""
-	if doc.FileType != nil {
-		mimeType = strings.ToLower(*doc.FileType)
-	}
-	if strings.Contains(mimeType, "image") {
-		log.Warn("extraction: image files are not supported by the text analyser")
-		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
-		return
-	}
+// makeCallbackURL builds a signed URL the analyser will POST results back to.
+func (h *DocumentHandler) makeCallbackURL(docID, ownerID uuid.UUID) string {
+	mac := hmac.New(sha256.New, []byte(h.callbackSecret))
+	mac.Write([]byte(docID.String() + ":" + ownerID.String()))
+	token := hex.EncodeToString(mac.Sum(nil))
+	return fmt.Sprintf("%s/internal/extraction-callback?doc_id=%s&owner_id=%s&token=%s",
+		h.callbackBaseURL, docID, ownerID, token)
+}
 
-	objectPath := strings.TrimPrefix(doc.StoragePath, "documents/")
-	encryptedBytes, err := h.storage.Download("documents", objectPath)
-	if err != nil {
-		log.Error("extraction: download failed", "error", err)
-		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
-		return
-	}
-	fileBytes, err := h.cryptoSvc.Decrypt(ctx, doc.OwnerID, encryptedBytes)
-	if err != nil {
-		log.Error("extraction: decrypt failed", "error", err)
-		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
-		return
-	}
-	log.Info("extraction: file downloaded and decrypted", "bytes", len(fileBytes))
-
-	if err := h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusProcessing); err != nil {
-		log.Error("extraction: failed to set processing status", "error", err)
-	}
-
-	log.Info("extraction: analyser call starting")
-	observability.Publish("info", "analyser_call_started", map[string]any{
-		"doc_id": doc.ID.String(),
-	})
-	result, err := h.analyserSvc.AnalyzeFile(ctx, doc.FileName, fileBytes)
-	if err != nil {
-		log.Error("extraction: analyser failed", "error", err)
-		observability.Publish("error", "analyser_call_failed", map[string]any{
-			"doc_id": doc.ID.String(),
-		})
-		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
-		return
-	}
-	log.Info("extraction: analyser returned", "findings", len(result.Layer2.Findings))
-	observability.Publish("info", "analyser_call_completed", map[string]any{
-		"doc_id":   doc.ID.String(),
-		"findings": len(result.Layer2.Findings),
-	})
+// persistExtractionResult saves health values, updates the document, and emits notifications.
+// Shared between the sync extraction path and the async callback receiver.
+func (h *DocumentHandler) persistExtractionResult(ctx context.Context, doc *model.Document, result *service.PipelineResult) {
+	log := slog.With("doc_id", doc.ID, "owner_id", doc.OwnerID)
 
 	reportDate := time.Now()
 	if result.Layer1.PatientInfo.ReportDate != nil {
@@ -650,7 +615,7 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 
 	if err := h.hvRepo.CreateBatch(ctx, doc.OwnerID, healthValues); err != nil {
 		log.Error("extraction: failed to save health values", "error", err)
-		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
+		h.markFailed(doc.OwnerID, doc.ID, "health_values_save_failed")
 		return
 	}
 
@@ -661,26 +626,124 @@ func (h *DocumentHandler) runExtraction(doc *model.Document) {
 
 	if err := h.docRepo.UpdateExtraction(ctx, doc.OwnerID, doc.ID, &docType, result.Layer1.PatientInfo.LabName, reportDatePtr, explanation); err != nil {
 		log.Error("extraction: failed to update document", "error", err)
-		_ = h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusFailed)
+		h.markFailed(doc.OwnerID, doc.ID, "update_extraction_failed")
 		return
 	}
-	observability.Publish("info", "document_extraction_updated", map[string]any{
+	observability.Publish("info", "extraction_status_changed", map[string]any{
 		"doc_id":        doc.ID.String(),
-		"status":        string(model.ExtractionStatusComplete),
+		"status":        "complete",
 		"health_values": len(healthValues),
 	})
 
 	h.emitExtractionNotifications(ctx, doc, healthValues, result.Layer1.PatientInfo.LabName)
-	log.Info("extraction: notification emitted")
-	observability.Publish("info", "extraction_notification_emitted", map[string]any{
-		"doc_id": doc.ID.String(),
-	})
-
 	log.Info("extraction: complete", "health_values", len(healthValues))
 	observability.Publish("info", "extraction_completed", map[string]any{
 		"doc_id":        doc.ID.String(),
 		"health_values": len(healthValues),
 	})
+}
+
+// runExtraction downloads the file, calls the analyser, and persists results.
+// Called in a goroutine — all errors are logged, never returned.
+func (h *DocumentHandler) runExtraction(doc *model.Document) {
+	// M3: Acquire bounded semaphore to cap concurrent analyser calls.
+	select {
+	case h.extractionSem <- struct{}{}:
+	default:
+		slog.Warn("extraction: semaphore full, dropping", "doc_id", doc.ID)
+		h.markFailed(doc.OwnerID, doc.ID, "semaphore_full")
+		return
+	}
+	defer func() { <-h.extractionSem }()
+
+	// 20-minute budget: local LLMs (e.g. Ollama) can take 10+ minutes per report.
+	ctx, cancel := context.WithTimeout(h.serverCtx, 20*time.Minute)
+	defer cancel()
+
+	log := slog.With("doc_id", doc.ID, "owner_id", doc.OwnerID)
+	log.Info("extraction: starting")
+	observability.Publish("info", "extraction_started", map[string]any{
+		"doc_id":   doc.ID.String(),
+		"owner_id": doc.OwnerID.String(),
+	})
+
+	mimeType := ""
+	if doc.FileType != nil {
+		mimeType = strings.ToLower(*doc.FileType)
+	}
+	if strings.Contains(mimeType, "image") {
+		log.Warn("extraction: image files are not supported by the text analyser")
+		h.markFailed(doc.OwnerID, doc.ID, "unsupported_image")
+		return
+	}
+
+	objectPath := strings.TrimPrefix(doc.StoragePath, "documents/")
+	encryptedBytes, err := h.storage.Download("documents", objectPath)
+	if err != nil {
+		log.Error("extraction: download failed", "error", err)
+		h.markFailed(doc.OwnerID, doc.ID, "download_failed")
+		return
+	}
+	fileBytes, err := h.cryptoSvc.Decrypt(ctx, doc.OwnerID, encryptedBytes)
+	if err != nil {
+		log.Error("extraction: decrypt failed", "error", err)
+		h.markFailed(doc.OwnerID, doc.ID, "decrypt_failed")
+		return
+	}
+	log.Info("extraction: file downloaded and decrypted", "bytes", len(fileBytes))
+
+	if err := h.docRepo.UpdateStatus(ctx, doc.OwnerID, doc.ID, model.ExtractionStatusProcessing); err != nil {
+		log.Error("extraction: failed to set processing status", "error", err)
+	} else {
+		observability.Publish("info", "extraction_status_changed", map[string]any{
+			"doc_id": doc.ID.String(),
+			"status": "processing",
+		})
+	}
+
+	// Prefer async path: the analyser processes in the background and POSTs back to our
+	// callback endpoint when done, freeing this goroutine immediately.
+	if h.callbackBaseURL != "" && h.callbackSecret != "" {
+		callbackURL := h.makeCallbackURL(doc.ID, doc.OwnerID)
+		log.Info("extraction: handing off to analyser async")
+		observability.Publish("info", "analyser_async_queued", map[string]any{"doc_id": doc.ID.String()})
+		if asyncErr := h.analyserSvc.AnalyzeFileAsync(ctx, doc.FileName, fileBytes, callbackURL); asyncErr == nil {
+			// Goroutine done — the callback handler will call persistExtractionResult.
+			return
+		}
+		log.Warn("extraction: async endpoint unavailable, falling back to sync")
+		observability.Publish("warn", "analyser_async_fallback", map[string]any{"doc_id": doc.ID.String()})
+	}
+
+	log.Info("extraction: analyser call starting")
+	observability.Publish("info", "analyser_call_started", map[string]any{
+		"doc_id": doc.ID.String(),
+	})
+	result, err := h.analyserSvc.AnalyzeFile(ctx, doc.FileName, fileBytes)
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			log.Error("extraction: analyser timed out", "timeout", "20m")
+			observability.Publish("error", "analyser_call_failed", map[string]any{
+				"doc_id": doc.ID.String(),
+				"reason": "timeout_20m",
+			})
+		} else {
+			log.Error("extraction: analyser failed", "error", err)
+			observability.Publish("error", "analyser_call_failed", map[string]any{
+				"doc_id": doc.ID.String(),
+				"error":  err.Error(),
+			})
+		}
+		h.markFailed(doc.OwnerID, doc.ID, "analyser_failed")
+		return
+	}
+	log.Info("extraction: analyser returned", "findings", len(result.Layer2.Findings))
+	observability.Publish("info", "analyser_call_completed", map[string]any{
+		"doc_id":   doc.ID.String(),
+		"findings": len(result.Layer2.Findings),
+	})
+
+	h.persistExtractionResult(ctx, doc, result)
 }
 
 // emitExtractionNotifications creates in-app rows according to user notification preferences.

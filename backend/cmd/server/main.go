@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"log/slog"
 	"net/http"
@@ -76,6 +78,19 @@ func main() {
 	cryptoSvc := crypto.NewService(pool, kek)
 	slog.Info("encryption service ready")
 
+	// If no callback secret is configured, generate a random one at startup.
+	// This is sufficient for local dev where analyser and backend share the same machine.
+	callbackSecret := cfg.CallbackSecret
+	if callbackSecret == "" {
+		buf := make([]byte, 32)
+		if _, err := rand.Read(buf); err != nil {
+			slog.Error("failed to generate callback secret", "error", err)
+			os.Exit(1)
+		}
+		callbackSecret = hex.EncodeToString(buf)
+		slog.Info("extraction callback secret auto-generated (set EXTRACTION_CALLBACK_SECRET to pin it)")
+	}
+
 	storageClient := storage.NewSupabaseStorage(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey)
 	analyserSvc := service.NewAnalyserService(cfg.AnalyserURL)
 
@@ -89,8 +104,8 @@ func main() {
 	authAdmin := supabaseauth.NewAdminClient(cfg.SupabaseURL, cfg.SupabaseServiceRoleKey)
 	privacyHandler := handler.NewPrivacyHandler(accessEventRepo, docRepo, profileRepo, familyRepo, hvRepo, storageClient, authAdmin)
 
-	docHandler := handler.NewDocumentHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc, cryptoSvc)
-	extractionHandler := handler.NewExtractionHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc, cryptoSvc)
+	docHandler := handler.NewDocumentHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc, cryptoSvc, cfg.CallbackBaseURL, callbackSecret)
+	extractionHandler := handler.NewExtractionHandler(ctx, docRepo, hvRepo, profileRepo, familyRepo, notifRepo, storageClient, analyserSvc, cryptoSvc, cfg.CallbackBaseURL, callbackSecret)
 	dashboardHandler := handler.NewDashboardHandler(docRepo, familyRepo)
 	familyHandler := handler.NewFamilyHandler(familyRepo, profileRepo, cfg.FamilyLimitFree, cfg.FamilyLimitPro)
 	profileHandler := handler.NewProfileHandler(profileRepo)
@@ -113,13 +128,19 @@ func main() {
 	r.Use(chimw.Recoverer)
 	r.Use(middleware.CORS)            // C2: allowlist-based
 	r.Use(middleware.SecurityHeaders) // M7: CSP + X-Frame-Options etc.
-	r.Use(chimw.Timeout(60 * time.Second))
+	// Note: Timeout is NOT applied globally — the SSE log stream needs no deadline.
+	// It is applied per-group below for all non-streaming routes.
 
 	r.Get("/health", healthHandler.Check)
 
 	r.Route("/api", func(r chi.Router) {
 		r.Use(middleware.Auth(keyfunc))
+		// SSE log stream — no timeout so the connection stays open indefinitely.
 		r.Get("/dev/logs/stream", devLogsHandler.Stream)
+
+		// All other API routes get a 60-second request deadline.
+		r.Group(func(r chi.Router) {
+			r.Use(chimw.Timeout(60 * time.Second))
 
 		r.Route("/documents", func(r chi.Router) {
 			r.Get("/", docHandler.List)
@@ -177,9 +198,13 @@ func main() {
 			r.Get("/payments", subscriptionHandler.ListPayments)
 			r.With(sensitiveMw).Post("/create-order", subscriptionHandler.CreateOrder)
 		})
+		}) // end r.Group (60s timeout)
 	})
 
 	r.Post("/api/webhooks/razorpay", razorpayHandler.Handle)
+
+	// Internal endpoint for the analyser's async callback — verified by HMAC token in URL.
+	r.Post("/internal/extraction-callback", extractionHandler.HandleCallback)
 
 	r.NotFound(jsonNotFound(cfg))
 

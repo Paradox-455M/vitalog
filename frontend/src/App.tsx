@@ -24,6 +24,11 @@ const ReportDetailPage = lazy(() => import('./pages/ReportDetailPage').then((m) 
 const HealthTimelinePage = lazy(() => import('./pages/HealthTimelinePage').then((m) => ({ default: m.HealthTimelinePage })))
 const FamilyPage = lazy(() => import('./pages/FamilyPage').then((m) => ({ default: m.FamilyPage })))
 
+// Dev-only — lazy so it never lands in the production bundle
+const DevLogsPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/DevLogsPage'))
+  : null
+
 function PageSkeleton() {
   return (
     <div className="flex-1 h-screen overflow-y-auto px-6 py-8 space-y-4 animate-pulse">
@@ -71,6 +76,11 @@ export default function App() {
             <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
             <Route path="/settings/privacy" element={<PrivacyPage />} />
             <Route path="/settings/subscription" element={<SubscriptionPage />} />
+            {import.meta.env.DEV && DevLogsPage && (
+              <Route path="/dev/logs" element={
+                <Suspense fallback={<PageSkeleton />}><DevLogsPage /></Suspense>
+              } />
+            )}
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

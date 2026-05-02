@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
 import type { ReportRow, FlaggedValue } from './ReportCard'
+import { ConfirmModal } from './ConfirmModal'
+import { getReportPrimaryTitle, getReportSubtitle } from '../lib/reportDisplay'
 
 function formatReportDate(dateStr: string | null): string {
   if (!dateStr) return '—'
@@ -10,10 +12,6 @@ function formatReportDate(dateStr: string | null): string {
     month: 'short',
     year: 'numeric',
   })
-}
-
-function displayTitle(fileName: string): string {
-  return fileName.replace(/\.[^/.]+$/, '').replace(/_/g, ' ')
 }
 
 function rowIcon(documentType: string | null | undefined, fileName: string): string {
@@ -43,6 +41,7 @@ export function ReportsTable({ reports, flaggedMap, loading, onDelete }: Reports
   const navigate = useNavigate()
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -65,6 +64,18 @@ export function ReportsTable({ reports, flaggedMap, loading, onDelete }: Reports
     }
   }, [])
 
+  const handleConfirmDelete = useCallback(async () => {
+    if (!pendingDeleteId || !onDelete) return
+    const id = pendingDeleteId
+    setDeletingId(id)
+    setPendingDeleteId(null)
+    try {
+      await onDelete(id)
+    } finally {
+      setDeletingId(null)
+    }
+  }, [onDelete, pendingDeleteId])
+
   if (loading) {
     return (
       <div className="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
@@ -86,12 +97,14 @@ export function ReportsTable({ reports, flaggedMap, loading, onDelete }: Reports
       </div>
 
       {reports.map((r) => {
+        const primaryTitle = getReportPrimaryTitle(r.lab_name, r.report_date, r.file_name)
+        const subtitle = getReportSubtitle(r.lab_name, r.report_date, r.file_name)
         const flagged = flaggedMap.get(r.id) ?? []
         const needsAttention = r.extraction_status === 'complete' && flagged.length > 0
         const statusLabel =
           r.extraction_status === 'complete'
             ? needsAttention
-              ? 'Needs attention'
+              ? 'Out of range'
               : 'Processed'
             : r.extraction_status === 'processing' || r.extraction_status === 'pending'
               ? 'Processing'
@@ -132,8 +145,14 @@ export function ReportsTable({ reports, flaggedMap, loading, onDelete }: Reports
                 <span className="material-symbols-outlined">{rowIcon(r.document_type, r.file_name)}</span>
               </div>
               <div className="min-w-0">
-                <h4 className="font-bold text-on-surface truncate">{displayTitle(r.file_name)}</h4>
-                <p className="text-xs text-outline truncate">{r.lab_name ?? '—'}</p>
+                <h4 className="font-bold text-on-surface truncate" title={primaryTitle}>
+                  {primaryTitle}
+                </h4>
+                {subtitle ? (
+                  <p className="text-xs text-outline truncate" title={subtitle}>
+                    {subtitle}
+                  </p>
+                ) : null}
               </div>
             </div>
             <div className="col-span-6 sm:col-span-2 text-sm text-on-surface-variant font-medium hidden sm:block">
@@ -213,15 +232,9 @@ export function ReportsTable({ reports, flaggedMap, loading, onDelete }: Reports
                         role="menuitem"
                         disabled={deletingId === r.id}
                         className="w-full px-4 py-2 text-left text-sm text-error hover:bg-error-container/20 disabled:opacity-50"
-                        onClick={async () => {
-                          if (!window.confirm('Delete this report? This cannot be undone.')) return
+                        onClick={() => {
                           setMenuOpenId(null)
-                          setDeletingId(r.id)
-                          try {
-                            await onDelete(r.id)
-                          } finally {
-                            setDeletingId(null)
-                          }
+                          setPendingDeleteId(r.id)
                         }}
                       >
                         {deletingId === r.id ? 'Deleting…' : 'Delete report'}
@@ -234,6 +247,17 @@ export function ReportsTable({ reports, flaggedMap, loading, onDelete }: Reports
           </div>
         )
       })}
+
+      <ConfirmModal
+        isOpen={pendingDeleteId !== null}
+        onClose={() => setPendingDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete report"
+        description="This will permanently remove the report and all its extracted health values. This cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        loading={deletingId !== null && pendingDeleteId === null}
+      />
     </div>
   )
 }

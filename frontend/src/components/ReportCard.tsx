@@ -1,5 +1,11 @@
 import { memo, useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  biomarkerPillClass,
+  biomarkerStatusIcon,
+  classifyBiomarkerStatus,
+} from '../lib/biomarkerStatus'
+import { getReportPrimaryTitle, getReportSubtitle } from '../lib/reportDisplay'
 
 export interface ReportRow {
   id: string
@@ -10,6 +16,8 @@ export interface ReportRow {
   explanation_text: string | null
   document_type?: string | null
   family_member_id?: string | null
+  /** From document list API; defaults to 0 if missing */
+  flagged_count?: number
 }
 
 export interface FlaggedValue {
@@ -17,21 +25,14 @@ export interface FlaggedValue {
   display_name: string
   value: number
   unit: string | null
+  reference_low?: number | null
+  reference_high?: number | null
 }
 
 interface ReportCardProps {
   report: ReportRow
   flaggedValues?: FlaggedValue[]
   onMenuClick?: (reportId: string) => void
-}
-
-function formatReportDate(dateStr: string | null): string {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
 }
 
 function parseSummary(explanationText: string | null): string {
@@ -47,8 +48,8 @@ function parseSummary(explanationText: string | null): string {
 function StatusChip({ status }: { status: ReportRow['extraction_status'] }) {
   const map = {
     complete:   { label: 'Complete',   cls: 'bg-secondary-container text-on-secondary-container' },
-    processing: { label: 'Processing', cls: 'bg-surface-container-high text-stone-500' },
-    pending:    { label: 'Pending',    cls: 'bg-surface-container-high text-stone-500' },
+    processing: { label: 'Processing', cls: 'bg-surface-container-high text-on-surface-variant' },
+    pending:    { label: 'Pending',    cls: 'bg-surface-container-high text-on-surface-variant' },
     failed:     { label: 'Failed',     cls: 'bg-error/10 text-error' },
   }
   const { label, cls } = map[status]
@@ -66,6 +67,9 @@ export const ReportCard = memo(function ReportCard({ report, flaggedValues = [],
 
   const pillsToShow = flaggedValues.slice(0, 2)
   const summary = parseSummary(report.explanation_text)
+  const primaryTitle = getReportPrimaryTitle(report.lab_name, report.report_date, report.file_name)
+  const subtitle = getReportSubtitle(report.lab_name, report.report_date, report.file_name)
+  const flaggedCount = report.flagged_count ?? 0
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false)
@@ -111,27 +115,26 @@ export const ReportCard = memo(function ReportCard({ report, flaggedValues = [],
     <article
       className="bg-surface-container-lowest p-6 rounded-xl transition-all hover:bg-surface-container-low border border-transparent hover:border-outline-variant/20 cursor-pointer"
       onClick={() => navigate(`/reports/${report.id}`)}
+      aria-labelledby={`report-title-${report.id}`}
     >
       <div className="flex justify-between items-start mb-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-bold text-lg">
-              {report.file_name.replace(/\.[^/.]+$/, '').replace(/_/g, ' ')}
+        <div className="min-w-0 pr-2">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <h3 id={`report-title-${report.id}`} className="font-bold text-lg leading-snug break-words">
+              {primaryTitle}
             </h3>
             <StatusChip status={report.extraction_status} />
           </div>
-          <div className="flex items-center gap-3 mt-1">
-            {report.lab_name && (
-              <>
-                <span className="text-xs text-stone-500 flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[14px]">lab_profile</span>
-                  {report.lab_name}
-                </span>
-                <span className="text-xs text-stone-500">•</span>
-              </>
-            )}
-            <span className="text-xs text-stone-500">{formatReportDate(report.report_date)}</span>
-          </div>
+          {subtitle && (
+            <p className="text-xs text-on-surface-variant mt-0.5 truncate" title={subtitle}>
+              {subtitle}
+            </p>
+          )}
+          {flaggedCount > 0 && report.extraction_status === 'complete' && (
+            <p className="text-xs font-semibold text-amber mt-2">
+              {flaggedCount} {flaggedCount === 1 ? 'result' : 'results'} outside lab reference on this report
+            </p>
+          )}
         </div>
         <div className="relative" ref={menuRef}>
           <button
@@ -149,7 +152,7 @@ export const ReportCard = memo(function ReportCard({ report, flaggedValues = [],
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             aria-controls={`report-menu-${report.id}`}
-            className="p-1 rounded-full text-stone-400 cursor-pointer hover:text-stone-600 hover:bg-surface-container transition-colors"
+            className="p-1 rounded-full text-on-surface-variant cursor-pointer hover:text-on-surface hover:bg-surface-container transition-colors"
           >
             <span className="material-symbols-outlined" aria-hidden="true">more_vert</span>
           </button>
@@ -196,13 +199,14 @@ export const ReportCard = memo(function ReportCard({ report, flaggedValues = [],
 
       {report.extraction_status === 'complete' && (
         <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
-          <span className="text-primary font-bold">AI Summary: </span>
+          <span className="text-primary font-bold">Summary </span>
+          <span className="text-on-surface-variant/80">(not medical advice): </span>
           {summary}
         </p>
       )}
 
       {report.extraction_status === 'processing' || report.extraction_status === 'pending' ? (
-        <p className="text-sm text-stone-400 italic mb-4">Analysing your report…</p>
+        <p className="text-sm text-on-surface-variant italic mb-4">Analysing your report…</p>
       ) : null}
 
       {report.extraction_status === 'failed' && (
@@ -210,18 +214,31 @@ export const ReportCard = memo(function ReportCard({ report, flaggedValues = [],
       )}
 
       {pillsToShow.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {pillsToShow.map((hv) => (
-            <span
-              key={hv.id}
-              className="bg-amber-container text-tertiary px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border border-tertiary/10"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-tertiary" aria-hidden="true" />
-              {hv.display_name} {hv.value} {hv.unit}
-            </span>
-          ))}
+        <div className="flex flex-wrap gap-2" aria-label="Out-of-range results on this report">
+          {pillsToShow.map((hv) => {
+            const kind = classifyBiomarkerStatus({
+              value: hv.value,
+              reference_low: hv.reference_low ?? null,
+              reference_high: hv.reference_high ?? null,
+            })
+            const icon = biomarkerStatusIcon(kind)
+            return (
+              <span
+                key={hv.id}
+                className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border ${biomarkerPillClass(kind)}`}
+              >
+                <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+                  {icon}
+                </span>
+                <span>
+                  {hv.display_name} {hv.value}
+                  {hv.unit ? ` ${hv.unit}` : ''}
+                </span>
+              </span>
+            )
+          })}
           {flaggedValues.length > 2 && (
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface-container text-stone-500">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant">
               +{flaggedValues.length - 2} more
             </span>
           )}

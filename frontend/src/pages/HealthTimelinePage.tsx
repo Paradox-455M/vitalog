@@ -17,6 +17,7 @@ import { useHealthValues } from '../hooks/useHealthValues'
 import { useFamilyMember } from '../contexts/FamilyMemberContext'
 import { groupByCanonical, timelineChartElementId } from '../lib/healthValues'
 import type { HealthValue } from '../lib/api'
+import { BiomarkerStatusChip } from '../components/BiomarkerStatusChip'
 
 type DatePreset = '3m' | '6m' | '12m' | 'all'
 type FilterMode = 'All' | 'Flagged'
@@ -145,9 +146,11 @@ function TrendChartCard({ series, isSpotlight = false }: { series: HealthValue[]
         </div>
         <div className="flex flex-col items-end gap-1">
           {latestFlagged && (
-            <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-light text-amber-text">
-              Flagged
-            </span>
+            <BiomarkerStatusChip
+              value={latest.value}
+              reference_low={latest.reference_low}
+              reference_high={latest.reference_high}
+            />
           )}
           {delta !== undefined && (
             <span
@@ -298,6 +301,12 @@ export function HealthTimelinePage() {
   const focusCanonical = searchParams.get('canonical')
   const spotlightCanonical = focusCanonical ?? stickySpotlight
 
+  useEffect(() => {
+    if (searchParams.get('filter') === 'flagged') {
+      setFilterMode('Flagged')
+    }
+  }, [searchParams])
+
   const { activeMemberId } = useFamilyMember()
   const { fromDate, toDate } = useMemo(() => getDateRange(preset), [preset])
   const { healthValues, loading, error, refetch } = useHealthValues({
@@ -394,8 +403,8 @@ export function HealthTimelinePage() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <header className="bg-surface/70 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-8 h-20 w-full border-b border-outline-variant/20">
-        <span className="font-serif text-xl text-primary font-bold">Health Timeline</span>
+      <header className="bg-surface/70 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 sm:px-6 lg:px-8 h-14 sm:h-16 lg:h-20 w-full border-b border-outline-variant/20">
+        <span className="font-serif text-lg sm:text-xl text-primary font-bold pl-14 lg:pl-0">Health Timeline</span>
         <div className="flex items-center gap-3">
           <div className="relative">
             <button
@@ -454,7 +463,7 @@ export function HealthTimelinePage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-8 py-12 space-y-10">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
         <section>
           <h1 className="font-serif text-4xl font-bold text-primary tracking-tight mb-2">
             Your Health Timeline
@@ -511,7 +520,7 @@ export function HealthTimelinePage() {
                     color="text-primary"
                   />
                   <StatCard
-                    label="Need attention"
+                    label="Out of range"
                     value={stats.flagged}
                     icon="warning"
                     color="text-amber"
@@ -542,7 +551,7 @@ export function HealthTimelinePage() {
                           : 'px-4 py-2 bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest rounded-full text-sm font-semibold transition-all'
                       }
                     >
-                      {mode}
+                      {mode === 'Flagged' ? 'Out of range' : mode}
                       {mode === 'Flagged' && stats.flagged > 0 && (
                         <span className="ml-2 px-1.5 py-0.5 bg-amber text-white text-xs rounded-full">
                           {stats.flagged}
@@ -565,7 +574,7 @@ export function HealthTimelinePage() {
                       <span className="material-symbols-outlined text-5xl mb-4 text-outline-variant">
                         filter_alt_off
                       </span>
-                      <p className="font-semibold text-on-surface">No flagged biomarkers in this range</p>
+                      <p className="font-semibold text-on-surface">No out-of-range biomarkers in this range</p>
                       <p className="text-sm mt-1">Try &quot;All&quot; or a wider date range.</p>
                     </div>
                   )}
@@ -591,7 +600,7 @@ export function HealthTimelinePage() {
                       </div>
                       <div>
                         <h3 className="font-serif text-lg font-bold text-amber-text mb-2">
-                          {stats.flagged} biomarker{stats.flagged !== 1 ? 's' : ''} need attention
+                          {stats.flagged} biomarker{stats.flagged !== 1 ? 's' : ''} outside lab reference range
                         </h3>
                         <p className="text-sm text-amber-text/80 mb-4">
                           These values are outside the reference range on their latest report in this period.
